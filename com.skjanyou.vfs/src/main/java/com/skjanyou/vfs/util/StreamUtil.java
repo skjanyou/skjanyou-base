@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.skjanyou.util.CommUtil;
+
 public class StreamUtil {
 	private static final int DEFAULT_BUFFER_SIZE = 8192;
 
@@ -19,18 +21,11 @@ public class StreamUtil {
 
 			out.flush();
 		} finally {
-			if (closeIn) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
+			if(closeIn){
+				CommUtil.close(in);
 			}
-
-			if (closeOut) {
-				try {
-					out.close();
-				} catch (IOException e) {
-				}
+			if(closeOut){
+				CommUtil.close(out);
 			}
 		}
 	}
