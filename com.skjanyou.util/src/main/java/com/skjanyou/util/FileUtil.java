@@ -114,4 +114,10 @@ public class FileUtil {
         return crc;  
     }  
     
+    public static void copy(File dest,File src){
+    	
+    }
+    
+    
+    
 }
