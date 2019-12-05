@@ -3,6 +3,7 @@ package com.skjanyou.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -114,10 +115,46 @@ public class FileUtil {
         return crc;  
     }  
     
-    public static void copy(File dest,File src){
-    	
+    
+    /**
+     * 复制文件
+     * @param src    源文件
+     * @param dest   目的文件
+     */
+    public static void copy(File src,File dest)  {
+    	FileInputStream fis = null;
+    	FileOutputStream fos = null;
+    	try {
+			fis = new FileInputStream(src);
+			fos = new FileOutputStream(dest);
+			int len = -1;
+			byte[] buff = new byte[ 1024 ];
+			while( (len = fis.read(buff)) != -1 ){
+				fos.write(buff, 0, len);
+			}
+			fos.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			CommUtil.close(fos);
+			CommUtil.close(fis);
+		}
     }
     
-    
+    /**
+     * 用于复杂的路径层级创建文件 </br>
+     * 例如: /opt/home, skjanyou, data ,结果为/opt/home/skjanyou/data </br> 
+     * @param filePath 第一个元素为根目录
+     * @return
+     */
+    public static File createNewFile( String... filePath ){
+    	File file = new File( filePath[0] );
+    	for( int i = 1; i < filePath.length;i++ ){
+    		file = new File(file,filePath[i]);
+    	}
+    	return file;
+    }
     
 }
