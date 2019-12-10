@@ -1,6 +1,5 @@
 package com.skjanyou.util;
 
-import java.util.Map;
 
 import com.skjanyou.util.proxy.annotation.Proxy;
 
@@ -25,6 +24,6 @@ public class Test {
 		
 		Test t3 = BeanUtil.createProxyBean(Test.class, Proxy.class);
 		t3.setAaa("sdfsdfdsf");
-		
+		System.out.println(t3.getAaa());
 	}
 }

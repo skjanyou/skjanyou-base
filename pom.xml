@@ -20,6 +20,7 @@
 		<module>com.skjanyou.start</module>
 		<module>com.skjanyou.util</module>
 		<module>com.skjanyou.log</module>
+		<module>com.skjanyou.server</module>
 	</modules>
 
 	<properties>
