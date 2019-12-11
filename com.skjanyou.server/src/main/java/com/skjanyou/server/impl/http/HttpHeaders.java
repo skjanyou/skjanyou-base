@@ -1,0 +1,68 @@
+package com.skjanyou.server.impl.http;
+
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.skjanyou.server.constant.ServerConst;
+import com.skjanyou.server.inter.Headers;
+import com.skjanyou.util.StringUtil;
+
+public class HttpHeaders implements Headers {
+	private Map<String,String> header = new HashMap<>();
+	
+	@Override
+	public String get(String key) {
+		return header.get(key);
+	}
+
+	@Override
+	public Headers put(String key, String value) {
+		header.put(key, value);
+		return this;
+	}
+
+	@Override
+	public Headers remove(String key) {
+		header.remove(key);
+		return this;
+	}
+
+	@Override
+	public int size() {
+		return header.size();
+	}
+
+	@Override
+	public String toHttpHeaderString() {
+		String result = "";
+		Iterator<Entry<String, String>> it = this.header.entrySet().iterator();
+		while( it.hasNext() ){
+			Entry<String, String> entry = it.next();
+			String key = entry.getKey();
+			String value = entry.getValue();
+			String header = MessageFormat.format("{0} : {1}{2}", key, value, ServerConst.LINEFEEd );
+			result += header;
+		}
+		
+		return result;
+	}
+	
+	public Headers converToHeaders( String headers ) {
+		// 1.判空
+		if( headers == null ){throw new NullPointerException("头部信息不能为空!");}
+		// 2. 拆分成单行
+		String[] lineHeaders = headers.split(ServerConst.LINEFEEd);
+		// 3.读取单行数据至map中
+		for( String lineHeader : lineHeaders ){
+			String[] headerArr = lineHeader.split(":");
+			if( headerArr.length == 2 ){
+				this.header.put(StringUtil.trim(headerArr[0]), headerArr[1]);
+			}
+		}
+		
+		return this;
+	}
+}

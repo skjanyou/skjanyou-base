@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
+import com.skjanyou.server.inter.Request;
+import com.skjanyou.server.inter.Response;
 import com.skjanyou.util.CommUtil;
 
 /**
@@ -24,19 +26,38 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 		this.socket = socket;
 	}
 	
-	
 	@Override
 	public void run() {
 		if(socket == null){
 			throw new NullPointerException("Socket套接字为空!");
 		}
+		
+		Request request = createRequest();
+		OutputStream os = null;
+		OutputStreamWriter osw = null;
+		BufferedWriter bw = null;
+		try {
+            
+            os = socket.getOutputStream();
+            osw = new OutputStreamWriter(os);
+            bw = new BufferedWriter(osw);
+            
+            bw.write("hellow");
+            bw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("读取数据出错!",e);
+		} finally {
+
+		}
+		
+	}
+	
+	protected Request createRequest(  ) {
 		InputStream is = null;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
 		
-		OutputStream os = null;
-		OutputStreamWriter osw = null;
-		BufferedWriter bw = null;
 		try {
 			is = socket.getInputStream();
 			isr = new InputStreamReader(is);
@@ -54,26 +75,24 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             }
             //接收客户端的请求信息
             String requestInfo = sb.toString().trim();        
-            System.out.println(requestInfo);	
-            
-            os = socket.getOutputStream();
-            osw = new OutputStreamWriter(os);
-            bw = new BufferedWriter(osw);
-            
-            bw.write("hellow");
-            bw.flush();
+            System.out.println(requestInfo);			
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("读取数据出错!",e);
 		} finally {
 			CommUtil.close(br);
 			CommUtil.close(isr);
-			CommUtil.close(is);
+			CommUtil.close(is);			
 		}
+
 		
+		return null;
 	}
-
-
+	
+	protected Response createResponse(){
+		return null;
+	}
+	
 	@Override
 	public int compareTo(AcceptThread o) {
 		return 0;

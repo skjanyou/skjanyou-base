@@ -28,12 +28,15 @@ public class HttpServer extends AbstractServer {
 
 	@Override
 	public boolean isAlive() {
-		return false;
+		return dispatchThread.isRunning();
 	}
 
 	@Override
 	public Server shutdown() {
-		return null;
+		if( dispatchThread != null ){
+			dispatchThread.setRunning(false);
+		}
+		return this;
 	}
 
 }

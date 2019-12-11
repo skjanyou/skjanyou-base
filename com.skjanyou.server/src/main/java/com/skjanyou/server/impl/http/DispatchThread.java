@@ -21,9 +21,11 @@ public class DispatchThread extends Thread implements Runnable {
 	private static ExecutorService pool;
 	private ServerConfig config;
 	private ServerSocket serverSocket;
+	private boolean isRunning;
 	public DispatchThread( ServerConfig config ){
 		this.config = config;
-		this.pool = new ThreadPoolExecutor(1, 2, 1000, TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>(),Executors.defaultThreadFactory(),new ThreadPoolExecutor.AbortPolicy());
+		this.isRunning = true;
+		pool = new ThreadPoolExecutor(1, 2, 1000, TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>(),Executors.defaultThreadFactory(),new ThreadPoolExecutor.AbortPolicy());
 	}
 	@Override
 	public void run() {
@@ -34,7 +36,7 @@ public class DispatchThread extends Thread implements Runnable {
 			e.printStackTrace();
 			throw new RuntimeException("启动服务失败",e);
 		}
-		while(true){
+		while(isRunning){
 			try {
 				Socket socket = serverSocket.accept();
 				Runnable runnable = new AcceptThread(socket);
@@ -43,5 +45,11 @@ public class DispatchThread extends Thread implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+	public boolean isRunning() {
+		return isRunning;
+	}
+	public void setRunning(boolean isRunning) {
+		this.isRunning = isRunning;
 	}
 }
