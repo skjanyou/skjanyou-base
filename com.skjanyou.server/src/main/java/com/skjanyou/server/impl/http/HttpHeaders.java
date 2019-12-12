@@ -43,7 +43,7 @@ public class HttpHeaders implements Headers {
 			Entry<String, String> entry = it.next();
 			String key = entry.getKey();
 			String value = entry.getValue();
-			String header = MessageFormat.format("{0} : {1}{2}", key, value, ServerConst.LINEFEEd );
+			String header = MessageFormat.format("{0} : {1}{2}", key, value, ServerConst.LINEFEED );
 			result += header;
 		}
 		
@@ -54,7 +54,7 @@ public class HttpHeaders implements Headers {
 		// 1.判空
 		if( headers == null ){throw new NullPointerException("头部信息不能为空!");}
 		// 2. 拆分成单行
-		String[] lineHeaders = headers.split(ServerConst.LINEFEEd);
+		String[] lineHeaders = headers.split(ServerConst.LINEFEED);
 		// 3.读取单行数据至map中
 		for( String lineHeader : lineHeaders ){
 			String[] headerArr = lineHeader.split(":");

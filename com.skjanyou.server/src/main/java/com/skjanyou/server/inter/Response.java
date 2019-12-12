@@ -1,5 +1,7 @@
 package com.skjanyou.server.inter;
 
+import java.io.OutputStream;
+
 import com.skjanyou.server.constant.StatusCode;
 
 public interface Response {
@@ -9,8 +11,8 @@ public interface Response {
 	
 	
 	public static interface ResponseBody{
-		public ResponseBody write( byte[] buff );
-		public ResponseBody write( String context );
+		public byte[] getBodyContent();
+		public ResponseBody writeToStream( OutputStream os );
 	}
 	
 	public static interface ResponseFeatures{

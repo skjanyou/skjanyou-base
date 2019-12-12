@@ -1,5 +1,6 @@
 package com.skjanyou.server.inter;
 
+import java.io.InputStream;
 import java.util.Map;
 
 
@@ -9,8 +10,8 @@ public interface Request {
 	public Headers headers();
 
 	public static interface Requestbody{
-		public String read( byte[] buff, int idx,int len );
-		public String read();
+		public Requestbody readFromStream( InputStream is );
+		public String getRequestbody();
 	}
 	public static interface RequestFeatures{
 	    String method();
@@ -20,6 +21,7 @@ public interface Request {
 	    Protocol protocol();
 
 	    Map<String,Object> queryParams();
-
+	    
+	    RequestFeatures convertToRequestFeatures( String firstLine );
 	}
 }
