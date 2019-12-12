@@ -55,17 +55,26 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             handler.handler(request, response);
             
             
-            String statusCode = response.responsefeaFeatures().statusCode().getCode() + "";
-            String protocol = response.responsefeaFeatures().protocol().protocol() + "/" + response.responsefeaFeatures().protocol().version();
-            bw.write(protocol + statusCode);
+            String statusCode = response.responseLine().statusCode().getCode() + " " + response.responseLine().statusCode().getName();
+            String protocol = response.responseLine().protocol().protocol() + "/" + response.responseLine().protocol().version();
+            String statusLine = protocol + " " + statusCode;
+            System.out.println("返回数据:");
+            System.out.println(statusLine);
+            // 写状态头
+            bw.write(statusLine);
+            
+            byte[] bodyContent = response.responseBody().getBodyContent();
+            response.headers().put("Content-Length", bodyContent.length + "")
+            .put("Content-Type", "text/plain;charset=UTF-8");
             // 写返回头
             String responseHeaderString = response.headers().toHttpHeaderString();
             bw.write(responseHeaderString);
+            System.out.println(responseHeaderString);
+            bw.write(ServerConst.CRLF);
             
             // 写正文
-            byte[] bodyContent = response.responseBody().getBodyContent();
             bw.write(new String(bodyContent));
-            
+            System.out.println(new String(bodyContent));
             bw.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,11 +98,11 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             StringBuilder sb = new StringBuilder();
             // 1.获取第一行,获取请求类型和uri,构建RequestFeatures
             String firstLine = br.readLine();	
-            request.requestFeatures().convertToRequestFeatures(firstLine);
+            request.requestLine().convertToRequestLine(firstLine);
             // 2.从第二行开始,全部为请求头
             String headerMsg = "";
             while(( headerMsg = br.readLine() ) != null && headerMsg.length() > 0){
-                sb.append(headerMsg).append(ServerConst.LINEFEED);
+                sb.append(headerMsg).append(ServerConst.CRLF);
             }
             String requestInfo = sb.toString().trim();        
             System.out.println(requestInfo);	

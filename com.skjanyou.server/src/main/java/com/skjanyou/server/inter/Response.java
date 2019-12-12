@@ -6,7 +6,7 @@ import com.skjanyou.server.constant.StatusCode;
 
 public interface Response {
 	public ResponseBody responseBody();
-	public ResponseFeatures responsefeaFeatures();
+	public ResponseLine responseLine();
 	public Headers headers();
 	
 	
@@ -15,7 +15,7 @@ public interface Response {
 		public ResponseBody writeToStream( OutputStream os );
 	}
 	
-	public static interface ResponseFeatures{
+	public static interface ResponseLine{
 		public StatusCode statusCode();
 		public Protocol protocol();
 	}

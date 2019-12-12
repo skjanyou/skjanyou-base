@@ -7,7 +7,7 @@ import com.skjanyou.server.inter.Request;
 
 public class HttpRequest implements Request {
 	private Headers headers = new HttpHeaders();
-	private RequestFeatures requestFeatures = new HttpRequestFeatures();
+	private RequestLine requestLine = new HttpRequestLine();
 	private Requestbody requestbody = new HttpRequestbody();
 	public HttpRequest( ){}
 	
@@ -31,8 +31,8 @@ public class HttpRequest implements Request {
 	}
 
 	@Override
-	public RequestFeatures requestFeatures() {
-		return this.requestFeatures;
+	public RequestLine requestLine() {
+		return this.requestLine;
 	}
 
 	@Override

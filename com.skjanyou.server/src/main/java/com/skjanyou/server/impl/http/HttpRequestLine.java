@@ -3,9 +3,9 @@ package com.skjanyou.server.impl.http;
 import java.util.Map;
 
 import com.skjanyou.server.inter.Protocol;
-import com.skjanyou.server.inter.Request.RequestFeatures;
+import com.skjanyou.server.inter.Request.RequestLine;
 
-public class HttpRequestFeatures implements RequestFeatures {
+public class HttpRequestLine implements RequestLine {
 	private String method;
 	private String url;
 	private Protocol protocol;
@@ -32,7 +32,7 @@ public class HttpRequestFeatures implements RequestFeatures {
 	}
 
 	@Override
-	public RequestFeatures convertToRequestFeatures( String firstLine ) {
+	public RequestLine convertToRequestLine(String firstLine) {
         String[] parm = firstLine.split("\\s");
         String method = parm[0];
         String uri = parm[1];		

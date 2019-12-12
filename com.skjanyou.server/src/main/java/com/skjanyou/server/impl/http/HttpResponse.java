@@ -10,13 +10,13 @@ import com.skjanyou.server.inter.Response;
 public class HttpResponse implements Response {
 	private Headers headers = new HttpHeaders();
 	private ResponseBody responseBody = new HttpResponseBody();
-	private ResponseFeatures responseFeatures = new HttpResponseFeatures();
+	private ResponseLine responseLine = new HttpResponseLine();
 	
 	public static class HttpResponseBody implements ResponseBody {
 
 		@Override
 		public byte[] getBodyContent() {
-			return "<br>这是一个html元素</br>".getBytes();
+			return "{\"code\":200,\"notice\":0,\"follow\":0,\"forward\":0,\"msg\":0,\"comment\":0,\"pushMsg\":null,\"friend\":{\"snsCount\":0,\"count\":0,\"celebrityCount\":0},\"lastPrivateMsg\":null,\"event\":0,\"newProgramCount\":0,\"createDJRadioCount\":0,\"newTheme\":true}".getBytes();
 		}
 
 		@Override
@@ -25,7 +25,7 @@ public class HttpResponse implements Response {
 		}
 	} 
 	
-	public static class HttpResponseFeatures implements ResponseFeatures {
+	public static class HttpResponseLine implements ResponseLine {
 
 		@Override
 		public StatusCode statusCode() {
@@ -55,8 +55,8 @@ public class HttpResponse implements Response {
 	}
 
 	@Override
-	public ResponseFeatures responsefeaFeatures() {
-		return this.responseFeatures;
+	public ResponseLine responseLine() {
+		return this.responseLine;
 	}
 
 	@Override

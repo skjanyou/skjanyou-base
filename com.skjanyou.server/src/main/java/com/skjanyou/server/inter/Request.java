@@ -5,15 +5,18 @@ import java.util.Map;
 
 
 public interface Request {
+	/** 获取请求行 **/
+	public RequestLine requestLine();
+	/** 请求数据,仅POST请求有 **/
 	public Requestbody requestBody();
-	public RequestFeatures requestFeatures();
+	/** 获取请求头 **/
 	public Headers headers();
 
 	public static interface Requestbody{
 		public Requestbody readFromStream( InputStream is );
 		public String getRequestbody();
 	}
-	public static interface RequestFeatures{
+	public static interface RequestLine{
 	    String method();
 
 	    String url();
@@ -22,6 +25,6 @@ public interface Request {
 
 	    Map<String,Object> queryParams();
 	    
-	    RequestFeatures convertToRequestFeatures( String firstLine );
+	    RequestLine convertToRequestLine( String firstLine );
 	}
 }
