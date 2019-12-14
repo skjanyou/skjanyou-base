@@ -7,8 +7,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.List;
 
+import com.skjanyou.server.bean.ApplicateContext;
 import com.skjanyou.server.constant.ServerConst;
+import com.skjanyou.server.inter.Filter;
 import com.skjanyou.server.inter.Request;
 import com.skjanyou.server.inter.Response;
 import com.skjanyou.server.inter.ServerHandler;
@@ -23,7 +26,7 @@ import com.skjanyou.util.CommUtil;
 public class AcceptThread extends Thread implements Runnable,Comparable<AcceptThread> {
 	private Socket socket;
 	private int priority;
-	private ServerHandler handler = new HttpServerHandler();
+	private ServerHandler handler = ApplicateContext.getServerHandler();
 	public AcceptThread( Socket socket ){
 		this.socket = socket;
 	}
@@ -52,6 +55,13 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             
             Response response = createResponse( bw );
             
+            List<Filter> filterList = ApplicateContext.getRegistedFilter();
+            
+            for (Filter filter : filterList) {
+            	boolean isContinue = filter.doFilter(request, response);
+            	if(!isContinue){ return ;}
+			}
+            
             handler.handler(request, response);
             
             
@@ -64,7 +74,8 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             bw.write(statusLine);
             
             byte[] bodyContent = response.responseBody().getBodyContent();
-            response.headers().put("Content-Length", bodyContent.length + "")
+            response.headers()
+            .put("Content-Length", bodyContent.length + "")
             .put("Content-Type", "text/plain;charset=UTF-8");
             // 写返回头
             String responseHeaderString = response.headers().toHttpHeaderString();
