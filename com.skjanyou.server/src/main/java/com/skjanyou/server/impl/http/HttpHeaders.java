@@ -58,9 +58,18 @@ public class HttpHeaders implements Headers {
 		// 3.读取单行数据至map中
 		for( String lineHeader : lineHeaders ){
 			String[] headerArr = lineHeader.split(":");
+			String key = null;
+			String value = null;
 			if( headerArr.length == 2 ){
 				this.header.put(StringUtil.trim(headerArr[0]), headerArr[1]);
+			}else if( headerArr.length > 2 ){
+				int idx = lineHeader.indexOf(":");
+				key = lineHeader.substring(0, idx);
+				value = lineHeader.substring(idx + 1);
+			}else{
+				continue;
 			}
+			this.header.put(StringUtil.trim(key), StringUtil.trim(value));
 		}
 		
 		return this;

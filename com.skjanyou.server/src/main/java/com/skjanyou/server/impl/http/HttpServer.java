@@ -1,7 +1,9 @@
 package com.skjanyou.server.impl.http;
 
+import com.skjanyou.server.bean.ApplicateContext;
 import com.skjanyou.server.bean.ServerConfig;
 import com.skjanyou.server.impl.AbstractServer;
+import com.skjanyou.server.inter.Filter;
 import com.skjanyou.server.inter.Server;
 
 public class HttpServer extends AbstractServer {
@@ -12,6 +14,9 @@ public class HttpServer extends AbstractServer {
 	
 	@Override
 	public Server init(){
+		for( Filter filter : ApplicateContext.getRegistedFilter()){
+			filter.init();
+		};
 		dispatchThread = new DispatchThread(this.config);
 		return this;
 	}
@@ -36,6 +41,9 @@ public class HttpServer extends AbstractServer {
 		if( dispatchThread != null ){
 			dispatchThread.setRunning(false);
 		}
+		for( Filter filter : ApplicateContext.getRegistedFilter()){
+			filter.destroy();
+		};		
 		return this;
 	}
 

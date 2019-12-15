@@ -1,5 +1,6 @@
 package com.skjanyou.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -155,6 +156,31 @@ public class FileUtil {
     		file = new File(file,filePath[i]);
     	}
     	return file;
+    }
+    
+    public static byte[] getFileBytes( File file ){
+    	byte[] result = null;
+    	InputStream is = null;
+    	ByteArrayOutputStream baos = null;
+    	try {
+			is = StreamUtil.getFileInputStream(file);
+			baos = new ByteArrayOutputStream(is.available());
+			int len = -1;byte[] buff = new byte[ 4 * 1024 ];
+			while( (len = is.read(buff)) != -1 ){
+				baos.write(buff, 0, len);
+			}
+			baos.flush();
+			result = baos.toByteArray();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			CommUtil.close(baos);
+			CommUtil.close(is);
+		}
+    	
+    	return result;
     }
     
 }

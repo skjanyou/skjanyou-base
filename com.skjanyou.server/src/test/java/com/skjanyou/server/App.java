@@ -21,7 +21,7 @@ public class App {
 			
 			@Override
 			public Filter init() {
-				return null;
+				return this;
 			}
 			
 			@Override

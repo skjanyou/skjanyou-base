@@ -12,6 +12,7 @@ import java.util.List;
 import com.skjanyou.server.bean.ApplicateContext;
 import com.skjanyou.server.constant.ServerConst;
 import com.skjanyou.server.inter.Filter;
+import com.skjanyou.server.inter.Headers;
 import com.skjanyou.server.inter.Request;
 import com.skjanyou.server.inter.Response;
 import com.skjanyou.server.inter.ServerHandler;
@@ -47,7 +48,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 			is = socket.getInputStream();
 			isr = new InputStreamReader(is);
 			br = new BufferedReader(isr);
-			Request request = createRequest( br );
+			Request request = resolveRequest( br );
 			
             os = socket.getOutputStream();
             osw = new OutputStreamWriter(os);
@@ -57,35 +58,38 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             
             List<Filter> filterList = ApplicateContext.getRegistedFilter();
             
+            boolean allPass = true;
             for (Filter filter : filterList) {
             	boolean isContinue = filter.doFilter(request, response);
-            	if(!isContinue){ return ;}
+            	if(!isContinue){ 
+            		allPass = false;
+            		break ;
+            	}
 			}
-            
-            handler.handler(request, response);
+            if( allPass ){
+            	handler.handler(request, response);
+            }
             
             
             String statusCode = response.responseLine().statusCode().getCode() + " " + response.responseLine().statusCode().getName();
             String protocol = response.responseLine().protocol().protocol() + "/" + response.responseLine().protocol().version();
             String statusLine = protocol + " " + statusCode;
-            System.out.println("返回数据:");
-            System.out.println(statusLine);
             // 写状态头
             bw.write(statusLine);
             
             byte[] bodyContent = response.responseBody().getBodyContent();
-            response.headers()
-            .put("Content-Length", bodyContent.length + "")
-            .put("Content-Type", "text/plain;charset=UTF-8");
+            Headers responseHeaders = response.headers();
+            responseHeaders.put("Content-Length", String.valueOf(bodyContent.length));
+            if(responseHeaders.get("Content-Type") == null){
+            	responseHeaders.put("Content-Type", "text/plain;charset=UTF-8");
+            }
             // 写返回头
             String responseHeaderString = response.headers().toHttpHeaderString();
             bw.write(responseHeaderString);
-            System.out.println(responseHeaderString);
             bw.write(ServerConst.CRLF);
             
             // 写正文
             bw.write(new String(bodyContent));
-            System.out.println(new String(bodyContent));
             bw.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,7 +107,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 		
 	}
 	
-	protected Request createRequest( BufferedReader br ) {
+	protected Request resolveRequest( BufferedReader br ) {
 		Request request = new HttpRequest();
 		try {
             StringBuilder sb = new StringBuilder();
