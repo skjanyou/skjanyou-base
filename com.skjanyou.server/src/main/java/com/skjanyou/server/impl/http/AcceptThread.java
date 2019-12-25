@@ -59,14 +59,15 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             List<Filter> filterList = ApplicateContext.getRegistedFilter();
             
             boolean allPass = true;
-            for (Filter filter : filterList) {
-            	boolean isContinue = filter.doFilter(request, response);
-            	if(!isContinue){ 
-            		allPass = false;
-            		break ;
-            	}
-			}
-            if( allPass ){
+        	for (Filter filter : filterList) {
+        		boolean isContinue = filter.doFilter(request, response);
+        		if(!isContinue){ 
+        			allPass = false;
+        			break ;
+        		}
+        	}
+            	
+            if( !allPass ){
             	handler.handler(request, response);
             }
             

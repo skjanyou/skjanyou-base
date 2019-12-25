@@ -17,6 +17,11 @@ public class HttpServer extends AbstractServer {
 		for( Filter filter : ApplicateContext.getRegistedFilter()){
 			filter.init();
 		};
+		try {
+			ApplicateContext.getServerHandler().init();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		dispatchThread = new DispatchThread(this.config);
 		return this;
 	}

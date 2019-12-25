@@ -14,7 +14,7 @@ import com.skjanyou.db.mybatis.inter.impl.DefaultSqlProcess.InsertSqlProcess;
 import com.skjanyou.db.mybatis.inter.impl.DefaultSqlProcess.SelectSqlProcess;
 import com.skjanyou.db.mybatis.inter.impl.DefaultSqlProcess.UpdateSqlProcess;
 
-public abstract class DDL {
+public interface DDL {
 	@Documented
 	@Inherited
 	@Target(ElementType.METHOD)

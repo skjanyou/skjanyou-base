@@ -1,11 +1,13 @@
 package com.skjanyou.db.mybatis;
 
-import com.skjanyou.db.mybatis.core.SqlSession;
-import com.skjanyou.db.mybatis.util.DBUtil;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import com.skjanyou.db.mybatis.core.SqlSession;
+import com.skjanyou.db.mybatis.util.DBUtil;
 
 /**
  * Unit test for simple App.
@@ -68,4 +70,13 @@ public class AppTest extends TestCase {
     	System.out.println(count);
     }
     
+    // 查询列表
+    public void testQueryUser(){
+    	String sql = "select * from user";
+    	User userBean = new User();
+    	List<User> list = SqlSession.executeSelectListSql(sql, userBean, User.class);
+    	for (User user : list) {
+			System.out.println(user.getUser_name());
+		}
+    }
 }

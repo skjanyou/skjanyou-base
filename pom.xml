@@ -22,6 +22,7 @@
 		<module>com.skjanyou.log</module>
 		<module>com.skjanyou.server</module>
 		<module>com.skjanyou.db.mybatis</module>
+		<module>com.skjanyou.mvc</module>
 	</modules>
 
 	<properties>
