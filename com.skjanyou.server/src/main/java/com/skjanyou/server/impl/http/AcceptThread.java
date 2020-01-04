@@ -67,7 +67,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
         		}
         	}
             	
-            if( !allPass ){
+            if( allPass ){
             	handler.handler(request, response);
             }
             

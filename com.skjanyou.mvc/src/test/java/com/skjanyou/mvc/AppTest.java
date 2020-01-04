@@ -1,38 +1,27 @@
 package com.skjanyou.mvc;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.lang.reflect.Field;
+
+import com.skjanyou.mvc.controller.UserController;
+import com.skjanyou.mvc.handler.MvcHandler;
+import com.skjanyou.server.inter.ServerHandler;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+public class AppTest 	 {
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
+    public void testMvcHandler() throws Exception{
+    	ServerHandler handler = new MvcHandler("com.skjanyou.mvc");
+    	handler.init();
     }
+    
+    public static void main(String[] args) {
+		UserController uc = new UserController();
+		Field[] fileds = uc.getClass().getDeclaredFields();
+		for (Field field : fileds) {
+			System.out.println(field);
+		}
+	}
 }

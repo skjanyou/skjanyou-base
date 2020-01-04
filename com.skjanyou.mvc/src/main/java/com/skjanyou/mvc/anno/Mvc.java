@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public interface Mvc {
 	@Documented
 	@Inherited
-	@Target(ElementType.PARAMETER)
+	@Target(ElementType.TYPE)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Controller {
 		public String value() default "";
@@ -18,7 +18,7 @@ public interface Mvc {
 	
 	@Documented
 	@Inherited
-	@Target(ElementType.PARAMETER)
+	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Mapping {
 		public String value() default "";
@@ -26,7 +26,7 @@ public interface Mvc {
 	
 	@Documented
 	@Inherited
-	@Target(ElementType.PARAMETER)
+	@Target({ElementType.TYPE,ElementType.FIELD})
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Service {
 		public String value() default "";
@@ -34,9 +34,17 @@ public interface Mvc {
 	
 	@Documented
 	@Inherited
-	@Target(ElementType.PARAMETER)
+	@Target({ElementType.TYPE,ElementType.FIELD})
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Dao {
 		public String value() default "";
 	}		
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)	
+	public @interface Autowired {
+		public String value() default "";
+	}
 }
