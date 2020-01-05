@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.skjanyou</groupId>
-		<artifactId>com.skjanyou.base</artifactId>
+		<artifactId>com.skjanyou.server</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>com.skjanyou.mvc</artifactId>
-	<name>com.skjanyou.mvc</name>
+	<artifactId>com.skjanyou.server.api</artifactId>
+	<name>com.skjanyou.server.api</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,15 +20,5 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.skjanyou</groupId>
-			<artifactId>com.skjanyou.server.api</artifactId>
-			<version>${parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.skjanyou</groupId>
-			<artifactId>com.skjanyou.server.simplehttpserver</artifactId>
-			<version>${parent.version}</version>
-		</dependency>		
 	</dependencies>
 </project>

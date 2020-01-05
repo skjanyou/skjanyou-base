@@ -36,11 +36,18 @@ public class StringUtil {
 		return randomString(null);
 	}
 	
-	//字符串去空格
+	/**
+	 * 字符串去空格
+	 */
 	public static String trim( String str ) {
 		if( str == null ){ return ""; }
 		return str.trim();
 	}
 	
-	
+	/**
+	 * 首字母小写
+	 */
+	public static String converFirstUpperCase(String str){
+		return String.valueOf(str.charAt(0)).toUpperCase() + str.substring(1);
+	}	
 }

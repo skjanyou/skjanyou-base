@@ -18,9 +18,9 @@ import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.mvc.core.MvcApplicateContext;
-import com.skjanyou.server.inter.Request;
-import com.skjanyou.server.inter.Response;
-import com.skjanyou.server.inter.ServerHandler;
+import com.skjanyou.server.api.inter.Request;
+import com.skjanyou.server.api.inter.Response;
+import com.skjanyou.server.api.inter.ServerHandler;
 import com.skjanyou.util.ClassUtil;
 
 public class MvcHandler implements ServerHandler {

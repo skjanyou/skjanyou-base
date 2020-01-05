@@ -1,10 +1,10 @@
 package com.skjanyou.mvc;
 
 import com.skjanyou.mvc.handler.MvcHandler;
-import com.skjanyou.server.bean.ApplicateContext;
-import com.skjanyou.server.bean.ServerConfig;
-import com.skjanyou.server.impl.http.HttpServer;
-import com.skjanyou.server.inter.Server;
+import com.skjanyou.server.api.bean.ApplicateContext;
+import com.skjanyou.server.api.bean.ServerConfig;
+import com.skjanyou.server.api.inter.Server;
+import com.skjanyou.server.simplehttpserver.http.HttpServer;
 
 /**
  * Hello world!

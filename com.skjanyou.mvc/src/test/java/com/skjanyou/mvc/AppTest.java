@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import com.skjanyou.mvc.controller.UserController;
 import com.skjanyou.mvc.handler.MvcHandler;
-import com.skjanyou.server.inter.ServerHandler;
+import com.skjanyou.server.api.inter.ServerHandler;
 
 /**
  * Unit test for simple App.

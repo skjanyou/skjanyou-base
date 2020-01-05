@@ -26,4 +26,9 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
+	<packaging>pom</packaging>
+	<modules>
+		<module>com.skjanyou.server.api</module>
+		<module>com.skjanyou.server.simplehttpserver</module>
+	</modules>
 </project>
