@@ -5,24 +5,29 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Data;
+import lombok.Setter;
+
 import com.skjanyou.server.api.inter.Headers;
 import com.skjanyou.server.api.inter.Protocol;
 import com.skjanyou.server.api.inter.Request;
-import com.skjanyou.server.api.inter.Request.RequestLine;
-import com.skjanyou.server.api.inter.Request.Requestbody;
 import com.skjanyou.util.StreamUtil;
 
 public class HttpRequest implements Request {
-	private Headers headers = new HttpHeaders();
-	private RequestLine requestLine = new HttpRequestLine(this);
-	private Requestbody requestbody = new HttpRequestbody(this);
-	public HttpRequest( ){}
+	private Headers headers;
+	private RequestLine requestLine;
+	private Requestbody requestbody;
+	public HttpRequest( ){
+		this.headers = new HttpHeaders();
+		this.requestLine = new HttpRequestLine(this);
+		this.requestbody = new HttpRequestbody(this);
+	}
 	
 	
 	public static class HttpRequestbody implements Requestbody {
 		private String requestBody;
-		private Request request;
-		public HttpRequestbody(Request request){ this.request = request; }
+		private HttpRequest request;
+		public HttpRequestbody(HttpRequest request){ this.request = request; }
 		
 		@Override
 		public Requestbody readFromStream(InputStream is) {
@@ -43,12 +48,15 @@ public class HttpRequest implements Request {
 	}
 	
 	public static class HttpRequestLine implements RequestLine {
+		@Setter
 		private String method;
+		@Setter
 		private String url;
+		@Setter
 		private Protocol protocol;
 		private Map<String,Object> params = new HashMap<String, Object>();
-		private Request request;
-		private HttpRequestLine(Request request){ this.request = request; }
+		private HttpRequest request;
+		private HttpRequestLine(HttpRequest request){ this.request = request; }
 		
 		@Override
 		public String method() {
