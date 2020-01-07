@@ -18,6 +18,7 @@ import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.mvc.core.MvcApplicateContext;
+import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.ServerHandler;
@@ -35,27 +36,22 @@ public class MvcHandler implements ServerHandler {
 	
 	
 	@Override
-	public boolean handler(Request request, Response response) {
+	public boolean handler(Request request, Response response) throws ServerException{
 		String url = request.requestLine().url(); 
 		Map<String,Object> params = request.requestLine().queryParams();
-		try {
-			url = URLDecoder.decode(url, "utf-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
+
 		System.out.println(url);
 		Context context = mappings.get(url);
 		if( context != null ){
 			Method method = context.getTargetMethod();
 			Object object = context.getTargetObj();
-			
-			
+			Object result = null;
 			try {
-				method.invoke(object);
-			} catch (IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
-				e.printStackTrace();
-			}			
+				method.setAccessible(true);
+				result = method.invoke(object);
+			} catch (Exception e) {
+				throw new ServerException("方法调用失败" + method,e);
+			}
 		}
 		
 		
@@ -63,60 +59,63 @@ public class MvcHandler implements ServerHandler {
 	}	
 	
 	@Override
-	public ServerHandler init() throws Exception {
+	public ServerHandler init() throws ServerException {
 		initBean();
 		autowired();
 		return this;
 	}
 
 	
-	private void initBean() throws Exception{
+	private void initBean() throws ServerException{
 		List<Class<?>> list = ClassUtil.getClasses(this.scanPath);
 		for ( Class<?> clazz : list ) {
 			// 接口,跳过处理
 			if(clazz.isInterface()){ continue; }
 			
-			// 包含Service
-			Service service = clazz.getDeclaredAnnotation(Service.class);
-			if( service != null ){
-				Object object = clazz.newInstance();
-				String serviceName = service.value();
-				MvcApplicateContext.putBean(serviceName, object);				
-			}
-			
-			// 包含Dao
-			Dao dao = clazz.getDeclaredAnnotation(Dao.class);
-			if( dao != null ){
-				Object object = clazz.newInstance();
-				String daoName = dao.value();
-				MvcApplicateContext.putBean(daoName, object);
-			}			
-			
-			// 包含Controller注解
-			Controller controller = clazz.getDeclaredAnnotation(Controller.class);
-			if( controller != null ){
-				Object object = clazz.newInstance();
-				MvcApplicateContext.putBean(clazz, object);
-				// 构建映射关系
-				String namespace = controller.value();
-				Method[] methods = clazz.getDeclaredMethods();
-				Mapping mapping = null;
-				Context context = null;
-				for ( Method md : methods ) {
-					mapping = md.getDeclaredAnnotation(Mapping.class);
-					if( mapping != null ){
-						String m = mapping.value();
-						String key = ("/" + namespace + "/" + m).replaceAll("/+","/");
-						context = new Context(object, clazz, md);
-						mappings.put(key, context);
+			try{
+				// 包含Service
+				Service service = clazz.getDeclaredAnnotation(Service.class);
+				if( service != null ){
+					Object object = clazz.newInstance();
+					String serviceName = service.value();
+					MvcApplicateContext.putBean(serviceName, object);				
+				}
+				
+				// 包含Dao
+				Dao dao = clazz.getDeclaredAnnotation(Dao.class);
+				if( dao != null ){
+					Object object = clazz.newInstance();
+					String daoName = dao.value();
+					MvcApplicateContext.putBean(daoName, object);
+				}			
+				
+				// 包含Controller注解
+				Controller controller = clazz.getDeclaredAnnotation(Controller.class);
+				if( controller != null ){
+					Object object = clazz.newInstance();
+					MvcApplicateContext.putBean(clazz, object);
+					// 构建映射关系
+					String namespace = controller.value();
+					Method[] methods = clazz.getDeclaredMethods();
+					Mapping mapping = null;
+					Context context = null;
+					for ( Method md : methods ) {
+						mapping = md.getDeclaredAnnotation(Mapping.class);
+						if( mapping != null ){
+							String m = mapping.value();
+							String key = ("/" + namespace + "/" + m).replaceAll("/+","/");
+							context = new Context(object, clazz, md);
+							mappings.put(key, context);
+						}
 					}
 				}
+			}catch( Exception e ){
+				throw new ServerException("初始化Bean[" + clazz.getName() + "]失败",e);
 			}
-
 		}
 	}
 
-	private void autowired() throws Exception{
+	private void autowired() throws ServerException{
 		Map<String,Object> beanMap = MvcApplicateContext.getAllBeans();
 		Iterator<Entry<String, Object>> it = beanMap.entrySet().iterator();
 		Field[] fileds = null;
@@ -135,7 +134,7 @@ public class MvcHandler implements ServerHandler {
 					String beanName = service.value();
 					filedObj = beanMap.get(beanName);
 					if( filedObj == null ){
-						throw new RuntimeException(fileds + "待装配对象在容器中不存在!");
+						throw new ServerException(fileds + "待装配对象在容器中不存在!");
 					}
 				}
 				
@@ -145,7 +144,7 @@ public class MvcHandler implements ServerHandler {
 					String beanName = dao.value();
 					filedObj = beanMap.get(beanName);
 					if( filedObj == null ){
-						throw new RuntimeException(fileds + "待装配对象在容器中不存在!");
+						throw new ServerException(fileds + "待装配对象在容器中不存在!");
 					}					
 				}	
 				
@@ -155,12 +154,16 @@ public class MvcHandler implements ServerHandler {
 					String beanName = field.getName();
 					filedObj = beanMap.get(beanName);
 					if( filedObj == null ){
-						throw new RuntimeException(fileds + "待装配对象在容器中不存在!");
+						throw new ServerException(fileds + "待装配对象在容器中不存在!");
 					}						
 				}
 				
 				if( filedObj != null ){
-					field.set(obj, filedObj);
+					try {
+						field.set(obj, filedObj);
+					} catch (Exception e) {
+						throw new ServerException("对象[" + obj + "]的成员变量["+ field + "]装配属性失败",e);
+					}
 				}
 			}
 			

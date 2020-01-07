@@ -2,6 +2,7 @@ package com.skjanyou.server.api.bean;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.skjanyou.server.api.inter.Filter;
@@ -17,6 +18,12 @@ public class ApplicateContext {
 	/** 注册过滤器 **/
 	public static ApplicateContext registFilter( Filter filter ){
 		filterList.add(filter);
+		Collections.sort(filterList,new Comparator<Filter>() {
+			@Override
+			public int compare(Filter f1, Filter f2) {
+				return f1.priority() - f2.priority();
+			}
+		});
 		return $this;
 	}
 	

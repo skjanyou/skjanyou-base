@@ -3,6 +3,7 @@ package com.skjanyou.server.simplehttpserver.http;
 import java.io.File;
 
 import com.skjanyou.server.api.constant.StatusCode;
+import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.ServerHandler;
@@ -11,7 +12,7 @@ import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
 public class HttpServerHandler implements ServerHandler {
 
 	@Override
-	public boolean handler(Request request, Response response) {
+	public boolean handler(Request request, Response response) throws ServerException{
 		HttpRequest httpRequest = null;
 		HttpResponse httpResponse = null;
 		HttpResponseLine hrl = null;
@@ -19,7 +20,7 @@ public class HttpServerHandler implements ServerHandler {
 			httpRequest = (HttpRequest) request;
 			httpResponse = (HttpResponse) response;
 		}else{
-			throw new RuntimeException("HttpServerHandler请求和响应类型有误!");
+			throw new ServerException("HttpServerHandler请求和响应类型有误!");
 		}
 		if(httpResponse.responseLine() instanceof HttpResponseLine){
 			hrl = (HttpResponseLine) httpResponse.responseLine();
@@ -46,8 +47,7 @@ public class HttpServerHandler implements ServerHandler {
 	}
 
 	@Override
-	public ServerHandler init() throws Exception {
-		
+	public ServerHandler init() throws ServerException {
 		return this;
 	}
 
