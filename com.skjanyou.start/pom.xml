@@ -20,6 +20,11 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.util</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
