@@ -1,10 +1,7 @@
 package com.skjanyou.mvc.handler;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,13 +15,19 @@ import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.mvc.core.MvcApplicateContext;
+import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.exception.ServerException;
-import com.skjanyou.server.api.inter.Request;
-import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.ServerHandler;
+import com.skjanyou.server.simplehttpserver.http.HttpHeaders;
+import com.skjanyou.server.simplehttpserver.http.HttpProtocolLv1;
+import com.skjanyou.server.simplehttpserver.http.HttpRequest;
+import com.skjanyou.server.simplehttpserver.http.HttpResponse;
+import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
+import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseBody;
+import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
 import com.skjanyou.util.ClassUtil;
 
-public class MvcHandler implements ServerHandler {
+public class MvcHandler extends HttpServerHandler {
 	// url映射
 	private Map<String,Context> mappings = new HashMap<>();
 	// 扫描的class
@@ -36,11 +39,20 @@ public class MvcHandler implements ServerHandler {
 	
 	
 	@Override
-	public boolean handler(Request request, Response response) throws ServerException{
+	public void handler(HttpRequest request, HttpResponse response) throws ServerException{
+		// 响应行
+		HttpResponseLine responseLine = (HttpResponseLine) response.responseLine();
+		// 响应体
+		HttpResponseBody responseBody = (HttpResponseBody) response.responseBody();
+		// 响应头
+		HttpHeaders httpHeaders = (HttpHeaders) response.headers();
+		// 请求url
 		String url = request.requestLine().url(); 
+		// 查询参数
 		Map<String,Object> params = request.requestLine().queryParams();
 
-		System.out.println(url);
+		responseLine.setProtocol(new HttpProtocolLv1());
+		
 		Context context = mappings.get(url);
 		if( context != null ){
 			Method method = context.getTargetMethod();
@@ -50,12 +62,16 @@ public class MvcHandler implements ServerHandler {
 				method.setAccessible(true);
 				result = method.invoke(object);
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new ServerException("方法调用失败" + method,e);
 			}
+			responseLine.setStatusCode(StatusCode.Ok);
+			responseBody.setBodyContent(result.toString());
+			httpHeaders.put("Content-Type", "json");
+		}else{
+			responseLine.setStatusCode(StatusCode.Not_Found);
 		}
 		
-		
-		return false;
 	}	
 	
 	@Override

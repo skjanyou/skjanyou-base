@@ -1,5 +1,6 @@
 package com.skjanyou.mvc;
 
+import com.skjanyou.mvc.handler.CharacterEncodingFilter;
 import com.skjanyou.mvc.handler.MvcHandler;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
@@ -12,6 +13,7 @@ public class MvcApp {
 		ServerConfig config = new ServerConfig();
 		config.setIp("");config.setPort(2333);config.setTimeout(5000000000L);
 		ApplicateContext.setServerHandler(new MvcHandler("com.skjanyou.mvc"));
+    	ApplicateContext.registFilter(new CharacterEncodingFilter());		
 		Server server = new HttpServer(config);
 		server.startup();
 	}

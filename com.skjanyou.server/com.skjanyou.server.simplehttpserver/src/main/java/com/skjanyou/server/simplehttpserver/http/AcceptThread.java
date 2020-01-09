@@ -79,6 +79,9 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             bw.write(statusLine);
             
             byte[] bodyContent = response.responseBody().getBodyContent();
+            if( bodyContent == null ){
+            	bodyContent = new byte[0];
+            }
             Headers responseHeaders = response.headers();
             responseHeaders.put("Content-Length", String.valueOf(bodyContent.length));
             if(responseHeaders.get("Content-Type") == null){

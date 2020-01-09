@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.Data;
 import lombok.Setter;
 
 import com.skjanyou.server.api.inter.Headers;
@@ -25,6 +24,7 @@ public class HttpRequest implements Request {
 	
 	
 	public static class HttpRequestbody implements Requestbody {
+		@Setter
 		private String requestBody;
 		private HttpRequest request;
 		public HttpRequestbody(HttpRequest request){ this.request = request; }
