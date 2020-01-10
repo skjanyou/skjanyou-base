@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import com.skjanyou.db.mybatis.inter.SqlExceptionProcess;
 import com.skjanyou.db.mybatis.inter.SqlProcess;
+import com.skjanyou.db.mybatis.inter.impl.DefaultSqlProcess.BatchInsertSqlProcess;
 import com.skjanyou.db.mybatis.inter.impl.DefaultSqlProcess.DeleteSqlProcess;
 import com.skjanyou.db.mybatis.inter.impl.DefaultSqlProcess.InsertSqlProcess;
 import com.skjanyou.db.mybatis.inter.impl.DefaultSqlProcess.SelectSqlProcess;
@@ -21,7 +22,7 @@ public interface DDL {
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Delete {
 		public String value() default "";
-		public Class<? extends SqlProcess> handler() default DeleteSqlProcess.class;
+		public Class<? extends SqlProcess<Delete>> handler() default DeleteSqlProcess.class;
 		public Class<? extends SqlExceptionProcess> exception() default DeleteSqlProcess.class;
 	}
 	
@@ -30,8 +31,8 @@ public interface DDL {
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Update {
-		public String value() default "";
-		public Class<? extends SqlProcess> handler() default UpdateSqlProcess.class;
+		public String value() ;
+		public Class<? extends SqlProcess<Update>> handler() default UpdateSqlProcess.class;
 		public Class<? extends SqlExceptionProcess> exception() default UpdateSqlProcess.class;
 	}
 	
@@ -40,8 +41,8 @@ public interface DDL {
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Select {
-		public String value() default "";
-		public Class<? extends SqlProcess> handler() default SelectSqlProcess.class;
+		public String value() ;
+		public Class<? extends SqlProcess<Select>> handler() default SelectSqlProcess.class;
 		public Class<? extends SqlExceptionProcess> exception() default SelectSqlProcess.class;
 	}
 	
@@ -50,8 +51,18 @@ public interface DDL {
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Insert {
-		public String value() default "";
-		public Class<? extends SqlProcess> handler() default InsertSqlProcess.class;
+		public String value() ;
+		public Class<? extends SqlProcess<Insert>> handler() default InsertSqlProcess.class;
 		public Class<? extends SqlExceptionProcess> exception() default InsertSqlProcess.class;
 	}	
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface BatchInsert {
+		public String value() ;
+		public Class<? extends SqlProcess<BatchInsert>> handler() default BatchInsertSqlProcess.class;
+		public Class<? extends SqlExceptionProcess> exception() default BatchInsertSqlProcess.class;
+	}		
 }

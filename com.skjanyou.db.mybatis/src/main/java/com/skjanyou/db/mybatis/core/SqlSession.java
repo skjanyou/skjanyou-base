@@ -12,10 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.skjanyou.db.mybatis.util.DBUtil;
+import com.skjanyou.db.mybatis.util.DbUtil;
 import com.skjanyou.db.mybatis.util.StringUtil;
+import com.skjanyou.db.pool.DataSource;
 
 public class SqlSession {
+	
+	
 	@SuppressWarnings("unchecked")
 	public static<T> T getMapper( Class<T> clazz ){
 		return (T) Proxy.newProxyInstance(SqlSession.class.getClassLoader(), 
@@ -23,6 +26,7 @@ public class SqlSession {
 	}
 	
 	public static<T,V>  V executeSelectSql( String sql, T bean, Class<V> resultClass  ){
+		DataSource ds = DbUtil.get().getDataSource();
 		V result = null;
 		// 1.获取填充符的位置
 		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
@@ -39,7 +43,7 @@ public class SqlSession {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		try {
-			statement = DBUtil.get().getConnection().prepareStatement(prepareSql);
+			statement = ds.getConnection().prepareStatement(prepareSql);
 			Class<?> targetClass = bean.getClass();
 			int setIdx = 1;
 			for (String field : sets) {
@@ -57,7 +61,7 @@ public class SqlSession {
 			rs = statement.executeQuery();
 			System.out.println("executeSql:" + statement.toString());
 			ResultSetMetaData metaData = rs.getMetaData();
-			List<String> metaList = DBUtil.getMetaData(metaData);
+			List<String> metaList = DbUtil.getMetaData(metaData);
 			
 			
 			result = resultClass.newInstance();
@@ -88,12 +92,14 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
+			DbUtil.get().releaseConnection(ds);
 		}
 		
 		return result;
 	}
 	
 	public static<T,V>  List<V> executeSelectListSql( String sql, T bean, Class<V> resultClass  ){
+		DataSource ds = DbUtil.get().getDataSource();
 		List<V> result = new ArrayList<>();
 		// 1.获取填充符的位置
 		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
@@ -110,7 +116,7 @@ public class SqlSession {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		try {
-			statement = DBUtil.get().getConnection().prepareStatement(prepareSql);
+			statement = ds.getConnection().prepareStatement(prepareSql);
 			Class<?> targetClass = bean.getClass();
 			int setIdx = 1;
 			for (String field : sets) {
@@ -128,7 +134,7 @@ public class SqlSession {
 			rs = statement.executeQuery();
 			System.out.println("executeSql:" + statement.toString());
 			ResultSetMetaData metaData = rs.getMetaData();
-			List<String> metaList = DBUtil.getMetaData(metaData);
+			List<String> metaList = DbUtil.getMetaData(metaData);
 			
 			
 			while( rs.next() ){
@@ -160,12 +166,14 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
+			DbUtil.get().releaseConnection(ds);
 		}
 		
 		return result;
 	}	
 	
 	public static<T> int executeDeleteSql( String sql, T bean ) {
+		DataSource ds = DbUtil.get().getDataSource();
 		int resultCount = 0;
 		// 1.获取填充符的位置
 		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
@@ -182,7 +190,7 @@ public class SqlSession {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		try {
-			statement = DBUtil.get().getConnection().prepareStatement(prepareSql);
+			statement = ds.getConnection().prepareStatement(prepareSql);
 			Class<?> targetClass = bean.getClass();
 			int setIdx = 1;
 			for (String field : sets) {
@@ -218,12 +226,14 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
+			DbUtil.get().releaseConnection(ds);
 		}
 				
 		return resultCount;		
 	}
 	
 	public static <T> int executeInsertSql( String sql, T bean ){
+		DataSource ds = DbUtil.get().getDataSource();
 		int resultCount = 0;
 		// 1.获取填充符的位置
 		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
@@ -240,7 +250,7 @@ public class SqlSession {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		try {
-			statement = DBUtil.get().getConnection().prepareStatement(prepareSql);
+			statement = ds.getConnection().prepareStatement(prepareSql);
 			Class<?> targetClass = bean.getClass();
 			int setIdx = 1;
 			for (String field : sets) {
@@ -276,12 +286,14 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
+			DbUtil.get().releaseConnection(ds);
 		}
 				
 		return resultCount;
 	}
 	
 	public static<T> int executeUpdateSql( String sql, T bean ){
+		DataSource ds = DbUtil.get().getDataSource();
 		int resultCount = 0;
 		// 1.获取填充符的位置
 		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
@@ -298,7 +310,7 @@ public class SqlSession {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		try {
-			statement = DBUtil.get().getConnection().prepareStatement(prepareSql);
+			statement = ds.getConnection().prepareStatement(prepareSql);
 			Class<?> targetClass = bean.getClass();
 			int setIdx = 1;
 			for (String field : sets) {
@@ -334,6 +346,7 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
+			DbUtil.get().releaseConnection(ds);
 		}
 				
 		return resultCount;

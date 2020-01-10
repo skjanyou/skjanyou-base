@@ -23,6 +23,7 @@
 		<module>com.skjanyou.server</module>
 		<module>com.skjanyou.db.mybatis</module>
 		<module>com.skjanyou.mvc</module>
+		<module>com.skjanyou.db</module>
 	</modules>
 
 	<properties>

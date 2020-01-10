@@ -1,5 +1,16 @@
 package com.skjanyou.db.mybatis.bean;
 
-public class ProcessItem {
+import java.lang.reflect.Method;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class ProcessItem<T> {
+	private Class<?> mapperClass;
+	private Object proxy;
+	private Method method;
+	private Object[] args;
+	private T anno;
 }

@@ -6,8 +6,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.skjanyou.db.bean.DatabaseInfo;
 import com.skjanyou.db.mybatis.core.SqlSession;
-import com.skjanyou.db.mybatis.util.DBUtil;
+import com.skjanyou.db.mybatis.util.DbUtil;
 
 /**
  * Unit test for simple App.
@@ -19,7 +20,8 @@ public class AppTest extends TestCase {
     	String url = "jdbc:mysql://127.0.0.1:3306/blog?zeroDateTimeBehavior=CONVERT_TO_NULL&useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC";
     	String user = "root";
     	String password = "123456";
-    	DBUtil.init(className, url, user, password);
+    	DatabaseInfo info = new DatabaseInfo(className,url,user,password,20,2000);
+    	DbUtil.init(info);
     }
 
     public static Test suite(){
