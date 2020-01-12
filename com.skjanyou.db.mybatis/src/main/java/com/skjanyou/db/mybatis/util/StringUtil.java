@@ -21,7 +21,6 @@ public class StringUtil {
 				}else{
 					endFlag = index;
 					String subString = sql.substring(startFlag + 1,endFlag);
-					System.out.println(subString);
 					fieldMap.put(subString, size++);
 				}
 			}

@@ -13,6 +13,7 @@ import com.skjanyou.db.pool.impl.DefaultDataBasePool;
 public class DbUtil {
 	private static DatabasePool pools = null;
 	private static DbUtil $this = new DbUtil();
+	public ThreadLocal<DataSource> currentDs = new ThreadLocal<>();
 	private DbUtil(){}
 	public static DbUtil init( DatabaseInfo info ){
 		pools = new DefaultDataBasePool(info);
@@ -21,7 +22,13 @@ public class DbUtil {
 	
 	public DataSource getDataSource(){
 		try {
-			return pools.getDataSource();
+			// 保证一个线程只有一个连接
+			DataSource ds = currentDs.get();
+			if( ds == null){
+				ds = pools.getDataSource();
+				currentDs.set(ds);
+			}
+			return ds;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -32,6 +39,7 @@ public class DbUtil {
 	}
 	
 	public DbUtil releaseConnection( DataSource ds){
+		currentDs.remove();
 		pools.releaseConnection(ds);
 		return $this;
 	}

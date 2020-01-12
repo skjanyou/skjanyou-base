@@ -1,4 +1,4 @@
-package com.skjanyou.db.mybatis;
+package com.skjanyou.db.mybatis.bean;
 
 import lombok.Data;
 
