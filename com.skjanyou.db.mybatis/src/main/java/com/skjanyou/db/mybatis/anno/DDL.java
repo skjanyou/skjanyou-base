@@ -64,5 +64,13 @@ public interface DDL {
 		public String value() ;
 		public Class<? extends SqlProcess<BatchInsert>> handler() default BatchInsertSqlProcess.class;
 		public Class<? extends SqlExceptionProcess> exception() default BatchInsertSqlProcess.class;
+	}	
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.PARAMETER)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface SqlParameter {
+		public String value() ;
 	}		
 }

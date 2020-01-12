@@ -110,7 +110,7 @@ public class SqlSession {
 			String field = MessageFormat.format("#{0}#", set);
 			prepareSql = prepareSql.replaceFirst(field, "?");
 		}
-		System.out.println("处理后的sql:" + prepareSql);
+		System.out.println("处理后的sql:[" + prepareSql + "]");
 
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
@@ -120,19 +120,27 @@ public class SqlSession {
 			Class<?> targetClass = bean.getClass();
 			int setIdx = 1;
 			for (String field : sets) {
-				// 通过反射获取bean内部的值
-				String getter = "get" + StringUtil.converFirstUpperCase(field);
-				Method method = targetClass.getDeclaredMethod(getter);
-				Object fieldObj = method.invoke(bean, new Object[]{});
+				Object setObj = null;
+				if( Map.class.isAssignableFrom(targetClass) ){
+					// Map接口通过get函数获取
+					Method getMethod = targetClass.getDeclaredMethod("get",Object.class);
+					setObj = getMethod.invoke(bean, field);
+				}else{
+					// 通过反射获取bean内部的值
+					String getter = "get" + StringUtil.converFirstUpperCase(field);
+					Method method = targetClass.getDeclaredMethod(getter);
+					setObj = method.invoke(bean, new Object[]{});
+				}
+
+				
 				
 				// 填充参数
-				statement.setObject(setIdx, fieldObj);
+				statement.setObject(setIdx, setObj);
 				setIdx++;
 			}
 			
 			// 执行查询sql
 			rs = statement.executeQuery();
-			System.out.println("executeSql:" + statement.toString());
 			ResultSetMetaData metaData = rs.getMetaData();
 			List<String> metaList = DbUtil.getMetaData(metaData);
 			
@@ -184,7 +192,7 @@ public class SqlSession {
 			String field = MessageFormat.format("#{0}#", set);
 			prepareSql = prepareSql.replaceFirst(field, "?");
 		}
-		System.out.println("处理后的sql:" + prepareSql);
+		System.out.println("处理后的sql:[" + prepareSql + "]");
 
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
@@ -266,7 +274,7 @@ public class SqlSession {
 			
 			// 执行查询sql
 			resultCount = statement.executeUpdate();
-			System.out.println("executeSql:" + statement.toString());
+			System.out.println("处理后的Sql:[" + statement.toString() + "]");
 
 		} catch (Exception e){
 			e.printStackTrace();
