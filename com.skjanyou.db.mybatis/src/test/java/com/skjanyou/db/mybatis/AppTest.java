@@ -3,27 +3,16 @@ package com.skjanyou.db.mybatis;
 import java.util.List;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.skjanyou.db.bean.DatabaseInfo;
 import com.skjanyou.db.mybatis.bean.User;
 import com.skjanyou.db.mybatis.core.SqlSession;
-import com.skjanyou.db.mybatis.util.DbUtil;
+import com.skjanyou.db.mybatis.test.UserTest;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest extends TestCase {
-    public AppTest( String testName ){
-        super( testName );
-    	String className = "com.mysql.cj.jdbc.Driver";
-    	String url = "jdbc:mysql://127.0.0.1:3306/blog?zeroDateTimeBehavior=CONVERT_TO_NULL&useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC";
-    	String user = "root";
-    	String password = "123456";
-    	DatabaseInfo info = new DatabaseInfo(className,url,user,password,20,2000);
-    	DbUtil.init(info);
-    }
+public class AppTest extends UserTest {
 
     public static Test suite(){
         return new TestSuite( AppTest.class );

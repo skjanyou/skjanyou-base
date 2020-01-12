@@ -28,7 +28,7 @@ public final class DefaultSqlProcess {
 			String sql = item.getAnno().value();
 			// 2.获取返回类型
 			Class<?> resultClass = item.getMethod().getReturnType();
-			if( resultClass.isAssignableFrom(List.class) ){
+			if( List.class.isAssignableFrom(resultClass) ){
 				Type genericType = item.getMethod().getGenericReturnType();
 				if( genericType instanceof ParameterizedType ){
 					ParameterizedType pType = (ParameterizedType) genericType;	
@@ -94,42 +94,36 @@ public final class DefaultSqlProcess {
 			if( throwable instanceof DaoException){
 				throw (DaoException)throwable;
 			}
-			throw new DaoException("执行查询Sql时出现异常",throwable);
+			throw new DaoException("执行查询SQL时出现异常",throwable);
 		}
 	}
 
 	public static class InsertSqlProcess implements SqlProcess<Insert>,SqlExceptionProcess {
 		@Override
 		public Object process(ProcessItem<Insert> item) {
-			return null;
-		}
-
-		@Override
-		public void handlerException(Throwable throwable) {
-			if( throwable instanceof DaoException){
-				throw (DaoException)throwable;
-			}
-			throw new DaoException("执行查询Sql时出现异常",throwable);			
-		}
-	}
-	
-	public static class BatchInsertSqlProcess implements SqlProcess<BatchInsert>,SqlExceptionProcess {
-		@Override
-		public Object process(ProcessItem<BatchInsert> item) {
-			// TODO 这是错的
 			// 1.获取原始SQL
 			String sql = item.getAnno().value();
 			// 2.获取返回类型
 			Class<?> resultClass = item.getMethod().getReturnType();
+			if( !Integer.class.isAssignableFrom(resultClass) && !int.class.isAssignableFrom(resultClass) ){
+				throw new DaoException("插入SQL的返回类型必须为int类型");
+			}
 			// 3.获取输入参数
 			Object bean = null;
 			Object[] objects = item.getArgs();
-			if( objects.length ==  0){
+			if( objects == null ){
 				// 没有输入参数时,默认入参为void
 				bean = Void.TYPE;
 			}else if( objects.length == 1){
-				// 一个输入参数时,不再检查注解,该输入参数即为bean
-				bean = objects[0];
+				// 一个输入参数时,检查注解,若不存在注解,则该输入参数即为bean
+				SqlParameter sqlParameter = item.getMethod().getParameters()[0].getAnnotation(SqlParameter.class);
+				if( sqlParameter == null ){
+					bean = objects[0];
+				}else{
+					Map<String,Object> beanMap = new HashMap<>();
+					beanMap.put(sqlParameter.value(), objects[0]);
+					bean = beanMap;
+				}
 			}else{
 				Map<String,Object> beanMap = new HashMap<>();
 				// 多个参数时,检查注解
@@ -150,7 +144,7 @@ public final class DefaultSqlProcess {
 				bean = beanMap;
 			}
 			// 4.返回结果
-			return SqlSession.executeSelectListSql(sql, bean, resultClass);
+			return SqlSession.executeInsertSql(sql, bean);
 		}
 
 		@Override
@@ -158,7 +152,24 @@ public final class DefaultSqlProcess {
 			if( throwable instanceof DaoException){
 				throw (DaoException)throwable;
 			}
-			throw new DaoException("执行批量插入Sql时出现异常",throwable);			
+			throw new DaoException("执行插入SQL时出现异常",throwable);			
+		}
+	}
+	
+	public static class BatchInsertSqlProcess implements SqlProcess<BatchInsert>,SqlExceptionProcess {
+		@Override
+		public Object process(ProcessItem<BatchInsert> item) {
+			// TODO 
+			
+			return null;
+		}
+
+		@Override
+		public void handlerException(Throwable throwable) {
+			if( throwable instanceof DaoException){
+				throw (DaoException)throwable;
+			}
+			throw new DaoException("执行批量插入SQL时出现异常",throwable);			
 		}
 	}	
 	
@@ -169,18 +180,25 @@ public final class DefaultSqlProcess {
 			String sql = item.getAnno().value();
 			// 2.获取返回类型
 			Class<?> resultClass = item.getMethod().getReturnType();
-			if( !resultClass.isAssignableFrom(Integer.class) ){
-				throw new DaoException("更新sql的返回类型有误,应当为Int类型");
+			if( !Integer.class.isAssignableFrom(resultClass) && !int.class.isAssignableFrom(resultClass) ){
+				throw new DaoException("插入SQL的返回类型必须为int类型");
 			}
 			// 3.获取输入参数
 			Object bean = null;
 			Object[] objects = item.getArgs();
-			if( objects.length ==  0){
+			if( objects == null ){
 				// 没有输入参数时,默认入参为void
 				bean = Void.TYPE;
 			}else if( objects.length == 1){
-				// 一个输入参数时,不再检查注解,该输入参数即为bean
-				bean = objects[0];
+				// 一个输入参数时,检查注解,若不存在注解,则该输入参数即为bean
+				SqlParameter sqlParameter = item.getMethod().getParameters()[0].getAnnotation(SqlParameter.class);
+				if( sqlParameter == null ){
+					bean = objects[0];
+				}else{
+					Map<String,Object> beanMap = new HashMap<>();
+					beanMap.put(sqlParameter.value(), objects[0]);
+					bean = beanMap;
+				}
 			}else{
 				Map<String,Object> beanMap = new HashMap<>();
 				// 多个参数时,检查注解
@@ -209,7 +227,7 @@ public final class DefaultSqlProcess {
 			if( throwable instanceof DaoException){
 				throw (DaoException)throwable;
 			}
-			throw new DaoException("执行更新Sql时出现异常",throwable);			
+			throw new DaoException("执行更新SQL时出现异常",throwable);			
 		}
 	}
 	
@@ -220,7 +238,7 @@ public final class DefaultSqlProcess {
 			String sql = item.getAnno().value();
 			// 2.获取返回类型
 			Class<?> resultClass = item.getMethod().getReturnType();
-			if( !resultClass.isAssignableFrom(Integer.class) ){
+			if( !Integer.class.isAssignableFrom(resultClass) && !int.class.isAssignableFrom(resultClass) ){
 				throw new DaoException("删除sql的返回类型有误,应当为Int类型");
 			}
 			// 3.获取输入参数
@@ -230,8 +248,15 @@ public final class DefaultSqlProcess {
 				// 没有输入参数时,默认入参为void
 				bean = Void.TYPE;
 			}else if( objects.length == 1){
-				// 一个输入参数时,不再检查注解,该输入参数即为bean
-				bean = objects[0];
+				// 一个输入参数时,检查注解,若不存在注解,则该输入参数即为bean
+				SqlParameter sqlParameter = item.getMethod().getParameters()[0].getAnnotation(SqlParameter.class);
+				if( sqlParameter == null ){
+					bean = objects[0];
+				}else{
+					Map<String,Object> beanMap = new HashMap<>();
+					beanMap.put(sqlParameter.value(), objects[0]);
+					bean = beanMap;
+				}
 			}else{
 				Map<String,Object> beanMap = new HashMap<>();
 				// 多个参数时,检查注解
@@ -260,7 +285,7 @@ public final class DefaultSqlProcess {
 			if( throwable instanceof DaoException){
 				throw (DaoException)throwable;
 			}
-			throw new DaoException("执行删除Sql时出现异常",throwable);			
+			throw new DaoException("执行删除SQL时出现异常",throwable);			
 		}
 	}
 }
