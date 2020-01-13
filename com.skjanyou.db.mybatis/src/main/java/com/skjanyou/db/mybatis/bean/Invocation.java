@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ProcessItem<T> {
+public class Invocation<T> {
 	private Class<?> mapperClass;
 	private Object proxy;
 	private Method method;

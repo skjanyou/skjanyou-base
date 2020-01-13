@@ -14,7 +14,7 @@ import com.skjanyou.db.mybatis.anno.DDL.Insert;
 import com.skjanyou.db.mybatis.anno.DDL.Select;
 import com.skjanyou.db.mybatis.anno.DDL.SqlParameter;
 import com.skjanyou.db.mybatis.anno.DDL.Update;
-import com.skjanyou.db.mybatis.bean.ProcessItem;
+import com.skjanyou.db.mybatis.bean.Invocation;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.db.mybatis.exception.DaoException;
 import com.skjanyou.db.mybatis.inter.SqlExceptionProcess;
@@ -23,7 +23,7 @@ import com.skjanyou.db.mybatis.inter.SqlProcess;
 public final class DefaultSqlProcess {
 	public static class SelectSqlProcess implements SqlProcess<Select>,SqlExceptionProcess {
 		@Override
-		public Object process(ProcessItem<Select> item) {
+		public Object process(Invocation<Select> item) {
 			// 1.获取原始SQL
 			String sql = item.getAnno().value();
 			// 2.获取返回类型
@@ -100,7 +100,7 @@ public final class DefaultSqlProcess {
 
 	public static class InsertSqlProcess implements SqlProcess<Insert>,SqlExceptionProcess {
 		@Override
-		public Object process(ProcessItem<Insert> item) {
+		public Object process(Invocation<Insert> item) {
 			// 1.获取原始SQL
 			String sql = item.getAnno().value();
 			// 2.获取返回类型
@@ -158,7 +158,7 @@ public final class DefaultSqlProcess {
 	
 	public static class BatchInsertSqlProcess implements SqlProcess<BatchInsert>,SqlExceptionProcess {
 		@Override
-		public Object process(ProcessItem<BatchInsert> item) {
+		public Object process(Invocation<BatchInsert> item) {
 			// TODO 
 			
 			return null;
@@ -175,7 +175,7 @@ public final class DefaultSqlProcess {
 	
 	public static class UpdateSqlProcess implements SqlProcess<Update>,SqlExceptionProcess {
 		@Override
-		public Object process(ProcessItem<Update> item) {
+		public Object process(Invocation<Update> item) {
 			// 1.获取原始SQL
 			String sql = item.getAnno().value();
 			// 2.获取返回类型
@@ -233,7 +233,7 @@ public final class DefaultSqlProcess {
 	
 	public static class DeleteSqlProcess implements SqlProcess<Delete>,SqlExceptionProcess {
 		@Override
-		public Object process(ProcessItem<Delete> item) {
+		public Object process(Invocation<Delete> item) {
 			// 1.获取原始SQL
 			String sql = item.getAnno().value();
 			// 2.获取返回类型

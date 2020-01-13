@@ -2,8 +2,8 @@ package com.skjanyou.db.mybatis.inter;
 
 import java.lang.annotation.Annotation;
 
-import com.skjanyou.db.mybatis.bean.ProcessItem;
+import com.skjanyou.db.mybatis.bean.Invocation;
 
 public interface SqlProcess<T extends Annotation> {
-	public Object process( ProcessItem<T> pi );
+	public Object process( Invocation<T> pi );
 }

@@ -9,7 +9,7 @@ import com.skjanyou.db.mybatis.anno.DDL.Delete;
 import com.skjanyou.db.mybatis.anno.DDL.Insert;
 import com.skjanyou.db.mybatis.anno.DDL.Select;
 import com.skjanyou.db.mybatis.anno.DDL.Update;
-import com.skjanyou.db.mybatis.bean.ProcessItem;
+import com.skjanyou.db.mybatis.bean.Invocation;
 import com.skjanyou.db.mybatis.inter.impl.DefaultAnnotationDispatchHandler;
 
 public class AnnotationHandlerManager {
@@ -42,7 +42,7 @@ public class AnnotationHandlerManager {
 			Class<?> cls = annotation.annotationType();
 			AnnotationHandler<?> handler = map.get(cls);
 			if( handler != null ){
-				return handler.handler(new ProcessItem(mapperClass,proxy,method,args,annotation));
+				return handler.handler(new Invocation(mapperClass,proxy,method,args,annotation));
 			}
 		}
 		

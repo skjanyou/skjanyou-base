@@ -4,7 +4,7 @@ import com.skjanyou.db.mybatis.anno.DDL.Delete;
 import com.skjanyou.db.mybatis.anno.DDL.Insert;
 import com.skjanyou.db.mybatis.anno.DDL.Select;
 import com.skjanyou.db.mybatis.anno.DDL.Update;
-import com.skjanyou.db.mybatis.bean.ProcessItem;
+import com.skjanyou.db.mybatis.bean.Invocation;
 import com.skjanyou.db.mybatis.inter.AnnotationHandler;
 import com.skjanyou.db.mybatis.inter.SqlExceptionProcess;
 import com.skjanyou.db.mybatis.inter.SqlProcess;
@@ -14,7 +14,7 @@ public class DefaultAnnotationDispatchHandler  {
 
 	public static class SelectAnnotationHandler implements AnnotationHandler<Select>{
 		@Override
-		public Object handler(ProcessItem<Select> item) {
+		public Object handler(Invocation<Select> item) {
 			Object result = null;
 			Select select = item.getAnno();
 			Class<? extends SqlProcess<Select>> sqlProcessClass = select.handler();
@@ -35,7 +35,7 @@ public class DefaultAnnotationDispatchHandler  {
 	
 	public static class InsertAnnotationHander implements AnnotationHandler<Insert>{
 		@Override
-		public Object handler(ProcessItem<Insert> item) {
+		public Object handler(Invocation<Insert> item) {
 			Object result = null;
 			Insert insert = item.getAnno();
 			Class<? extends SqlProcess<Insert>> sqlProcessClass = insert.handler();
@@ -56,7 +56,7 @@ public class DefaultAnnotationDispatchHandler  {
 	
 	public static class UpdateAnnotationHander implements AnnotationHandler<Update>{
 		@Override
-		public Object handler(ProcessItem<Update> item) {
+		public Object handler(Invocation<Update> item) {
 			Object result = null;
 			Update update = item.getAnno();
 			Class<? extends SqlProcess<Update>> sqlProcessClass = update.handler();
@@ -77,7 +77,7 @@ public class DefaultAnnotationDispatchHandler  {
 	
 	public static class DeleteAnnotationHandler implements AnnotationHandler<Delete>{
 		@Override
-		public Object handler(ProcessItem<Delete> item) {
+		public Object handler(Invocation<Delete> item) {
 			Object result = null;
 			Delete delete = item.getAnno();
 			Class<? extends SqlProcess<Delete>> sqlProcessClass = delete.handler();
