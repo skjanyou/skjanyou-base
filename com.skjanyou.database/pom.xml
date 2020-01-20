@@ -36,11 +36,7 @@
 			<artifactId>sqlite-jdbc</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.skjanyou</groupId>
-			<artifactId>com.skjanyou.appl.AppAnnotationloader</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>				
+			
 	</dependencies>
 	<build>
 		<plugins>

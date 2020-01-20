@@ -1,39 +1,91 @@
 package com.skjanyou.util;
 
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
-
-import com.google.common.base.Predicate;
+import java.io.File;
+import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class ScanUtil {
-	public static final String ROOT = ".";
-	public static final String ALL = ".*";
-	public static final String NONE = "";
+	public static List<URL> findResources( String packageName,ClassLoader loader ) throws IOException{
+		List<URL> resultUrl = new ArrayList<>();
+		String subPack = packageName.replace(".","/");
+		Enumeration<URL> urls = loader.getResources(subPack);
+		while( urls.hasMoreElements() ){
+			URL url = urls.nextElement();
+			if( !isJarUrl( url ) ){
+				resultUrl.addAll( fildFileResources(url) );
+			}else{
+				resultUrl.addAll( findJarResources(url,packageName,loader) );
+			}
+		}
 		
-	/**
-	 * 扫描目录下面的资源
-	 * @param forpackage	在哪个目录下面查找, 根目录为 "."
-	 * @param resource		查找资源,支持匹配符
-	 * @param include		包括资源资源
-	 * @param exclude		排除资源
-	 * @return
-	 */
-	public static Set<String> scanResources(String forpackage,String resource,String include,String exclude){
-		Set<String> result = null;
-		Predicate<String> filter = new FilterBuilder().include(include)
-				.exclude(exclude);
-		Reflections reflections = new Reflections(new ConfigurationBuilder()
-		.filterInputsBy(filter)
-		.setScanners(new ResourcesScanner())
-		.setUrls(ClasspathHelper.forPackage(forpackage)));
+		
+		return resultUrl;
+	}
+	
+	public static List<URL> findResources( String packageName ) throws IOException {
+		return findResources(packageName, ScanUtil.class.getClassLoader());
+	}
 
-		result = reflections.getResources(Pattern.compile(resource));
-		return result;
+	private static Collection<? extends URL> findJarResources(URL jarUrl,String packageName, ClassLoader loader) throws IOException {
+		List<URL> jarUrlList = new ArrayList<>();
+		
+		URLConnection connection = null;
+		try {
+			connection = jarUrl.openConnection();
+			if( connection instanceof JarURLConnection ){
+				JarURLConnection jarCon = (JarURLConnection) connection;
+				JarFile jarFile = jarCon.getJarFile();
+				Enumeration<JarEntry> jarEntrys = jarFile.entries();
+				while( jarEntrys.hasMoreElements() ){
+					JarEntry subJarEntry = jarEntrys.nextElement();
+					String entryName = subJarEntry.getName();
+					// 判断是否为目录
+					if( entryName.endsWith("/") ){ continue ; }
+					// 判断包路径是否匹配
+					if( !entryName.startsWith(packageName.replace(".", "/"))){ continue; }
+					URL subJarUrl = loader.getResource(entryName);
+					jarUrlList.add(subJarUrl);
+				}
+			}
+			
+			jarUrlList.add(jarUrl);
+		} finally {
+			
+		}
+		
+		return jarUrlList;
+	}
+	
+	
+
+	private static Collection<? extends URL> fildFileResources(URL fileUrl) throws MalformedURLException {
+		List<URL> fileUrlList = new ArrayList<>();
+		String filePath = fileUrl.getFile();
+		File file = new File(filePath);
+		if( file.isFile() ){
+			fileUrlList.add(fileUrl);
+		}else if( file.isDirectory() ){
+			File[] subFiles = file.listFiles();
+			if( subFiles != null ){
+				for( File subFile : subFiles ){
+					fileUrlList.addAll(fildFileResources(subFile.toURI().toURL()));
+				}
+			}
+		}
+		return fileUrlList;
+	}
+
+	private static boolean isJarUrl(URL url) {
+		String protocol = url.getProtocol();
+		return ("jar".equals(protocol)) || ("zip".equals(protocol)) || ("wsjar".equals(protocol)) || ("code-source".equals(protocol));
 	}
 }
