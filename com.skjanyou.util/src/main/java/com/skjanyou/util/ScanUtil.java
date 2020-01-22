@@ -9,11 +9,31 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScanUtil {
+	
+	public static List<URL> findResourcesByPattern( String packageName,String resourcePattern ,ClassLoader loader ) throws IOException {
+		List<URL> result = findResources(packageName, loader);
+		Pattern pattern = Pattern.compile(resourcePattern);
+		Matcher match = null;
+		Iterator<URL> it = result.iterator();
+		while( it.hasNext() ){
+			URL url = it.next();
+			match = pattern.matcher(url.getFile());
+			if( !match.find() ){
+				it.remove();
+			}
+		}
+		
+		return result;
+	}
+	
 	public static List<URL> findResources( String packageName,ClassLoader loader ) throws IOException{
 		List<URL> resultUrl = new ArrayList<>();
 		String subPack = packageName.replace(".","/");

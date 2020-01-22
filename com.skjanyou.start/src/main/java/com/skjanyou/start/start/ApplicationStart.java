@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -24,6 +25,7 @@ import com.skjanyou.start.util.BeanUtil;
 import com.skjanyou.start.util.JarUtil;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.CommUtil;
+import com.skjanyou.util.ScanUtil;
 
 public final class ApplicationStart {
 	private static String pluginPattern = "plugin/\\S+.plugin.xml$";
@@ -79,8 +81,9 @@ public final class ApplicationStart {
 		
 		// 3.加载所有的类  TODO
 		List<Class<?>> allClassList = ClassUtil.getClasses("com",loader);
+		System.out.println(allClassList);
+		//PluginManager.loadAllPlugins();
 		
-		PluginManager.loadAllPlugins();
 		
 	}
 
