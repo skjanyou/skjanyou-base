@@ -66,14 +66,7 @@ public class ClassUtil {
 		return null;
 	}
  
-	/**
-	 * 从包package中获取所有的Class
-	 * 
-	 * @param pack
-	 * @return
-	 */
-	public static List<Class<?>> getClasses(String packageName) {
- 
+	public static List<Class<?>> getClasses(String packageName,ClassLoader loader){
 		// 第一个class类的集合
 		List<Class<?>> classes = new ArrayList<Class<?>>();
 		// 是否循环迭代
@@ -83,7 +76,7 @@ public class ClassUtil {
 		// 定义一个枚举的集合 并进行循环来处理这个目录下的things
 		Enumeration<URL> dirs;
 		try {
-			dirs = Thread.currentThread().getContextClassLoader().getResources(packageDirName);
+			dirs = loader.getResources(packageDirName);
 			// 循环迭代下去
 			while (dirs.hasMoreElements()) {
 				// 获取下一个元素
@@ -131,7 +124,7 @@ public class ClassUtil {
 										String className = name.substring(packageName.length() + 1, name.length() - 6);
 										try {
 											// 添加到classes
-											classes.add(Class.forName(packageName + '.' + className));
+											classes.add(loader.loadClass(packageName + '.' + className));
 										} catch (ClassNotFoundException e) {
 											e.printStackTrace();
 										}
@@ -148,7 +141,17 @@ public class ClassUtil {
 			e.printStackTrace();
 		}
  
-		return classes;
+		return classes;		
+	}
+	
+	/**
+	 * 从包package中获取所有的Class
+	 * 
+	 * @param pack
+	 * @return
+	 */
+	public static List<Class<?>> getClasses(String packageName) {
+		return getClasses(packageName,Thread.currentThread().getContextClassLoader());
 	}
  
 	/**
@@ -183,9 +186,11 @@ public class ClassUtil {
 			} else {
 				// 如果是java类文件 去掉后面的.class 只留下类名
 				String className = file.getName().substring(0, file.getName().length() - 6);
+				String fullClassName = packageName + '.' + className;
 				try {
+					if( packageName.startsWith(".") ){ fullClassName = fullClassName.substring(1); }
 					// 添加到集合中去
-					classes.add(Class.forName(packageName + '.' + className));
+					classes.add(Class.forName(fullClassName));
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}

@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="skjanyou.mybatis" displayName="Mybatis插件" activator="com.skjanyou.db.mybatis.App" order="5000" enable="true" failOnInitError="true" />
