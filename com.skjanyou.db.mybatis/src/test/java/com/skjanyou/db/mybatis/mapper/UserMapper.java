@@ -8,10 +8,13 @@ import com.skjanyou.db.mybatis.anno.DDL.Insert;
 import com.skjanyou.db.mybatis.anno.DDL.Select;
 import com.skjanyou.db.mybatis.anno.DDL.SqlParameter;
 import com.skjanyou.db.mybatis.anno.DDL.Update;
+import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.bean.User;
 
+@Mapper
 public interface UserMapper {
 	
+	@Mapper
 	public static interface SelectUserMapper{
 		// 情况1,由一个对象查一条数据
 		@Select("select * from user where user_id = #user_id# and user_name = #user_name# and user_pass = #user_pass#")
@@ -33,6 +36,7 @@ public interface UserMapper {
 		public List<User> selectListBySqlParameter( @SqlParameter("user_id") String user_id );		
 	}
 
+	@Mapper
 	public static interface InsertUserMapper{
 		// 情况1,通过bean插入单条记录
 		@Insert("insert into user ( user_id,user_name,user_pass ) values ( #user_id#,#user_name#,#user_pass# )")
@@ -45,6 +49,7 @@ public interface UserMapper {
 		public int insertUserBySqlParameter( @SqlParameter("user_id") String user_id,@SqlParameter("user_name") String user_name,@SqlParameter("user_pass") String user_pass );		
 	}
 	
+	@Mapper
 	public static interface UpdateUserMapper{
 		// 情况1,通过bean更新单条数据  
 		@Update("update user set user_name = #user_name#,user_pass = #user_pass# where user_id = #user_id#")
@@ -57,6 +62,7 @@ public interface UserMapper {
 		public int updateUserBySqlParameter( @SqlParameter("user_id") String user_id , @SqlParameter("user_name") String user_name,@SqlParameter("user_pass") String user_pass );		
 	}
 	
+	@Mapper
 	public static interface DeleteUserMapper{
 		// 情况1,通过bean删除单条数据  
 		@Delete("delete from user where user_id = #user_id#")

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.util.DbUtil;
 import com.skjanyou.db.mybatis.util.StringUtil;
 import com.skjanyou.db.pool.DataSource;
@@ -21,6 +22,7 @@ public class SqlSession {
 	
 	@SuppressWarnings("unchecked")
 	public static<T> T getMapper( Class<T> clazz ){
+		if(clazz.getAnnotation(Mapper.class) == null){ throw new RuntimeException("Mapper类必须添加@Mapper注解"); }
 		return (T) Proxy.newProxyInstance(SqlSession.class.getClassLoader(), 
 				new Class[]{ clazz }, new MapperHandler(clazz));
 	}
