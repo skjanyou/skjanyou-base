@@ -80,9 +80,9 @@ public final class ApplicationStart {
 		}
 		
 		// 3.加载所有的类  TODO
-		List<Class<?>> allClassList = ClassUtil.getClasses("com",loader);
+		List<Class<?>> allClassList = ClassUtil.getClasses("",loader);
 		System.out.println(allClassList);
-		//PluginManager.loadAllPlugins();
+		PluginManager.loadAllPlugins();
 		
 		
 	}

@@ -1,4 +1,4 @@
-package com.skjanyou.db.mybatis;
+package com.skjanyou.db.mybatis.plugin;
 
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.impl.PropertiesConfig;
@@ -9,7 +9,7 @@ import com.skjanyou.start.start.ApplicationStart;
 	configManagerFactory = PropertiesConfig.class,
 	name = "mybatis测试配置props"
 )
-public class Start implements PluginSupport {
+public class MybatisPlugin implements PluginSupport {
 
 	@Override
 	public PluginSupport init() {
@@ -31,6 +31,6 @@ public class Start implements PluginSupport {
 	
 	public static void main(String[] args) {
 		System.setProperty("skjanyou.configfile", "classpath:skjanyou.config.properties");
-		ApplicationStart.start(Start.class);
+		ApplicationStart.start(MybatisPlugin.class);
 	}
 }
