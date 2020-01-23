@@ -14,7 +14,6 @@ import com.skjanyou.start.start.ApplicationStart;
 import com.skjanyou.util.ClassUtil;
 
 @Configure(
-	configManagerFactory = PropertiesConfig.class,
 	name = "mybatis测试配置props"
 )
 public class MybatisPlugin implements PluginSupport {

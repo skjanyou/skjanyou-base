@@ -4,18 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import com.skjanyou.start.AppTest;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.ApplicationConst;
 import com.skjanyou.start.config.ConfigManager;
@@ -41,12 +38,17 @@ public final class ApplicationStart {
 		ConfigManagerFactory cmFactory = BeanUtil.getBean(cmFactoryClazz);
 		ConfigManager manager = cmFactory.create();
 		// 1.解析应用配置
-		String[] lib_path = manager.getString(ApplicationConst.LIB_PATH).split(",");
-		System.out.println("开始扫描Jar路径");
+		String lib_path = manager.getString(ApplicationConst.LIB_PATH);
 		// 2.扫描jar目录,将jar添加至classpath
-		Collection<URL> urlList = JarUtil.getAllJarFileURL(lib_path);
-		System.out.println("开始扫描Jar路径完成,总共找到Jar文件" + urlList.size() + "个");
+		Collection<URL> urlList = null;
+		if( lib_path != null ){
+			System.out.println("开始扫描Jar路径");
+			String[] lib_path_arr = lib_path.split(",");
+			urlList = JarUtil.getAllJarFileURL(lib_path_arr);
+			System.out.println("开始扫描Jar路径完成,总共找到Jar文件" + urlList.size() + "个");
+		}
 		// 创建ClassLoader
+		if( urlList == null ) { urlList = new ArrayList<>(); }
 		loader = new URLClassLoader( urlList.toArray( new URL[]{} ) );
 		Thread.currentThread().setContextClassLoader(loader);
 		// 3.扫描classpath目录,获取所有的*.plugin.xml文件
