@@ -15,6 +15,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.skjanyou.start.AppTest;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.ApplicationConst;
 import com.skjanyou.start.config.ConfigManager;
@@ -48,34 +49,46 @@ public final class ApplicationStart {
 		// 创建ClassLoader
 		loader = new URLClassLoader( urlList.toArray( new URL[]{} ) );
 		Thread.currentThread().setContextClassLoader(loader);
-		// 3.扫描jar目录,获取所有的jarFile对象
-		Collection<JarFile> jarFiles = JarUtil.getAllJarFile(lib_path);
-		ZipEntry pluginEntryFile = null;
-		for (JarFile jarFile : jarFiles) {
-			pluginEntryFile = JarUtil.scanJarFile(jarFile, pluginPattern);
-			InputStream is = null;
-			try {
-				is = jarFile.getInputStream(pluginEntryFile);
-				SAXReader sr = new SAXReader();
-				Document document = sr.read(is);
-				Element root = document.getRootElement();
-				String id = root.attributeValue("id");	// 插件ID
-				String displayName = root.attributeValue("displayName"); //插件名称
-				Class activator = loader.loadClass( root.attributeValue("activator") ); //启动类
-				int order = Integer.valueOf(root.attributeValue("order"));				//排序
-				Boolean enable = Boolean.valueOf(root.attributeValue("enable"));	//是否启动
-				Boolean failOnInitError = Boolean.valueOf(root.attributeValue("failOnInitError"));						//报错时是否终止启动
-				System.out.println("加载插件:[id:" + id + ",displayName:" + displayName + "]");
-				
-				Plugin plugin = new Plugin();
-				plugin.setId(id);plugin.setActivator(activator);plugin.setDisplayName(displayName);
-				plugin.setEnable(enable);plugin.setFailOnInitError(failOnInitError);plugin.setOrder(order);
-				
-				PluginManager.registPlugin(plugin);
-			} catch (IOException | DocumentException | ClassNotFoundException e) {
-				e.printStackTrace();
-			} finally {
-				CommUtil.close(is);
+		// 3.扫描classpath目录,获取所有的*.plugin.xml文件
+		List<URL> list = null;
+		try {
+			list = ScanUtil.findResourcesByPattern("", "plugin/\\S+.plugin.xml$", loader);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("所有插件配置文件失败!",e);
+		}
+		if( list != null ){
+			for (URL url : list) {
+				InputStream is = null;
+				try {
+					is = url.openStream();
+					SAXReader sr = new SAXReader();
+					Document document = sr.read(is);
+					Element root = document.getRootElement();
+					String id = root.attributeValue("id");	// 插件ID
+					String displayName = root.attributeValue("displayName"); //插件名称
+					String activatorString = root.attributeValue("activator");
+					Class activator = null;
+					try{
+						activator = loader.loadClass( activatorString ); //启动类
+					} catch ( ClassNotFoundException e){
+						activator = ApplicationStart.class.getClassLoader().loadClass( activatorString );
+					}
+						int order = Integer.valueOf(root.attributeValue("order"));				//排序
+					Boolean enable = Boolean.valueOf(root.attributeValue("enable"));	//是否启动
+					Boolean failOnInitError = Boolean.valueOf(root.attributeValue("failOnInitError"));						//报错时是否终止启动
+					System.out.println("加载插件:[id:" + id + ",displayName:" + displayName + "]");
+					
+					Plugin plugin = new Plugin();
+					plugin.setId(id);plugin.setActivator(activator);plugin.setDisplayName(displayName);
+					plugin.setEnable(enable);plugin.setFailOnInitError(failOnInitError);plugin.setOrder(order);
+					
+					PluginManager.registPlugin(plugin);
+				} catch (IOException | DocumentException | ClassNotFoundException e) {
+					e.printStackTrace();
+				} finally {
+					CommUtil.close(is);
+				}
 			}
 		}
 		
@@ -83,7 +96,6 @@ public final class ApplicationStart {
 		List<Class<?>> allClassList = ClassUtil.getClasses("",loader);
 		System.out.println(allClassList);
 		PluginManager.loadAllPlugins();
-		
 		
 	}
 

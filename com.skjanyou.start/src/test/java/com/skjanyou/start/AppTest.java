@@ -1,38 +1,36 @@
 package com.skjanyou.start;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+import com.skjanyou.start.plugin.PluginSupport;
+import com.skjanyou.util.ScanUtil;
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
+public class AppTest implements PluginSupport{
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+	public static void main(String[] args) throws IOException {
+		List<URL> list = ScanUtil.findResourcesByPattern("", "plugin/\\S+.plugin.xml$", AppTest.class.getClassLoader());
+		for (URL url : list) {
+			System.out.println(url);
+		}
+	}
+
+	@Override
+	public PluginSupport init() {
+		System.out.println("AppTest.init() ");
+		return this;
+	}
+
+	@Override
+	public PluginSupport startup() {
+		System.out.println("AppTest.startup() ");
+		return this;
+	}
+
+	@Override
+	public PluginSupport shutdown() {
+		System.out.println("AppTest.shutdown() ");
+		return this;
+	}
 }
