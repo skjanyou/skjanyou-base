@@ -20,7 +20,7 @@ public class DbUtil {
 		return $this;
 	}
 	
-	public DataSource getDataSource(){
+	public synchronized DataSource getDataSource(){
 		try {
 			// 保证一个线程只有一个连接
 			DataSource ds = currentDs.get();
