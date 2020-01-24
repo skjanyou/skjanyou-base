@@ -9,9 +9,11 @@ import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.impl.PropertiesConfig;
+import com.skjanyou.start.ioc.BeanContainer;
 import com.skjanyou.start.plugin.PluginSupport;
 import com.skjanyou.start.start.ApplicationStart;
 import com.skjanyou.util.ClassUtil;
+import com.skjanyou.util.CommUtil;
 
 @Configure(
 	name = "mybatis测试配置props"
@@ -19,20 +21,26 @@ import com.skjanyou.util.ClassUtil;
 public class MybatisPlugin implements PluginSupport {
 	// 缓存Mapper
 	private List<Class<?>> list; 
-	// 需引入ioc容器
-	private Map<Class<?>,Object> map = new ConcurrentHashMap<>();
 	
 	@Override
 	public PluginSupport init() {
 		System.out.println("mybatis插件初始化!");
 		list = ClassUtil.getClasses("");
 		Iterator<Class<?>> it = list.iterator();
+		Mapper mapper = null;
+		String beanName = null;
 		while( it.hasNext() ){
 			Class<?> clazz = it.next();
-			if( clazz.getDeclaredAnnotation(Mapper.class) == null ){
+			clazz.getDeclaredAnnotation(Mapper.class);
+			if( mapper == null ){
 				it.remove();
 			}else{
-				map.put(clazz, SqlSession.getMapper(clazz));
+				if( !CommUtil.isNullOrEmpty(mapper.value()) ){
+					beanName = mapper.value();
+				}else{
+					beanName = clazz.getName();
+				}
+				BeanContainer.setBean(beanName, SqlSession.getMapper(clazz));
 			}
 		}
 		return this;

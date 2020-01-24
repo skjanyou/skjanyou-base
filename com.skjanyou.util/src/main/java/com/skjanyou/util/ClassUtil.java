@@ -18,13 +18,25 @@ import java.util.jar.JarFile;
  * 作用 :
  */
 public class ClassUtil {
-	 
+	public static final String CGLIB_CLASS_SEPARATOR = "$";
+	public static boolean isCglibProxyClassName(String className) {
+		return (className != null && className.contains(CGLIB_CLASS_SEPARATOR));
+	}
+
+	public static Class<?> getSourceClass(Class<?> clazz) {
+		if (ClassUtil.isCglibProxyClassName(clazz.getName())) {
+			clazz = clazz.getSuperclass();
+			return getSourceClass(clazz);
+		}
+		return clazz;
+	}
+
 	/**
 	 * 取得某个接口下所有实现这个接口的类
 	 */
 	public static List<Class<?>> getAllClassByInterface(Class<?> c) {
 		List<Class<?>> returnClassList = null;
- 
+
 		if (c.isInterface()) {
 			// 获取当前的包名
 			String packageName = c.getPackage().getName();
@@ -43,10 +55,10 @@ public class ClassUtil {
 				}
 			}
 		}
- 
+
 		return returnClassList;
 	}
- 
+
 	/*
 	 * 取得某一类所在包的所有类名 不含迭代
 	 */
@@ -65,7 +77,7 @@ public class ClassUtil {
 		}
 		return null;
 	}
- 
+
 	public static List<Class<?>> getClasses(String packageName,ClassLoader loader){
 		// 第一个class类的集合
 		List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -140,10 +152,10 @@ public class ClassUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
- 
+
 		return classes;		
 	}
-	
+
 	/**
 	 * 从包package中获取所有的Class
 	 * 
@@ -153,7 +165,7 @@ public class ClassUtil {
 	public static List<Class<?>> getClasses(String packageName) {
 		return getClasses(packageName,Thread.currentThread().getContextClassLoader());
 	}
- 
+
 	/**
 	 * 以文件的形式来获取包下的所有Class
 	 * 
