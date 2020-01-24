@@ -16,7 +16,7 @@ import com.skjanyou.util.CommUtil;
 )
 public class MybatisPlugin implements PluginSupport {
 	@Override
-	public PluginSupport init() {
+	public PluginSupport startup() {
 		System.out.println("mybatis插件初始化!");
 		List<Class<?>> list = ClassUtil.getClasses("");
 		Iterator<Class<?>> it = list.iterator();
@@ -39,11 +39,6 @@ public class MybatisPlugin implements PluginSupport {
 		return this;
 	}
 
-	@Override
-	public PluginSupport startup() {
-		System.out.println("mybatis插件启动!");
-		return this;
-	}
 
 	@Override
 	public PluginSupport shutdown() {

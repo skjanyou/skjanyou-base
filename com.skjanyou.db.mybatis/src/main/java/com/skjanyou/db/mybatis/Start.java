@@ -12,14 +12,8 @@ import com.skjanyou.start.start.ApplicationStart;
 public class Start implements PluginSupport {
 
 	@Override
-	public PluginSupport init() {
-		System.out.println("mybatis插件初始化!");
-		return this;
-	}
-
-	@Override
 	public PluginSupport startup() {
-		System.out.println("mybatis插件启动!");
+		System.out.println("mybatis插件初始化!");
 		return this;
 	}
 

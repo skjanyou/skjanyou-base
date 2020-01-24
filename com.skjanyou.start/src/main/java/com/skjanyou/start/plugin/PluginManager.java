@@ -28,7 +28,7 @@ public class PluginManager {
 		for (Plugin plugin : pluginList) {
 			support = BeanUtil.getBean(plugin.getActivator());
 			try{
-				support.init();
+				support.startup();
 				pluginSupportList.add(support);
 			}catch(Exception e){
 				if( plugin.getFailOnInitError() ){

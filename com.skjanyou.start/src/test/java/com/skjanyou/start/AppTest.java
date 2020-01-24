@@ -17,16 +17,11 @@ public class AppTest implements PluginSupport{
 	}
 
 	@Override
-	public PluginSupport init() {
+	public PluginSupport startup() {
 		System.out.println("AppTest.init() ");
 		return this;
 	}
 
-	@Override
-	public PluginSupport startup() {
-		System.out.println("AppTest.startup() ");
-		return this;
-	}
 
 	@Override
 	public PluginSupport shutdown() {
