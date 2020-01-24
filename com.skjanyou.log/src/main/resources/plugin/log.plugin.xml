@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin id="skjanyou.log" displayName="Log插件" activator="com.skjanyou.log.plugin.LogPlugin" order="5000" enable="true" failOnInitError="true" />
+<plugin 
+	id="skjanyou.log" 
+	displayName="Log插件"
+	activator="com.skjanyou.log.plugin.LogPlugin" 
+	order="5000" 
+	enable="true"
+	failOnInitError="true"
+	defaultConfig="/config/log.default.properties" />

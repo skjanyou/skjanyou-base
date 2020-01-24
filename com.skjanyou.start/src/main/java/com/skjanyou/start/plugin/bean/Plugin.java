@@ -12,4 +12,5 @@ public class Plugin {
 	private int order ;
 	private Boolean enable;
 	private Boolean failOnInitError;
+	private String defaultConfig;
 }

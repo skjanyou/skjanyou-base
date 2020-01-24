@@ -3,6 +3,7 @@ package com.skjanyou.start.start;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.skjanyou.start.anno.Bean;
+import com.skjanyou.start.anno.Component;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.ApplicationConst;
 import com.skjanyou.start.config.ConfigManager;
@@ -51,8 +53,8 @@ public final class ApplicationStart {
 		loadClasses();
 		// 6.初始化bean
 		initBean();
-
-		
+		// 7.填充依赖bean
+		fillDependency();
 		
 		// 7.加载所有的插件
 		PluginManager.loadAllPlugins();
@@ -120,11 +122,13 @@ public final class ApplicationStart {
 						int order = Integer.valueOf(root.attributeValue("order"));				//排序
 					Boolean enable = Boolean.valueOf(root.attributeValue("enable"));	//是否启动
 					Boolean failOnInitError = Boolean.valueOf(root.attributeValue("failOnInitError"));						//报错时是否终止启动
+					String defaultConfig = root.attributeValue("defaultConfig");	//默认配置文件路径
 					System.out.println("加载插件:[id:" + id + ",displayName:" + displayName + "]");
 					
 					Plugin plugin = new Plugin();
 					plugin.setId(id);plugin.setActivator(activator);plugin.setDisplayName(displayName);
 					plugin.setEnable(enable);plugin.setFailOnInitError(failOnInitError);plugin.setOrder(order);
+					plugin.setDefaultConfig(defaultConfig);
 					
 					PluginManager.registPlugin(plugin);
 				} catch (IOException | DocumentException | ClassNotFoundException e) {
@@ -146,6 +150,34 @@ public final class ApplicationStart {
 			// 接口,跳过处理
 			if(cla.isInterface()){ continue; }
 			
+			// 带有Component注解的类,扫描内部的属性,填充数据
+			Component component = cla.getAnnotation(Component.class);
+			if( component != null ){
+				Object bean = BeanUtil.getBean(cla);
+				Field[] fields = cla.getDeclaredFields();
+				Bean fieldBean = null;String beanName = null;
+				for (Field field : fields) {
+					fieldBean = field.getAnnotation(Bean.class);
+					if( fieldBean != null ){
+						beanName = fieldBean.value();
+						if( null == beanName || "".equals(beanName) ){
+							beanName = field.getGenericType().getTypeName();
+						}
+						// 通过反射赋值
+						Object obj = BeanContainer.getBean(beanName);
+						field.setAccessible(true);
+						try {
+							field.set(bean, obj);
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						}
+					}
+					
+				}
+			}
+			
 			Bean beanAnno = cla.getAnnotation(Bean.class);
 			if( beanAnno != null ){
 				Object bean = BeanUtil.getBean(cla);
@@ -154,7 +186,9 @@ public final class ApplicationStart {
 		}		
 	}
 	
-	private static void autowired(){}
+	private static void fillDependency(){
+		
+	}
 
 	private static void startupPlugin(){}
 	
