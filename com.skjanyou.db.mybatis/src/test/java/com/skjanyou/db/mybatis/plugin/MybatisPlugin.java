@@ -2,16 +2,12 @@ package com.skjanyou.db.mybatis.plugin;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.start.anno.Configure;
-import com.skjanyou.start.config.impl.PropertiesConfig;
 import com.skjanyou.start.ioc.BeanContainer;
 import com.skjanyou.start.plugin.PluginSupport;
-import com.skjanyou.start.start.ApplicationStart;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.CommUtil;
 
@@ -31,7 +27,7 @@ public class MybatisPlugin implements PluginSupport {
 		String beanName = null;
 		while( it.hasNext() ){
 			Class<?> clazz = it.next();
-			clazz.getDeclaredAnnotation(Mapper.class);
+			mapper = clazz.getDeclaredAnnotation(Mapper.class);
 			if( mapper == null ){
 				it.remove();
 			}else{
@@ -58,8 +54,4 @@ public class MybatisPlugin implements PluginSupport {
 		return this;
 	}
 	
-	public static void main(String[] args) {
-		System.setProperty("skjanyou.configfile", "classpath:skjanyou.config.properties");
-		ApplicationStart.start(MybatisPlugin.class);
-	}
 }

@@ -9,16 +9,19 @@ import junit.framework.TestSuite;
 import com.skjanyou.db.mybatis.bean.User;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.db.mybatis.mapper.UserMapper.DeleteUserMapper;
-import com.skjanyou.db.mybatis.test.UserTest;
+import com.skjanyou.db.mybatis.test.MybatisTest;
+import com.skjanyou.start.ioc.BeanContainer;
 
-public class DeleteUserTest extends UserTest {
+public class DeleteUserTest extends MybatisTest {
 	public static Test suite(){
         return new TestSuite( DeleteUserTest.class );
     }
 	
+	
 	// 情况1,通过bean删除单条数据  
 	public void testdeleteUser( ){
-		DeleteUserMapper userMapper = SqlSession.getMapper(DeleteUserMapper.class);
+
+		DeleteUserMapper userMapper = BeanContainer.getBean(DeleteUserMapper.class);
 		
 		User user = new User();
 		user.setUser_id("test_1");

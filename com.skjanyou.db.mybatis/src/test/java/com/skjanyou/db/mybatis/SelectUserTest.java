@@ -11,9 +11,9 @@ import com.skjanyou.db.mybatis.bean.User;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.db.mybatis.mapper.UserMapper;
 import com.skjanyou.db.mybatis.mapper.UserMapper.SelectUserMapper;
-import com.skjanyou.db.mybatis.test.UserTest;
+import com.skjanyou.db.mybatis.test.MybatisTest;
 
-public class SelectUserTest extends UserTest {
+public class SelectUserTest extends MybatisTest {
     
 	public static Test suite(){
         return new TestSuite( SelectUserTest.class );

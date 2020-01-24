@@ -9,9 +9,9 @@ import junit.framework.TestSuite;
 import com.skjanyou.db.mybatis.bean.User;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.db.mybatis.mapper.UserMapper.InsertUserMapper;
-import com.skjanyou.db.mybatis.test.UserTest;
+import com.skjanyou.db.mybatis.test.MybatisTest;
 
-public class InsertUserTest extends UserTest  {
+public class InsertUserTest extends MybatisTest  {
 	public static Test suite(){
         return new TestSuite( InsertUserTest.class );
     }

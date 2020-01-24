@@ -7,12 +7,12 @@ import junit.framework.TestSuite;
 
 import com.skjanyou.db.mybatis.bean.User;
 import com.skjanyou.db.mybatis.core.SqlSession;
-import com.skjanyou.db.mybatis.test.UserTest;
+import com.skjanyou.db.mybatis.test.MybatisTest;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest extends UserTest {
+public class AppTest extends MybatisTest {
 
     public static Test suite(){
         return new TestSuite( AppTest.class );
