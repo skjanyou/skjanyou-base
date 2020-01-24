@@ -15,13 +15,10 @@ import com.skjanyou.util.CommUtil;
 	name = "mybatis测试配置props"
 )
 public class MybatisPlugin implements PluginSupport {
-	// 缓存Mapper
-	private List<Class<?>> list; 
-	
 	@Override
 	public PluginSupport init() {
 		System.out.println("mybatis插件初始化!");
-		list = ClassUtil.getClasses("");
+		List<Class<?>> list = ClassUtil.getClasses("");
 		Iterator<Class<?>> it = list.iterator();
 		Mapper mapper = null;
 		String beanName = null;

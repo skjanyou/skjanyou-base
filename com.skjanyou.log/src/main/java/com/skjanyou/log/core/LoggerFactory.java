@@ -1,5 +1,6 @@
 package com.skjanyou.log.core;
 
-public class LoggerFactory {
-
+public interface LoggerFactory {
+	public Logger create( Class<?> clazz );
+	public Logger create( String className );
 }

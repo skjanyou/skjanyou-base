@@ -2,6 +2,7 @@ package com.skjanyou.start.start;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -13,10 +14,12 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.skjanyou.start.anno.Bean;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.ApplicationConst;
 import com.skjanyou.start.config.ConfigManager;
 import com.skjanyou.start.config.ConfigManagerFactory;
+import com.skjanyou.start.ioc.BeanContainer;
 import com.skjanyou.start.plugin.PluginManager;
 import com.skjanyou.start.plugin.bean.Plugin;
 import com.skjanyou.start.util.BeanUtil;
@@ -26,18 +29,54 @@ import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.ScanUtil;
 
 public final class ApplicationStart {
+	// 启动类
+	private static Class<?> startClass = null;
+	// 配置中心
+	private static ConfigManager manager = null;
 	private static String pluginPattern = "plugin/\\S+.plugin.xml$";
 	private static ClassLoader loader = null;
 	private static List<Class<?>> classList = null;
 	private ApplicationStart(){}
 	public static void start( Class<?> clazz ){
-		Configure configure = clazz.getAnnotation(Configure.class);
+		startClass = clazz;
+		// 1.解析应用配置
+		initConfig();
+		// 2.搜索jar文件,并将jar文件放置到classpath内,并初始化classloader
+		findJarFile();
+		// 3.设置当前运行上下文的classloader 
+		Thread.currentThread().setContextClassLoader(loader);
+		// 4.扫描classpath目录,获取所有的*.plugin.xml文件
+		findPlugin();
+		// 5.加载所有的类  TODO
+		loadClasses();
+		// 6.初始化bean
+		initBean();
+
+		
+		
+		// 7.加载所有的插件
+		PluginManager.loadAllPlugins();
+		
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+			
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				PluginManager.shutdownAllPlugins();
+			}
+		});
+		
+	}
+
+	private static void initConfig(){
+		Configure configure = startClass.getAnnotation(Configure.class);
 		if( configure == null ){ return ; }
 		
 		Class<? extends ConfigManagerFactory> cmFactoryClazz = configure.configManagerFactory();
 		ConfigManagerFactory cmFactory = BeanUtil.getBean(cmFactoryClazz);
-		ConfigManager manager = cmFactory.create();
-		// 1.解析应用配置
+		manager = cmFactory.create();
+	}
+	
+	private static void findJarFile(){
 		String lib_path = manager.getString(ApplicationConst.LIB_PATH);
 		// 2.扫描jar目录,将jar添加至classpath
 		Collection<URL> urlList = null;
@@ -50,11 +89,13 @@ public final class ApplicationStart {
 		// 创建ClassLoader
 		if( urlList == null ) { urlList = new ArrayList<>(); }
 		loader = new URLClassLoader( urlList.toArray( new URL[]{} ) );
-		Thread.currentThread().setContextClassLoader(loader);
-		// 3.扫描classpath目录,获取所有的*.plugin.xml文件
+		
+	}
+	
+	private static void findPlugin(){
 		List<URL> list = null;
 		try {
-			list = ScanUtil.findResourcesByPattern("", "plugin/\\S+.plugin.xml$", loader);
+			list = ScanUtil.findResourcesByPattern("", pluginPattern, loader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("所有插件配置文件失败!",e);
@@ -92,15 +133,29 @@ public final class ApplicationStart {
 					CommUtil.close(is);
 				}
 			}
-		}
-		
-		// 3.加载所有的类  TODO
-		List<Class<?>> allClassList = ClassUtil.getClasses("",loader);
-		System.out.println(allClassList);
-		PluginManager.loadAllPlugins();
-		
+		}		
 	}
 
+	
+	private static void loadClasses(){
+		classList = ClassUtil.getClasses("",loader);
+	}
+	
+	private static void initBean(){
+		for (Class<?> cla : classList) {
+			// 接口,跳过处理
+			if(cla.isInterface()){ continue; }
+			
+			Bean beanAnno = cla.getAnnotation(Bean.class);
+			if( beanAnno != null ){
+				Object bean = BeanUtil.getBean(cla);
+				BeanContainer.setBean(beanAnno.value(), bean);
+			}
+		}		
+	}
+	
+	private static void autowired(){}
 
+	private static void startupPlugin(){}
 	
 }
