@@ -7,9 +7,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import com.skjanyou.db.mybatis.bean.User;
-import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.db.mybatis.mapper.UserMapper.UpdateUserMapper;
 import com.skjanyou.db.mybatis.test.MybatisTest;
+import com.skjanyou.start.ioc.BeanContainer;
 
 public class UpdateUserTest extends MybatisTest {
 	public static Test suite(){
@@ -18,7 +18,7 @@ public class UpdateUserTest extends MybatisTest {
 	
 	// 情况1,通过bean更新单条数据  
 	public void testupdateUser(  ) {
-		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class);
+		UpdateUserMapper userMapper = BeanContainer.getBean(UpdateUserMapper.class);
 		
 		User user = new User();
 		user.setUser_id("skjanyou");
@@ -30,7 +30,7 @@ public class UpdateUserTest extends MybatisTest {
 	}
 	// 情况2,通过Map更新单条数据
 	public void testupdateUserByMap(  ){
-		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class);
+		UpdateUserMapper userMapper = BeanContainer.getBean(UpdateUserMapper.class);
 		
 		Map<String,Object> map = new HashMap<>();
 		map.put("user_id","skjanyou");
@@ -42,7 +42,7 @@ public class UpdateUserTest extends MybatisTest {
 	}
 	// 情况3,通过SqlParameter更新单条数据
 	public void testupdateUserBySqlParameter(  ){
-		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class);
+		UpdateUserMapper userMapper = BeanContainer.getBean(UpdateUserMapper.class);
 		
 		String user_id = "skjanyou";
 		String user_name = "a super man3!";

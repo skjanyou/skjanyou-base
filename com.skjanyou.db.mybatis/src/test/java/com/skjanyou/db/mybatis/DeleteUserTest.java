@@ -31,7 +31,7 @@ public class DeleteUserTest extends MybatisTest {
 	};
 	// 情况2,通过Map删除单条数据
 	public void testDeleteUserByMap( ){
-		DeleteUserMapper userMapper = SqlSession.getMapper(DeleteUserMapper.class);
+		DeleteUserMapper userMapper = BeanContainer.getBean(DeleteUserMapper.class);
 		
 		Map<String,Object> map = new HashMap<>();
 		map.put("user_id", "test_2");
@@ -41,7 +41,7 @@ public class DeleteUserTest extends MybatisTest {
 	};
 	// 情况3,通过SqlParameter更新单条数据
 	public void testDeleteUserBySqlParameter(  ){
-		DeleteUserMapper userMapper = SqlSession.getMapper(DeleteUserMapper.class);
+		DeleteUserMapper userMapper = BeanContainer.getBean(DeleteUserMapper.class);
 		
 		String user_id = "test_3";
 		
