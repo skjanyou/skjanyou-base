@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.core.SqlSession;
+import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.ioc.BeanContainer;
-import com.skjanyou.start.plugin.PluginSupport;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.CommUtil;
 

@@ -18,7 +18,7 @@ import com.skjanyou.db.mybatis.util.StringUtil;
 import com.skjanyou.db.pool.DataSource;
 
 public class SqlSession {
-	
+			
 	
 	@SuppressWarnings("unchecked")
 	public static<T> T getMapper( Class<T> clazz ){
@@ -40,7 +40,6 @@ public class SqlSession {
 			prepareSql = prepareSql.replaceFirst(field, "?");
 		}
 		System.out.println("处理后的SQL:" + prepareSql);
-
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
 		ResultSet rs = null;

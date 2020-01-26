@@ -1,12 +1,12 @@
-package com.skjanyou.start.plugin;
+package com.skjanyou.plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.skjanyou.start.plugin.bean.Plugin;
-import com.skjanyou.start.util.InstanceUtil;
+import com.skjanyou.plugin.bean.Plugin;
+import com.skjanyou.plugin.util.InstanceUtil;
 
 public class PluginManager {
 	private static List<Plugin> pluginList = new ArrayList<>();

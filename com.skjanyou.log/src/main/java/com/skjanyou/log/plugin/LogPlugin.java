@@ -2,7 +2,7 @@ package com.skjanyou.log.plugin;
 
 import java.util.List;
 
-import com.skjanyou.start.plugin.PluginSupport;
+import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.util.ClassUtil;
 
 public class LogPlugin implements PluginSupport {

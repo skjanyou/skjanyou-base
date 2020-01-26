@@ -1,8 +1,8 @@
-package com.skjanyou.start.plugin.bean;
-
-import com.skjanyou.start.plugin.PluginSupport;
+package com.skjanyou.plugin.bean;
 
 import lombok.Data;
+
+import com.skjanyou.plugin.PluginSupport;
 
 @Data
 public class Plugin {

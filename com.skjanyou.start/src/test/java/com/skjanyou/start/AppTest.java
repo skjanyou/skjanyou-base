@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import com.skjanyou.start.plugin.PluginSupport;
+import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.util.ScanUtil;
 
 public class AppTest implements PluginSupport{

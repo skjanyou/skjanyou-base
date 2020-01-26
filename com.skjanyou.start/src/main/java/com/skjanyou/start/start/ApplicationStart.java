@@ -15,6 +15,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.skjanyou.plugin.PluginManager;
+import com.skjanyou.plugin.bean.Plugin;
 import com.skjanyou.start.anno.Bean;
 import com.skjanyou.start.anno.Component;
 import com.skjanyou.start.anno.Configure;
@@ -22,8 +24,6 @@ import com.skjanyou.start.config.ApplicationConst;
 import com.skjanyou.start.config.ConfigManager;
 import com.skjanyou.start.config.ConfigManagerFactory;
 import com.skjanyou.start.ioc.BeanContainer;
-import com.skjanyou.start.plugin.PluginManager;
-import com.skjanyou.start.plugin.bean.Plugin;
 import com.skjanyou.start.util.InstanceUtil;
 import com.skjanyou.start.util.JarUtil;
 import com.skjanyou.util.ClassUtil;

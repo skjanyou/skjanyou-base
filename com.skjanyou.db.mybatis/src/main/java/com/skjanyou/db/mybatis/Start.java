@@ -1,8 +1,8 @@
 package com.skjanyou.db.mybatis;
 
+import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.impl.PropertiesConfig;
-import com.skjanyou.start.plugin.PluginSupport;
 import com.skjanyou.start.start.ApplicationStart;
 
 @Configure(

@@ -25,6 +25,11 @@
 			<artifactId>com.skjanyou.util</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.plugin</artifactId>
+			<version>${parent.version}</version>
+		</dependency>		
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
