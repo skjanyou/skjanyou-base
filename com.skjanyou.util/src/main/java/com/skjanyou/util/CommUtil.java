@@ -36,6 +36,7 @@ public class CommUtil {
 		return result;
 	}
 	
+	/** 判断对象是否为空 **/
 	public static boolean isNullOrEmpty( Object obj ){
 		try {
 			if (obj == null) {
@@ -70,4 +71,5 @@ public class CommUtil {
 		}
 
 	}
+	
 }

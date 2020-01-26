@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.skjanyou.start.plugin.bean.Plugin;
-import com.skjanyou.start.util.BeanUtil;
+import com.skjanyou.start.util.InstanceUtil;
 
 public class PluginManager {
 	private static List<Plugin> pluginList = new ArrayList<>();
@@ -26,7 +26,7 @@ public class PluginManager {
 	public static void loadAllPlugins(){
 		PluginSupport support = null;
 		for (Plugin plugin : pluginList) {
-			support = BeanUtil.getBean(plugin.getActivator());
+			support = InstanceUtil.newInstance(plugin.getActivator());
 			try{
 				support.startup();
 				pluginSupportList.add(support);

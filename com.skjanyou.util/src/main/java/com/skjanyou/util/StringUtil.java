@@ -50,4 +50,8 @@ public class StringUtil {
 	public static String converFirstUpperCase(String str){
 		return String.valueOf(str.charAt(0)).toUpperCase() + str.substring(1);
 	}	
+	
+	public static boolean isBlank( String msg ){
+		return msg == null || "".equals(msg);
+	}
 }

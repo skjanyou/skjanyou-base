@@ -7,6 +7,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -19,6 +20,7 @@ import java.util.jar.JarFile;
  */
 public class ClassUtil {
 	public static final String CGLIB_CLASS_SEPARATOR = "$";
+	public static final List<String> SYSTEM_MATEHERS = new ArrayList<String>(Arrays.asList(new String[] { "java.", "javax." }));
 	public static boolean isCglibProxyClassName(String className) {
 		return (className != null && className.contains(CGLIB_CLASS_SEPARATOR));
 	}
@@ -58,7 +60,24 @@ public class ClassUtil {
 
 		return returnClassList;
 	}
+	
+	public static String getGeneralBeanName(Class<?> clazz) {
+		if (isSystem(clazz)) {
+			return null;
+		}
+		clazz = getSourceClass(clazz);
+		return clazz.getName();
+	}
 
+	public static final boolean isSystem(Class<?> clazz) {
+		String className = clazz.getName();
+		for(String mateher:SYSTEM_MATEHERS){
+			if( className.contains(mateher) ){
+				return true;
+			}
+		}
+		return false;
+	}		
 	/*
 	 * 取得某一类所在包的所有类名 不含迭代
 	 */
