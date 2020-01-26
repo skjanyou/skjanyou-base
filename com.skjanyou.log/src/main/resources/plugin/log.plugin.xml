@@ -3,7 +3,7 @@
 	id="skjanyou.log" 
 	displayName="Log插件"
 	activator="com.skjanyou.log.plugin.LogPlugin" 
-	order="5000" 
+	order="0" 
 	enable="true"
 	failOnInitError="true"
 	defaultConfig="/config/log.default.properties" />

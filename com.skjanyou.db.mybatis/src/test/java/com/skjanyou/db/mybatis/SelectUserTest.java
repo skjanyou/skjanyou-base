@@ -10,8 +10,10 @@ import junit.framework.TestSuite;
 import com.skjanyou.db.mybatis.bean.User;
 import com.skjanyou.db.mybatis.mapper.UserMapper;
 import com.skjanyou.db.mybatis.mapper.UserMapper.SelectUserMapper;
+import com.skjanyou.db.mybatis.plugin.MybatisPlugin;
 import com.skjanyou.db.mybatis.test.MybatisTest;
 import com.skjanyou.start.ioc.BeanContainer;
+import com.skjanyou.start.start.ApplicationStart;
 
 public class SelectUserTest extends MybatisTest {
     
@@ -19,6 +21,11 @@ public class SelectUserTest extends MybatisTest {
         return new TestSuite( SelectUserTest.class );
     }
     
+	@Override
+	public void runBare() throws Throwable {
+		ApplicationStart.start(MybatisPlugin.class);
+		super.runBare();
+	}
 
 
     // 情况1,由一个对象查一条数据

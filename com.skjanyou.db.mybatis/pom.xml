@@ -22,6 +22,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.log</artifactId>
+			<version>${parent.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.db</artifactId>
 			<version>${parent.version}</version>
 		</dependency>

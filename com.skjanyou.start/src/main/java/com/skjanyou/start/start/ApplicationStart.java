@@ -42,6 +42,8 @@ public final class ApplicationStart {
 	private ApplicationStart(){}
 	public static void start( Class<?> clazz ){
 		startClass = clazz;
+		Configure configure = startClass.getAnnotation(Configure.class);
+		if( configure == null ){ return ; }
 		// 1.解析应用配置
 		initConfig();
 		// 2.搜索jar文件,并将jar文件放置到classpath内,并初始化classloader
@@ -72,7 +74,6 @@ public final class ApplicationStart {
 
 	private static void initConfig(){
 		Configure configure = startClass.getAnnotation(Configure.class);
-		if( configure == null ){ return ; }
 
 		Class<? extends ConfigManagerFactory> cmFactoryClazz = configure.configManagerFactory();
 		ConfigManagerFactory cmFactory = InstanceUtil.newInstance(cmFactoryClazz);
@@ -125,7 +126,7 @@ public final class ApplicationStart {
 					Boolean enable = Boolean.valueOf(root.attributeValue("enable"));	//是否启动
 					Boolean failOnInitError = Boolean.valueOf(root.attributeValue("failOnInitError"));						//报错时是否终止启动
 					String defaultConfig = root.attributeValue("defaultConfig");	//默认配置文件路径
-					System.out.println("加载插件:[id:" + id + ",displayName:" + displayName + "]");
+					System.out.println("扫描到插件:[id:" + id + ",displayName:" + displayName + "]");
 
 					Plugin plugin = new Plugin();
 					plugin.setId(id);plugin.setActivator(activator);plugin.setDisplayName(displayName);
