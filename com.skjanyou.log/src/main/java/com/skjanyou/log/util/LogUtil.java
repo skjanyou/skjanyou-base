@@ -1,9 +1,9 @@
 package com.skjanyou.log.util;
 
+import com.skjanyou.annotation.api.Application.Bean;
+import com.skjanyou.annotation.api.Application.Component;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.core.LoggerFactory;
-import com.skjanyou.start.anno.Bean;
-import com.skjanyou.start.anno.Component;
 
 @Component
 public class LogUtil {

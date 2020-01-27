@@ -2,9 +2,9 @@ package com.skjanyou.log.simple;
 
 import java.io.PrintStream;
 
+import com.skjanyou.annotation.api.Application.Bean;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.core.LoggerFactory;
-import com.skjanyou.start.anno.Bean;
 
 @Bean
 public class SystemLogger implements Logger,LoggerFactory {

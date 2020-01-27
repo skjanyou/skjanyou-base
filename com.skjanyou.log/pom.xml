@@ -18,14 +18,18 @@
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.plugin</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.skjanyou</groupId>
-			<artifactId>com.skjanyou.start</artifactId>
-			<version>${parent.version}</version>
-			<scope>test</scope>
-		</dependency>		
+			<artifactId>com.skjanyou.util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.annotation.api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>			
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

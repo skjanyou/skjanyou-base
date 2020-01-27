@@ -39,4 +39,32 @@ public final class Application {
 	public @interface Autowired {
 
 	}
+	
+	/**
+	 * 
+	 * @author skjanyou
+	 * 时间 : 2020年1月27日
+	 * 作用 : 标记bean的注解,需要使用容器才有效
+	 */	
+	@Target( { ElementType.TYPE,ElementType.FIELD } )
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface Bean {
+		String value() default "";
+	}
+	
+	/**
+	 * 
+	 * @author skjanyou
+	 * 时间 : 2020年1月27日
+	 * 作用 : 标记组件的注解,需要使用容器才有效,标记Component的类,会处理内部成员变量的注解
+	 */		
+	@Target( { ElementType.TYPE } )
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface Component {
+		
+	}
+	
+	
 }

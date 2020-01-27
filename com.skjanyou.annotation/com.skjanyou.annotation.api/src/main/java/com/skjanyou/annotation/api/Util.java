@@ -53,14 +53,51 @@ public @interface Util {
 	@Documented	
 	public @interface notNull {}
 	
+	/**
+	 * 
+	 * @author skjanyou
+	 * 时间 : 2018年5月19日
+	 * 作用 : 打开输入流注解
+	 */
 	@Target({ElementType.METHOD, ElementType.TYPE})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented	
 	public @interface LoadInputStream {}
 	
+	/**
+	 * 
+	 * @author skjanyou
+	 * 时间 : 2018年5月19日
+	 * 作用 : 打开输出流注解
+	 */	
 	@Target({ElementType.METHOD, ElementType.TYPE})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented	
 	public @interface LoadOutputStream {}	
 	
+	/**
+	 * 
+	 * @author skjanyou
+	 * 时间 : 2020年1月27日
+	 * 作用 : 别名注解
+	 */	
+	@Target( {ElementType.TYPE,ElementType.FIELD} )
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface Alias {
+		String value();
+	}
+	
+	/**
+	 * 
+	 * @author skjanyou
+	 * 时间 : 2020年1月27日
+	 * 作用 : Property注解,填充Property中的数据
+	 */		
+	@Target( { ElementType.TYPE,ElementType.FIELD } )
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface Property {
+		String value() ;
+	}	
 }

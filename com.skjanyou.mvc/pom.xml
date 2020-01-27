@@ -23,12 +23,12 @@
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.server.api</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.server.simplehttpserver</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>		
 	</dependencies>
 </project>

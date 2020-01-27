@@ -15,12 +15,12 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.skjanyou.annotation.api.Application.Bean;
+import com.skjanyou.annotation.api.Application.Component;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.simple.SystemLogger;
 import com.skjanyou.plugin.PluginManager;
 import com.skjanyou.plugin.bean.Plugin;
-import com.skjanyou.start.anno.Bean;
-import com.skjanyou.start.anno.Component;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.ApplicationConst;
 import com.skjanyou.start.config.ConfigManager;

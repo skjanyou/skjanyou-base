@@ -23,12 +23,12 @@
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.util</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.server.api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
