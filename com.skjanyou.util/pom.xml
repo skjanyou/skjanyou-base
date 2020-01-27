@@ -34,6 +34,12 @@
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>		
-		</dependency>	
+		</dependency>
+		<!-- xstream 处理xml格式 -->
+	    <dependency>
+	        <groupId>com.thoughtworks.xstream</groupId>
+	        <artifactId>xstream</artifactId>
+	        <version>1.4.10</version>
+	    </dependency>				
 	</dependencies>
 </project>

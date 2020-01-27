@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin id="skjanyou.test" displayName="测试插件" activator="com.skjanyou.start.AppTest" order="5000" enable="true" failOnInitError="true" />
+<plugin 
+	id="skjanyou.test" 
+	displayName="测试插件" 
+	activator="com.skjanyou.start.AppTest" 
+	order="5000" 
+	enable="true" 
+	failOnInitError="true" 
+	classScanPath="com.skjanyou.start"
+	defaultConfig="/config/test.default.properties"/>

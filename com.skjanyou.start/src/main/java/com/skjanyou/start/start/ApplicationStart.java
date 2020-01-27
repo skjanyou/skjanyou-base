@@ -113,6 +113,7 @@ public final class ApplicationStart {
 				InputStream is = null;
 				try {
 					is = url.openStream();
+//					Plugin p = XmlParseUtil.xml2Bean(is, Plugin.class);   TODO
 					SAXReader sr = new SAXReader();
 					Document document = sr.read(is);
 					Element root = document.getRootElement();
@@ -129,12 +130,13 @@ public final class ApplicationStart {
 					Boolean enable = Boolean.valueOf(root.attributeValue("enable"));	//是否启动
 					Boolean failOnInitError = Boolean.valueOf(root.attributeValue("failOnInitError"));						//报错时是否终止启动
 					String defaultConfig = root.attributeValue("defaultConfig");	//默认配置文件路径
+					String classScanPath = root.attributeValue("classScanPath");
 					logger.debug("扫描到插件:[id:" + id + ",displayName:" + displayName + "]");
 					
 					Plugin plugin = new Plugin();
 					plugin.setId(id);plugin.setActivator(activator);plugin.setDisplayName(displayName);
 					plugin.setEnable(enable);plugin.setFailOnInitError(failOnInitError);plugin.setOrder(order);
-					plugin.setDefaultConfig(defaultConfig);
+					plugin.setDefaultConfig(defaultConfig);plugin.setClassScanPath(classScanPath);
 
 					PluginManager.registPlugin(plugin);
 				} catch (IOException | DocumentException | ClassNotFoundException e) {
