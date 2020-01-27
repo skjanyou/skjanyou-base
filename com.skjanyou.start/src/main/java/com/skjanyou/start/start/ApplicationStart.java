@@ -66,7 +66,6 @@ public final class ApplicationStart {
 		PluginManager.loadAllPlugins();
 
 		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
 				PluginManager.shutdownAllPlugins();

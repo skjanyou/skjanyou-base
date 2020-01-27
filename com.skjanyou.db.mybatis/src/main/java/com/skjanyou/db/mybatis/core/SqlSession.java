@@ -16,9 +16,11 @@ import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.util.DbUtil;
 import com.skjanyou.db.mybatis.util.StringUtil;
 import com.skjanyou.db.pool.DataSource;
+import com.skjanyou.log.core.Logger;
+import com.skjanyou.log.util.LogUtil;
 
 public class SqlSession {
-			
+	private static Logger logger = LogUtil.getLogger(SqlSession.class);		
 	
 	@SuppressWarnings("unchecked")
 	public static<T> T getMapper( Class<T> clazz ){
@@ -39,7 +41,7 @@ public class SqlSession {
 			String field = MessageFormat.format("#{0}#", set);
 			prepareSql = prepareSql.replaceFirst(field, "?");
 		}
-		System.out.println("处理后的SQL:" + prepareSql);
+		logger.debug("处理后的SQL:" + prepareSql);
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
 		ResultSet rs = null;
@@ -110,8 +112,7 @@ public class SqlSession {
 			String field = MessageFormat.format("#{0}#", set);
 			prepareSql = prepareSql.replaceFirst(field, "?");
 		}
-		System.out.println("处理后的SQL:[" + prepareSql + "]");
-
+		logger.debug("处理后的SQL:" + prepareSql);
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
 		ResultSet rs = null;
@@ -192,7 +193,7 @@ public class SqlSession {
 			String field = MessageFormat.format("#{0}#", set);
 			prepareSql = prepareSql.replaceFirst(field, "?");
 		}
-		System.out.println("处理后的SQL:[" + prepareSql + "]");
+		logger.debug("处理后的SQL:" + prepareSql );
 
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
@@ -258,7 +259,7 @@ public class SqlSession {
 			String field = MessageFormat.format("#{0}#", set);
 			prepareSql = prepareSql.replaceFirst(field, "?");
 		}
-		System.out.println("处理后的SQL:[" + prepareSql + "]");
+		logger.debug("处理后的SQL:" + prepareSql );
 
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
@@ -325,7 +326,7 @@ public class SqlSession {
 			String field = MessageFormat.format("#{0}#", set);
 			prepareSql = prepareSql.replaceFirst(field, "?");
 		}
-		System.out.println("处理后的SQL:[" + prepareSql + "]");
+		logger.debug("处理后的SQL:" + prepareSql );
 
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
