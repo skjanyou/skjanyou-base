@@ -15,6 +15,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.skjanyou.log.core.Logger;
+import com.skjanyou.log.simple.SystemLogger;
 import com.skjanyou.plugin.PluginManager;
 import com.skjanyou.plugin.bean.Plugin;
 import com.skjanyou.start.anno.Bean;
@@ -32,6 +34,7 @@ import com.skjanyou.util.ScanUtil;
 import com.skjanyou.util.StringUtil;
 
 public final class ApplicationStart {
+	private static Logger logger = new SystemLogger().create(ApplicationStart.class);
 	// 启动类
 	private static Class<?> startClass = null;
 	// 配置中心
@@ -86,10 +89,10 @@ public final class ApplicationStart {
 		// 2.扫描jar目录,将jar添加至classpath
 		Collection<URL> urlList = null;
 		if( lib_path != null ){
-			System.out.println("开始扫描Jar路径");
+			logger.debug("开始扫描Jar路径");
 			String[] lib_path_arr = lib_path.split(",");
 			urlList = JarUtil.getAllJarFileURL(lib_path_arr);
-			System.out.println("开始扫描Jar路径完成,总共找到Jar文件" + urlList.size() + "个");
+			logger.debug("开始扫描Jar路径完成,总共找到Jar文件" + urlList.size() + "个");
 		}
 		// 创建ClassLoader
 		if( urlList == null ) { urlList = new ArrayList<>(); }
@@ -102,7 +105,7 @@ public final class ApplicationStart {
 		try {
 			list = ScanUtil.findResourcesByPattern("", pluginPattern, loader);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 			throw new RuntimeException("所有插件配置文件失败!",e);
 		}
 		if( list != null ){
@@ -126,8 +129,8 @@ public final class ApplicationStart {
 					Boolean enable = Boolean.valueOf(root.attributeValue("enable"));	//是否启动
 					Boolean failOnInitError = Boolean.valueOf(root.attributeValue("failOnInitError"));						//报错时是否终止启动
 					String defaultConfig = root.attributeValue("defaultConfig");	//默认配置文件路径
-					System.out.println("扫描到插件:[id:" + id + ",displayName:" + displayName + "]");
-
+					logger.debug("扫描到插件:[id:" + id + ",displayName:" + displayName + "]");
+					
 					Plugin plugin = new Plugin();
 					plugin.setId(id);plugin.setActivator(activator);plugin.setDisplayName(displayName);
 					plugin.setEnable(enable);plugin.setFailOnInitError(failOnInitError);plugin.setOrder(order);

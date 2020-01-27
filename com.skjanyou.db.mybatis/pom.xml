@@ -32,9 +32,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.plugin</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.start</artifactId>
 			<version>${parent.version}</version>
-		</dependency>		
+			<scope>test</scope>
+		</dependency>	
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
