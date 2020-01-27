@@ -56,11 +56,11 @@ public final class ApplicationStart {
 		// 4.扫描classpath目录,获取所有的*.plugin.xml文件
 		findPlugin();
 		// 5.加载所有的类  TODO
-		loadClasses();
+		loadClassesAndInitPlugin();
 		// 6.初始化bean
-		initBean();
+		initBean(classList);
 		// 7.填充依赖bean
-		fillDependency();
+		fillDependency(classList);
 
 		// 7.加载所有的插件
 		PluginManager.loadAllPlugins();
@@ -149,11 +149,19 @@ public final class ApplicationStart {
 	}
 
 
-	private static void loadClasses(){
-		classList = ClassUtil.getClasses("",loader);
+	private static void loadClassesAndInitPlugin(){
+		List<Plugin> allPlugin = PluginManager.getPluginList();
+		classList = new ArrayList<>();
+		for (Plugin plugin : allPlugin) {
+			List<Class<?>> pluginClass = ClassUtil.getClasses(plugin.getClassScanPath(), loader);
+			initBean(pluginClass);
+			PluginManager.initPlugin(plugin, pluginClass);
+			fillDependency(pluginClass);
+			classList.addAll(pluginClass);
+		}
 	}
 
-	private static void initBean(){
+	private static void initBean( List<Class<?>> classList ){
 		String className = null;
 		for (Class<?> cla : classList) {
 			// 接口,跳过处理
@@ -179,7 +187,7 @@ public final class ApplicationStart {
 		}		
 	}
 
-	private static void fillDependency(){
+	private static void fillDependency( List<Class<?>> classList ){
 		for (Class<?> cla : classList) {
 			// 带有Component注解的类,扫描内部的属性,填充数据
 			Component component = cla.getAnnotation(Component.class);

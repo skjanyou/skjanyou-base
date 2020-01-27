@@ -15,8 +15,14 @@ import com.skjanyou.util.CommUtil;
 	name = "mybatis测试配置props"
 )
 public class MybatisPlugin implements PluginSupport {
+
 	@Override
-	public PluginSupport startup() {
+	public void init(List<Class<?>> plugnInnerClass) {
+		
+	}
+	
+	@Override
+	public void startup() {
 		System.out.println("mybatis插件初始化!");
 		List<Class<?>> list = ClassUtil.getClasses("");
 		Iterator<Class<?>> it = list.iterator();
@@ -36,14 +42,15 @@ public class MybatisPlugin implements PluginSupport {
 				BeanContainer.setBean(beanName, SqlSession.getMapper(clazz));
 			}
 		}
-		return this;
 	}
 
 
 	@Override
-	public PluginSupport shutdown() {
+	public void shutdown() {
 		System.out.println("mybatis插件关闭!");
-		return this;
 	}
+
+
+
 	
 }

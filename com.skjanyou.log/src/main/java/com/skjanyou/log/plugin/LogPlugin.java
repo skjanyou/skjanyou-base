@@ -8,16 +8,19 @@ import com.skjanyou.util.ClassUtil;
 public class LogPlugin implements PluginSupport {
 
 	@Override
-	public PluginSupport startup() {
+	public void init(List<Class<?>> plugnInnerClass) {
+		
+	}
+
+	@Override
+	public void startup() {
 		List<Class<?>> list = ClassUtil.getClasses("com.skjanyou.log");
 		
-		return this;
 	}
 
 
 	@Override
-	public PluginSupport shutdown() {
-		return this;
+	public void shutdown() {
 	}
 
 }

@@ -6,4 +6,6 @@
 	order="5000"
 	enable="true" 
 	failOnInitError="true" 
-	defaultConfig="/config/mybatis.default.properties"/>
+	defaultConfig="/config/mybatis.default.properties"
+	classScanPath="com.skjanyou.mybatis"
+	/>

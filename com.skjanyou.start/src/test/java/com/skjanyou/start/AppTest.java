@@ -8,7 +8,12 @@ import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.util.ScanUtil;
 
 public class AppTest implements PluginSupport{
-
+	
+	@Override
+	public void init(List<Class<?>> plugnInnerClass) {
+		
+	}
+	
 	public static void main(String[] args) throws IOException {
 		List<URL> list = ScanUtil.findResourcesByPattern("", "plugin/\\S+.plugin.xml$", AppTest.class.getClassLoader());
 		for (URL url : list) {
@@ -17,15 +22,15 @@ public class AppTest implements PluginSupport{
 	}
 
 	@Override
-	public PluginSupport startup() {
+	public void startup() {
 		System.out.println("AppTest.init() ");
-		return this;
 	}
 
 
 	@Override
-	public PluginSupport shutdown() {
+	public void shutdown() {
 		System.out.println("AppTest.shutdown() ");
-		return this;
 	}
+
+
 }
