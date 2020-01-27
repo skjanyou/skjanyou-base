@@ -23,12 +23,17 @@
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.util</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>	
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.server.api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>				
+			<version>${project.parent.version}</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.plugin</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>					
 	</dependencies>
 </project>

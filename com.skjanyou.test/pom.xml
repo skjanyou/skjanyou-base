@@ -24,7 +24,13 @@
 			<artifactId>com.skjanyou.db.mybatis</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
-		</dependency>					
+		</dependency>		
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.server.simplehttpserver</artifactId>	
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>				
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.start</artifactId>
