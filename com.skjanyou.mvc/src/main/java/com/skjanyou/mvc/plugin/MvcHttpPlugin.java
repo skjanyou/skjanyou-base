@@ -1,12 +1,11 @@
-package com.skjanyou.server.simplehttpserver.plugin;
+package com.skjanyou.mvc.plugin;
 
 import java.util.List;
 
 import com.skjanyou.plugin.PluginSupport;
 
+public class MvcHttpPlugin implements PluginSupport{
 
-public class SimpleHttpServerPlugin implements PluginSupport{
-	
 	@Override
 	public void init(List<Class<?>> plugnInnerClass) {
 		
@@ -14,10 +13,12 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 
 	@Override
 	public void startup() {
+		
 	}
 
 	@Override
 	public void shutdown() {
+		
 	}
 
 }

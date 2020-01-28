@@ -18,7 +18,7 @@ import org.dom4j.io.SAXReader;
 import com.skjanyou.annotation.api.Application.Bean;
 import com.skjanyou.annotation.api.Application.Component;
 import com.skjanyou.log.core.Logger;
-import com.skjanyou.log.simple.SystemLogger;
+import com.skjanyou.log.util.SimpleLogUtil;
 import com.skjanyou.plugin.PluginManager;
 import com.skjanyou.plugin.bean.Plugin;
 import com.skjanyou.start.anno.Configure;
@@ -34,7 +34,7 @@ import com.skjanyou.util.ScanUtil;
 import com.skjanyou.util.StringUtil;
 
 public final class ApplicationStart {
-	private static Logger logger = new SystemLogger().create(ApplicationStart.class);
+	private static Logger logger = SimpleLogUtil.getLogger(ApplicationStart.class);
 	// 启动类
 	private static Class<?> startClass = null;
 	// 配置中心

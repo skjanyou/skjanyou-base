@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin 
+	id="skjanyou.mvc" 
+	displayName="mvc插件"
+	activator="com.skjanyou.mvc.plugin.MvcHttpPlugin" 
+	order="6000" 
+	enable="true"
+	failOnInitError="true"
+	defaultConfig="/config/mvc.default.properties" 
+	classScanPath="com.skjanyou.mvc"
+	/>
