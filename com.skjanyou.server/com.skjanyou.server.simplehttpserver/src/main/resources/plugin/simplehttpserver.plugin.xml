@@ -6,6 +6,6 @@
 	order="0" 
 	enable="true"
 	failOnInitError="true"
-	defaultConfig="/config/simplehttpserver.default.properties" 
+	defaultConfig="config/simplehttpserver.default.properties" 
 	classScanPath="com.skjanyou.server.simplehttpserver"
 	/>

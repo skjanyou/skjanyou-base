@@ -3,6 +3,7 @@ package com.skjanyou.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
@@ -72,6 +73,22 @@ public class ResourcesUtil {
 	public static<T> T getInstanceByResources(T t,String path){
 		Properties properties = ResourcesUtil.getResources(path);
 		return null;
+	}
+	
+	/**
+	 * 
+	 */
+	public static Properties getInnerResources( String innerpath,ClassLoader classloader ){
+		InputStream is = classloader.getResourceAsStream(innerpath);
+		Properties properties = new Properties();
+		try {
+			properties.load(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			CommUtil.close(is);
+		}
+		return properties;
 	}
 	
 }

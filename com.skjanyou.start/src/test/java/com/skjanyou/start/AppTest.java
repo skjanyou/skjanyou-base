@@ -5,13 +5,13 @@ import java.net.URL;
 import java.util.List;
 
 import com.skjanyou.plugin.PluginSupport;
-import com.skjanyou.plugin.bean.ComplexProperties;
+import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.util.ScanUtil;
 
 public class AppTest implements PluginSupport{
 	
 	@Override
-	public void init(List<Class<?>> plugnInnerClass,ComplexProperties properties) {
+	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) {
 		
 	}
 	

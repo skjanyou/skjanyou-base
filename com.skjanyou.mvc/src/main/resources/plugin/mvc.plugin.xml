@@ -6,6 +6,6 @@
 	order="6000" 
 	enable="true"
 	failOnInitError="true"
-	defaultConfig="/config/mvc.default.properties" 
+	defaultConfig="config/mvc.default.properties" 
 	classScanPath="com.skjanyou.mvc"
 	/>

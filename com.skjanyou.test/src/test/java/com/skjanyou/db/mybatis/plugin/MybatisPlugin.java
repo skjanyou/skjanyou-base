@@ -6,7 +6,7 @@ import java.util.List;
 import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.plugin.PluginSupport;
-import com.skjanyou.plugin.bean.ComplexProperties;
+import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.ioc.BeanContainer;
 import com.skjanyou.util.ClassUtil;
@@ -18,7 +18,7 @@ import com.skjanyou.util.CommUtil;
 public class MybatisPlugin implements PluginSupport {
 
 	@Override
-	public void init(List<Class<?>> plugnInnerClass,ComplexProperties properties) {
+	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) {
 		
 	}
 	

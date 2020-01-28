@@ -21,10 +21,11 @@ import com.skjanyou.annotation.api.Application.Component;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.SimpleLogUtil;
 import com.skjanyou.plugin.PluginManager;
-import com.skjanyou.plugin.bean.ComplexProperties;
+import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.plugin.bean.Plugin;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.ApplicationConst;
+import com.skjanyou.start.config.ComplexPluginConfig;
 import com.skjanyou.start.config.ConfigManager;
 import com.skjanyou.start.config.ConfigManagerFactory;
 import com.skjanyou.start.ioc.BeanContainer;
@@ -32,6 +33,7 @@ import com.skjanyou.start.util.InstanceUtil;
 import com.skjanyou.start.util.JarUtil;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.CommUtil;
+import com.skjanyou.util.ResourcesUtil;
 import com.skjanyou.util.ScanUtil;
 import com.skjanyou.util.StringUtil;
 
@@ -153,10 +155,10 @@ public final class ApplicationStart {
 	private static void loadClassesAndInitPlugin(){
 		List<Plugin> allPlugin = PluginManager.getPluginList();
 		classList = new ArrayList<>();
-		ComplexProperties properties = null;
+		PluginConfig properties = null;
 		for (Plugin plugin : allPlugin) {
 			List<Class<?>> pluginClass = ClassUtil.getClasses(plugin.getClassScanPath(), loader);
-			properties = new ComplexProperties( new HashMap<String, String>(), new HashMap<String, String>());
+			properties = new ComplexPluginConfig( manager, ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), loader) );
 			initBean(pluginClass);
 			PluginManager.initPlugin(plugin, pluginClass, properties);
 			fillDependency(pluginClass);
