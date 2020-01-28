@@ -5,13 +5,14 @@ import java.util.List;
 
 import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.plugin.PluginSupport;
+import com.skjanyou.plugin.bean.ComplexProperties;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.CommUtil;
 
 public class MybatisPlugin implements PluginSupport {
 
 	@Override
-	public void init(List<Class<?>> plugnInnerClass) {
+	public void init(List<Class<?>> plugnInnerClass,ComplexProperties properties) {
 		System.out.println("mybatis插件初始化!");
 		List<Class<?>> list = ClassUtil.getClasses("");
 		Iterator<Class<?>> it = list.iterator();

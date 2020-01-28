@@ -9,6 +9,7 @@ import java.util.Map;
 
 import lombok.Getter;
 
+import com.skjanyou.plugin.bean.ComplexProperties;
 import com.skjanyou.plugin.bean.Plugin;
 import com.skjanyou.plugin.util.InstanceUtil;
 
@@ -36,7 +37,7 @@ public class PluginManager {
 		});
 	} 
 	
-	public static void initPlugin( Plugin plugin,List<Class<?>> classList ){
+	public static void initPlugin( Plugin plugin,List<Class<?>> classList,ComplexProperties properties ){
 		if( plugin == null ){
 			throw new RuntimeException("插件不能为空!");
 		}
@@ -45,7 +46,7 @@ public class PluginManager {
 		}
 		PluginSupport support = InstanceUtil.newInstance(plugin.getActivator());
 		try{
-			support.init(classList);
+			support.init(classList,properties);
 			pluginSupportList.add(support);
 		}catch(Exception e){
 			if( plugin.getFailOnInitError() ){

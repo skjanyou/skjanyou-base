@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.dom4j.Document;
@@ -20,6 +21,7 @@ import com.skjanyou.annotation.api.Application.Component;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.SimpleLogUtil;
 import com.skjanyou.plugin.PluginManager;
+import com.skjanyou.plugin.bean.ComplexProperties;
 import com.skjanyou.plugin.bean.Plugin;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.ApplicationConst;
@@ -151,10 +153,12 @@ public final class ApplicationStart {
 	private static void loadClassesAndInitPlugin(){
 		List<Plugin> allPlugin = PluginManager.getPluginList();
 		classList = new ArrayList<>();
+		ComplexProperties properties = null;
 		for (Plugin plugin : allPlugin) {
 			List<Class<?>> pluginClass = ClassUtil.getClasses(plugin.getClassScanPath(), loader);
+			properties = new ComplexProperties( new HashMap<String, String>(), new HashMap<String, String>());
 			initBean(pluginClass);
-			PluginManager.initPlugin(plugin, pluginClass);
+			PluginManager.initPlugin(plugin, pluginClass, properties);
 			fillDependency(pluginClass);
 			classList.addAll(pluginClass);
 		}
