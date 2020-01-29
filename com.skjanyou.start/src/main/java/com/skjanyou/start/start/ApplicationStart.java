@@ -257,12 +257,6 @@ public final class ApplicationStart {
 	
 	/** 从列表中获取满足扫描规则的类  **/
 	private static List<Class<?>> scanPluginClassList( String classScanPath ){
-		List<Class<?>> resultClassList = new ArrayList<>();
-		for (Class<?> clazz : classSet) {
-			if( clazz.getName().startsWith(classScanPath) ){
-				resultClassList.add(clazz);
-			}
-		}
-		return resultClassList;
+		return ClassUtil.getClasses(classScanPath, classLoader);
 	}
 }
