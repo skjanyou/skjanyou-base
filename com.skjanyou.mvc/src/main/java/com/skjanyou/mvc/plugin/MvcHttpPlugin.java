@@ -13,7 +13,6 @@ import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.inter.Server;
 import com.skjanyou.server.simplehttpserver.http.HttpServer;
-import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.StringUtil;
 
 public class MvcHttpPlugin implements PluginSupport{
