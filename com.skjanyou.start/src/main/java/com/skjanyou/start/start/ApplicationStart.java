@@ -18,6 +18,7 @@ import org.dom4j.io.SAXReader;
 
 import com.skjanyou.annotation.api.Application.Bean;
 import com.skjanyou.annotation.api.Application.Component;
+import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.SimpleLogUtil;
 import com.skjanyou.plugin.PluginManager;
@@ -239,13 +240,17 @@ public final class ApplicationStart {
 		PluginSupport pluginSupport = null;
 		List<Class<?>> classList = null;
 		PluginConfig properties = null;
+		Class<? extends PluginSupport> activatorClass = null;
 		for (Plugin plugin : pluginList) {
 			// 启动开启的插件
 			if( plugin.getEnable() ){
 				logger.info("开始加载插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}");
-				pluginSupport = InstanceUtil.newInstance(plugin.getActivator());
-				classList = scanPluginClassList(plugin.getClassScanPath());
 				properties = new ComplexPluginConfig( manager, ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader) );
+				classList = scanPluginClassList(plugin.getClassScanPath());
+				activatorClass = plugin.getActivator();
+				pluginSupport = InstanceUtil.newInstance(activatorClass);
+				// 填充值
+				fillPluginBeanWithProperties(activatorClass,pluginSupport,properties);
 				PluginManager.initPlugin(pluginSupport, classList, properties);
 				logger.info("加载插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}完成");
 			}else{
@@ -258,5 +263,26 @@ public final class ApplicationStart {
 	/** 从列表中获取满足扫描规则的类  **/
 	private static List<Class<?>> scanPluginClassList( String classScanPath ){
 		return ClassUtil.getClasses(classScanPath, classLoader);
+	}
+	
+	/** 向插件类中的成员变量注入值  **/
+	private static void fillPluginBeanWithProperties( Class<?> clazz,PluginSupport pluginSupport,PluginConfig properties ){
+		Field[] fileds = clazz.getDeclaredFields();
+		Property property = null;
+		String key = null;String value = null;
+		for (Field field : fileds) {
+			property = field.getAnnotation(Property.class);
+			if( property != null ){
+				key = property.value();
+				value = properties.getProperty(key);
+				field.setAccessible(true);
+				try {
+					field.set(pluginSupport, value);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 }
