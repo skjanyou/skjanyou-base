@@ -65,6 +65,17 @@ public final class Application {
 	public @interface Component {
 		
 	}
-	
-	
+
+	/**
+	 * 
+	 * @author skjanyou
+	 * 时间 : 2020年1月29日
+	 * 作用 : 标记插件的注解,标记注解的类,会可以使用使用@Property注解对成员变量进行赋值
+	 */		
+	@Target( { ElementType.TYPE } )
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface Plugin {
+		
+	}
 }

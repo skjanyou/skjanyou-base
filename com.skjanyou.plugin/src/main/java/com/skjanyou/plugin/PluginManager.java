@@ -37,24 +37,9 @@ public class PluginManager {
 		});
 	} 
 	
-	public static void initPlugin( Plugin plugin,List<Class<?>> classList,PluginConfig properties ){
-		if( plugin == null ){
-			throw new RuntimeException("插件不能为空!");
-		}
-		if( pluginIdList.indexOf(plugin.getId()) == -1 ){
-			throw new RuntimeException("插件[" + plugin.getId() + "]不存在!");
-		}
-		PluginSupport support = InstanceUtil.newInstance(plugin.getActivator());
-		try{
-			support.init(classList,properties);
-			pluginSupportList.add(support);
-		}catch(Exception e){
-			if( plugin.getFailOnInitError() ){
-				throw new RuntimeException(e);
-			}
-			support.shutdown();
-		}		
-		
+	public static void initPlugin( PluginSupport support,List<Class<?>> classList,PluginConfig properties ){
+		support.init(classList,properties);
+		pluginSupportList.add(support);
 	}
 	
 	/** 加载所有的插件 **/

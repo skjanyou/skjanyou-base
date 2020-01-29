@@ -3,6 +3,8 @@ package com.skjanyou.util;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -24,7 +26,23 @@ public class ClassUtil {
 	public static boolean isCglibProxyClassName(String className) {
 		return (className != null && className.contains(CGLIB_CLASS_SEPARATOR));
 	}
-
+	
+	/**
+	 * 是否为静态成员变量
+	 * @param field 成员变量
+	 * @return 是否为静态变量
+	 */
+	public static boolean isStatic( Field field ){
+		return Modifier.isStatic(field.getModifiers());
+	}
+	
+	
+	
+	/**
+	 * 获取代理类的原始类
+	 * @param clazz  代理类
+	 * @return 原始类
+	 */
 	public static Class<?> getSourceClass(Class<?> clazz) {
 		if (ClassUtil.isCglibProxyClassName(clazz.getName())) {
 			clazz = clazz.getSuperclass();
