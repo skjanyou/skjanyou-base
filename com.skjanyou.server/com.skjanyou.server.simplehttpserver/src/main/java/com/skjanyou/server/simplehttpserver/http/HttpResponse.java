@@ -8,14 +8,18 @@ import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.inter.Headers;
 import com.skjanyou.server.api.inter.Protocol;
 import com.skjanyou.server.api.inter.Response;
-import com.skjanyou.server.api.inter.Response.ResponseBody;
-import com.skjanyou.server.api.inter.Response.ResponseLine;
 import com.skjanyou.util.FileUtil;
 
 public class HttpResponse implements Response {
-	private Headers headers = new HttpHeaders();
-	private ResponseBody responseBody = new HttpResponseBody();
-	private ResponseLine responseLine = new HttpResponseLine();
+	private HttpHeaders headers ;
+	private HttpResponseBody responseBody ;
+	private HttpResponseLine responseLine ;
+	
+	public HttpResponse(){
+		headers = new HttpHeaders();
+		responseBody = new HttpResponseBody();
+		responseLine = new HttpResponseLine();
+	}
 	
 	public static class HttpResponseBody implements ResponseBody {
 		private byte[] bodyContent;
@@ -94,5 +98,23 @@ public class HttpResponse implements Response {
 	public Headers headers() {
 		return this.headers;
 	}
-
+	
+	/** 设置Http头 **/
+	public HttpResponse putHeader( String key,String value ) {
+		this.headers.put(key, value);
+		return this;
+	}
+	
+	/**  **/
+	public HttpResponseBody getHttpResponseBody(){
+		return this.responseBody;
+	}
+	
+	public HttpResponseLine getHttpResponseLine(){
+		return this.responseLine;
+	}
+	
+	public HttpHeaders getHttpHeaders(){
+		return this.headers;
+	}
 }

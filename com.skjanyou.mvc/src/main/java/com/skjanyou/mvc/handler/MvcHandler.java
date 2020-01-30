@@ -45,11 +45,11 @@ public class MvcHandler extends HttpServerHandler {
 	@Override
 	public void handler(HttpRequest request, HttpResponse response) throws ServerException{
 		// 响应行
-		HttpResponseLine responseLine = (HttpResponseLine) response.responseLine();
+		HttpResponseLine responseLine = response.getHttpResponseLine();
 		// 响应体
-		HttpResponseBody responseBody = (HttpResponseBody) response.responseBody();
+		HttpResponseBody responseBody = response.getHttpResponseBody();
 		// 响应头
-		HttpHeaders httpHeaders = (HttpHeaders) response.headers();
+		HttpHeaders httpHeaders = response.getHttpHeaders();
 		// 请求url
 		String url = request.requestLine().url().split("\\?")[0]; 
 		// 查询参数
