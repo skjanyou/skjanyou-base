@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.skjanyou.log.core.Logger;
+import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.mvc.anno.Mvc.Autowired;
 import com.skjanyou.mvc.anno.Mvc.Controller;
 import com.skjanyou.mvc.anno.Mvc.Dao;
@@ -19,6 +21,7 @@ import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.mvc.core.MvcApplicateContext;
+import com.skjanyou.mvc.core.convert.Converts;
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.api.inter.ServerHandler;
@@ -32,6 +35,7 @@ import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
 import com.skjanyou.util.ClassUtil;
 
 public class MvcHandler extends HttpServerHandler {
+	private Logger logger = LogUtil.getLogger(MvcHandler.class);
 	// url映射
 	private Map<String,Context> mappings = new HashMap<>();
 	// 扫描的class
@@ -82,6 +86,7 @@ public class MvcHandler extends HttpServerHandler {
 					if( pObject == null ){
 						throw new ServerException("请求参数[" + p + "]未传");
 					}
+					pObject = Converts.convert(pObject, parameter.getType());
 					linkList.add(pObject);
 					continue;
 				}
@@ -92,6 +97,7 @@ public class MvcHandler extends HttpServerHandler {
 			Object result = null;
 			try {
 				method.setAccessible(true);
+				logger.info("invoke method{" + method + "}" + "argus{" + linkList + "}");
 				result = method.invoke(object,paras);
 			} catch (Exception e) {
 				e.printStackTrace();

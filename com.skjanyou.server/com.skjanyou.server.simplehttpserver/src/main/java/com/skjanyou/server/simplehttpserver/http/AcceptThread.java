@@ -124,7 +124,6 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
                 sb.append(headerMsg).append(ServerConst.CRLF);
             }
             String requestInfo = sb.toString().trim();        
-            System.out.println(requestInfo);	
             request.headers().converToHeaders(requestInfo);
             // 3.Post请求要通过Control-length获取请求体内容
             
