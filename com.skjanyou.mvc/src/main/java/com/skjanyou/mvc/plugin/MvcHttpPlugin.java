@@ -51,7 +51,7 @@ public class MvcHttpPlugin implements PluginSupport{
 
 	@Override
 	public void shutdown() {
-		
+		server.shutdown();
 	}
 
 }

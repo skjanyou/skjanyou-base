@@ -2,8 +2,11 @@ package com.skjanyou.mvc.handler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +14,7 @@ import java.util.Map.Entry;
 import com.skjanyou.mvc.anno.Mvc.Autowired;
 import com.skjanyou.mvc.anno.Mvc.Controller;
 import com.skjanyou.mvc.anno.Mvc.Dao;
+import com.skjanyou.mvc.anno.Mvc.HttpParameter;
 import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
 import com.skjanyou.mvc.bean.Context;
@@ -22,9 +26,9 @@ import com.skjanyou.server.simplehttpserver.http.HttpHeaders;
 import com.skjanyou.server.simplehttpserver.http.HttpProtocolLv1;
 import com.skjanyou.server.simplehttpserver.http.HttpRequest;
 import com.skjanyou.server.simplehttpserver.http.HttpResponse;
-import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
 import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseBody;
 import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
+import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
 import com.skjanyou.util.ClassUtil;
 
 public class MvcHandler extends HttpServerHandler {
@@ -47,7 +51,7 @@ public class MvcHandler extends HttpServerHandler {
 		// 响应头
 		HttpHeaders httpHeaders = (HttpHeaders) response.headers();
 		// 请求url
-		String url = request.requestLine().url(); 
+		String url = request.requestLine().url().split("\\?")[0]; 
 		// 查询参数
 		Map<String,Object> params = request.requestLine().queryParams();
 
@@ -57,10 +61,38 @@ public class MvcHandler extends HttpServerHandler {
 		if( context != null ){
 			Method method = context.getTargetMethod();
 			Object object = context.getTargetObj();
+			List<Object> linkList = new LinkedList<>();
+			Parameter[] parameters = method.getParameters();
+			for (Parameter parameter : parameters) {
+				// 参数为HttpRequest 
+				if( HttpRequest.class.isAssignableFrom(parameter.getType()) ){
+					linkList.add(request);
+					continue;
+				}
+				// 参数为HttpResponse
+				if( HttpResponse.class.isAssignableFrom(parameter.getType()) ){
+					linkList.add(response);
+					continue;
+				}
+				// 查询参数
+				HttpParameter httpParameter = parameter.getAnnotation(HttpParameter.class);
+				if( httpParameter != null ){
+					String p = httpParameter.value();
+					Object pObject = params.get(p);
+					if( pObject == null ){
+						throw new ServerException("请求参数[" + p + "]未传");
+					}
+					linkList.add(pObject);
+					continue;
+				}
+				linkList.add(null);
+			}
+			
+			Object[] paras = linkList.toArray(new Object[]{});
 			Object result = null;
 			try {
 				method.setAccessible(true);
-				result = method.invoke(object);
+				result = method.invoke(object,paras);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new ServerException("方法调用失败" + method,e);
@@ -167,8 +199,7 @@ public class MvcHandler extends HttpServerHandler {
 				// 自动装配
 				Autowired autowired = field.getDeclaredAnnotation(Autowired.class);
 				if( autowired != null ){
-					String beanName = field.getName();
-					filedObj = beanMap.get(beanName);
+					filedObj = getBeanByInterfaceClass(field.getType(),beanMap);
 					if( filedObj == null ){
 						throw new ServerException(fileds + "待装配对象在容器中不存在!");
 					}						
@@ -184,5 +215,15 @@ public class MvcHandler extends HttpServerHandler {
 			}
 			
 		}
+	}
+	
+	public static Object getBeanByInterfaceClass( Class<?> targetClass , Map<String,Object> beanMap ){
+		Collection<Object> values = beanMap.values();
+		for (Object object : values) {
+			if( targetClass.isAssignableFrom(object.getClass()) ){
+				return object;
+			}
+		}
+		return null;
 	}
 }

@@ -47,4 +47,12 @@ public interface Mvc {
 	public @interface Autowired {
 		public String value() default "";
 	}
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.PARAMETER)
+	@Retention(RetentionPolicy.RUNTIME)	
+	public @interface HttpParameter {
+		public String value();
+	}	
 }
