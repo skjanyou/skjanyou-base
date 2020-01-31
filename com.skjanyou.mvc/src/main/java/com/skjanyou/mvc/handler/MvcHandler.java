@@ -198,7 +198,7 @@ public class MvcHandler extends HttpServerHandler {
 					String beanName = dao.value();
 					filedObj = beanMap.get(beanName);
 					if( filedObj == null ){
-						throw new ServerException(fileds + "待装配对象在容器中不存在!");
+						throw new ServerException(field + "待装配对象在容器中不存在!");
 					}					
 				}	
 				
@@ -207,7 +207,7 @@ public class MvcHandler extends HttpServerHandler {
 				if( autowired != null ){
 					filedObj = getBeanByInterfaceClass(field.getType(),beanMap);
 					if( filedObj == null ){
-						throw new ServerException(fileds + "待装配对象在容器中不存在!");
+						throw new ServerException(field + "待装配对象在容器中不存在!");
 					}						
 				}
 				
