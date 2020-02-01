@@ -16,13 +16,13 @@ import com.skjanyou.server.simplehttpserver.http.HttpServer;
 import com.skjanyou.util.StringUtil;
 
 public class MvcHttpPlugin implements PluginSupport{
-	@Property("http.port")
+	@Property("mvc.port")
 	private String port;
-	@Property("http.ip")
+	@Property("mvc.ip")
 	private String ip;
-	@Property("http.timeout")
+	@Property("mvc.timeout")
 	private String timeout;
-	@Property("http.scanPath")
+	@Property("mvc.scanPath")
 	private String scanPath;
 	
 	private ServerConfig config;

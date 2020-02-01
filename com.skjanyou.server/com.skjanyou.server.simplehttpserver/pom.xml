@@ -39,6 +39,11 @@
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.plugin</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>					
+		</dependency>	
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.log</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>							
 	</dependencies>
 </project>

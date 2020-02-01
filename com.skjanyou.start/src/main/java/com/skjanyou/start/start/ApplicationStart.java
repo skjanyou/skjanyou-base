@@ -77,7 +77,9 @@ public final class ApplicationStart {
 		// 8.初始化所有的插件bean
 		initPlugin();
 		// 9.启动所有的插件
+		logger.info("----------------开始启动插件----------------");
 		PluginManager.loadAllPlugins();
+		logger.info("----------------启动插件完成----------------");
 		// 10.绑定线程守护事件
 		
 	} 
