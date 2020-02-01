@@ -1,4 +1,4 @@
-package com.skjanyou.db.mybatis.util;
+package com.skjanyou.db.util;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin 
+	id="skjanyou.db" 
+	displayName="Db插件"
+	activator="com.skjanyou.db.plugin.DBPlugin" 
+	order="0" 
+	enable="true"
+	failOnInitError="true"
+	defaultConfig="config/db.default.properties" 
+	classScanPath="com.skjanyou.db"
+	/>

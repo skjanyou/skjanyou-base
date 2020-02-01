@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.skjanyou.db.mybatis.anno.Mapper;
-import com.skjanyou.db.mybatis.util.DbUtil;
 import com.skjanyou.db.mybatis.util.StringUtil;
 import com.skjanyou.db.pool.DataSource;
+import com.skjanyou.db.util.DbUtil;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 

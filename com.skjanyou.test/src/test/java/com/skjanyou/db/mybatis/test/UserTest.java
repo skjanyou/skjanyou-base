@@ -1,9 +1,9 @@
 package com.skjanyou.db.mybatis.test;
 
-import com.skjanyou.db.bean.DatabaseInfo;
-import com.skjanyou.db.mybatis.util.DbUtil;
-
 import junit.framework.TestCase;
+
+import com.skjanyou.db.bean.DatabaseInfo;
+import com.skjanyou.db.util.DbUtil;
 
 public class UserTest extends TestCase {
 	{

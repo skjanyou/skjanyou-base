@@ -21,6 +21,16 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.plugin</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.annotation.api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>			
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
