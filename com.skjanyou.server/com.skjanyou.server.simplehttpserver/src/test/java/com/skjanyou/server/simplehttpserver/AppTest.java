@@ -2,6 +2,7 @@ package com.skjanyou.server.simplehttpserver;
 
 import java.io.File;
 
+import com.skjanyou.annotation.api.enumclass.ResponseType;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.constant.StatusCode;
@@ -10,8 +11,10 @@ import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.Server;
+import com.skjanyou.server.simplehttpserver.http.HttpHeaders;
 import com.skjanyou.server.simplehttpserver.http.HttpRequest;
 import com.skjanyou.server.simplehttpserver.http.HttpResponse;
+import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseBody;
 import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
 import com.skjanyou.server.simplehttpserver.http.HttpServer;
 import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
@@ -38,6 +41,21 @@ public class AppTest {
 				response.responseBody().setBodyContent("<p>服务器出现异常</p>");
 				System.out.println("其他请求,我要返回状态码为错误");
 			}			
+		}
+
+		@Override
+		public void handlerException(Exception e, HttpRequest request,
+				HttpResponse response) {
+			// 响应行
+			HttpResponseLine responseLine = response.getHttpResponseLine();
+			// 响应体
+			HttpResponseBody responseBody = response.getHttpResponseBody();
+			// 响应头
+			HttpHeaders httpHeaders = response.getHttpHeaders();
+			
+			responseLine.setStatusCode(StatusCode.Error);
+			responseBody.setBodyContent("服务器内部错误");
+			httpHeaders.put("Content-Type", ResponseType.HTML.getValue());			
 		}
 		
 	}

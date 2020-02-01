@@ -9,6 +9,8 @@ public abstract class HttpServerHandler implements ServerHandler {
 
 	public abstract void handler(HttpRequest request,HttpResponse response) throws ServerException;
 	
+	public abstract void handlerException( Exception e ,HttpRequest request, HttpResponse response );
+	
 	@Override
 	public void handler(Request request, Response response) throws ServerException{
 		HttpRequest httpRequest = null;
@@ -17,10 +19,13 @@ public abstract class HttpServerHandler implements ServerHandler {
 			httpRequest = (HttpRequest) request;
 			httpResponse = (HttpResponse) response;
 		}else{
-			throw new ServerException("HttpServerHandler请求和响应类型有误!");
+			handlerException(new ServerException("HttpServerHandler请求和响应类型有误!"),httpRequest,httpResponse);
 		}
-		
-		handler(httpRequest,httpResponse);
+		try{
+			handler(httpRequest,httpResponse);
+		} catch( Exception e ) {
+			handlerException(e,httpRequest,httpResponse);
+		}	
 	}
 
 	@Override

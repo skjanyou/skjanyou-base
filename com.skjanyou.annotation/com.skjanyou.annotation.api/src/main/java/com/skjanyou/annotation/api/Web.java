@@ -42,7 +42,7 @@ public final class Web {
 	@Target({ElementType.METHOD})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
-	public @interface Response {
-		ResponseType type() default ResponseType.HTML;
+	public @interface ResponseBody {
+		ResponseType type() default ResponseType.JSON;
 	}	
 }

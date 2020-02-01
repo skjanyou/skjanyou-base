@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.skjanyou.annotation.api.Web.ResponseBody;
+import com.skjanyou.annotation.api.enumclass.ResponseType;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.mvc.anno.Mvc.Autowired;
@@ -44,6 +46,19 @@ public class MvcHandler extends HttpServerHandler {
 		this.scanPath = scanPath;
 	}
 	
+	@Override
+	public void handlerException( Exception e ,HttpRequest request, HttpResponse response ) {
+		// 响应行
+		HttpResponseLine responseLine = response.getHttpResponseLine();
+		// 响应体
+		HttpResponseBody responseBody = response.getHttpResponseBody();
+		// 响应头
+		HttpHeaders httpHeaders = response.getHttpHeaders();
+		
+		responseLine.setStatusCode(StatusCode.Error);
+		responseBody.setBodyContent("服务器内部错误");
+		httpHeaders.put("Content-Type", ResponseType.HTML.getValue());
+	}
 	
 	@Override
 	public void handler(HttpRequest request, HttpResponse response) throws ServerException{
@@ -96,15 +111,17 @@ public class MvcHandler extends HttpServerHandler {
 			Object result = null;
 			try {
 				method.setAccessible(true);
+				ResponseBody rb = method.getAnnotation(ResponseBody.class);
+				if( rb != null ){
+					httpHeaders.put("Content-Type", rb.type().getValue());
+				}
 				logger.info("invoke method{" + method + "}" + "argus{" + linkList + "}");
 				result = method.invoke(object,paras);
 			} catch (Exception e) {
-				e.printStackTrace();
 				throw new ServerException("方法调用失败" + method,e);
 			}
 			responseLine.setStatusCode(StatusCode.Ok);
 			responseBody.setBodyContent(result.toString());
-			httpHeaders.put("Content-Type", "json");
 		}else{
 			responseLine.setStatusCode(StatusCode.Not_Found);
 		}
@@ -228,4 +245,7 @@ public class MvcHandler extends HttpServerHandler {
 		}
 		return null;
 	}
+
+
+
 }
