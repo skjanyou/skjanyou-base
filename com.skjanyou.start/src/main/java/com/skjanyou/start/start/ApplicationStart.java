@@ -2,6 +2,7 @@ package com.skjanyou.start.start;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -23,6 +24,7 @@ import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.beancontainer.factory.impl.BeandefinitionFactoryImpl;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.SimpleLogUtil;
+import com.skjanyou.plugin.PluginDefineAnnotationClassManager;
 import com.skjanyou.plugin.PluginManager;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.bean.Plugin;
@@ -75,12 +77,12 @@ public final class ApplicationStart {
 		findPlugin();
 		// 5.加载所有的类
 		loadAllClasses();
-		// 6.创建所有的Bean
-		initBean();
-		// 7.填充依赖bean
-		fillDependency();
-		// 8.初始化所有的插件bean
+		// 6.初始化所有的插件bean
 		initPlugin();
+		// 7.创建所有的Bean
+		initBean();
+		// 8.填充依赖bean
+		fillDependency();
 		// 9.启动所有的插件
 		logger.info("----------------开始启动插件----------------");
 		PluginManager.loadAllPlugins();
@@ -181,21 +183,25 @@ public final class ApplicationStart {
 	/** 创建所有的Bean **/
 	private static void initBean(  ){
 		String className = null;
-		for (Class<?> cla : classSet) {
+		Class<? extends Annotation> registAnnoClass = null;
+		for (Class<?> targetClass : classSet) {
 			// 接口,跳过处理
-			if(cla.isInterface()){ continue; }
-			if(cla.isEnum()){ continue; }
-			if(cla.isAnnotation()){ continue; }
+			if(targetClass.isEnum()){ continue; }
+			if(targetClass.isAnnotation()){ continue; }
 			
-			Bean beanAnno = cla.getAnnotation(Bean.class);
+			Bean beanAnno = targetClass.getAnnotation(Bean.class);
 			if( beanAnno != null ){
 				className = beanAnno.value();
 				if( StringUtil.isBlank(className) ){
 					// 如果没有提供bean的别名,就使用全限定名来作为查询key
-					className = cla.getName();
+					className = targetClass.getName();
 				}
-				Object bean = InstanceUtil.newInstance(cla);
+				Object bean = InstanceUtil.newInstance(targetClass);
 				beanContainer.setBean(className, bean);
+			}
+			registAnnoClass = PluginDefineAnnotationClassManager.getRegistAnnotationClass(PluginDefineAnnotationClassManager.classAnnotationClass(),targetClass);
+			if( registAnnoClass != null ){
+				PluginDefineAnnotationClassManager.classProcess(registAnnoClass, targetClass, beanContainer);
 			}
 			
 		}		
