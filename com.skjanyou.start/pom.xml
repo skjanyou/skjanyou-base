@@ -39,7 +39,12 @@
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.plugin</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>		
+		</dependency>	
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.beancontainer</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>			
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>

@@ -19,6 +19,8 @@ import org.dom4j.io.SAXReader;
 import com.skjanyou.annotation.api.Application.Bean;
 import com.skjanyou.annotation.api.Application.Component;
 import com.skjanyou.annotation.api.Util.Property;
+import com.skjanyou.beancontainer.factory.Beandefinition;
+import com.skjanyou.beancontainer.factory.impl.BeandefinitionFactoryImpl;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.SimpleLogUtil;
 import com.skjanyou.plugin.PluginManager;
@@ -31,7 +33,6 @@ import com.skjanyou.start.config.ComplexPluginConfig;
 import com.skjanyou.start.config.ConfigManager;
 import com.skjanyou.start.config.ConfigManagerFactory;
 import com.skjanyou.start.exception.StartFailException;
-import com.skjanyou.start.ioc.BeanContainer;
 import com.skjanyou.start.util.InstanceUtil;
 import com.skjanyou.start.util.JarUtil;
 import com.skjanyou.util.ClassUtil;
@@ -47,8 +48,12 @@ public final class ApplicationStart {
 	private static ClassLoader classLoader;
 	// 配置中心
 	private static ConfigManager manager;
+	// 插件
 	private static String pluginPackageName = "plugin/";
 	private static String pluginPattern = "plugin/\\S+.plugin.xml$";
+	// bean容器
+	private static Beandefinition beanContainer = new BeandefinitionFactoryImpl().create();
+	
 	// 所有的类
 	private static Set<Class<?>> classSet;
 	// logger
@@ -90,7 +95,7 @@ public final class ApplicationStart {
 
 		Class<? extends ConfigManagerFactory> cmFactoryClazz = configure.configManagerFactory();
 		ConfigManagerFactory cmFactory = InstanceUtil.newInstance(cmFactoryClazz);
-		BeanContainer.setBean(ConfigManagerFactory.class.getName(), cmFactory);
+		beanContainer.setBean(ConfigManagerFactory.class.getName(), cmFactory);
 		manager = cmFactory.create();
 	}	
 
@@ -190,7 +195,7 @@ public final class ApplicationStart {
 					className = cla.getName();
 				}
 				Object bean = InstanceUtil.newInstance(cla);
-				BeanContainer.setBean(className, bean);
+				beanContainer.setBean(className, bean);
 			}
 			
 		}		
@@ -210,16 +215,16 @@ public final class ApplicationStart {
 						beanName = fieldBean.value();
 						Object obj = null;
 						if( null == beanName || "".equals(beanName) ){
-							obj = BeanContainer.getBeanByInterfaceClass(field.getType());
+							obj = beanContainer.getBeanByInterfaceClass(field.getType());
 						}else{
-							obj = BeanContainer.getBean(beanName);
+							obj = beanContainer.getBean(beanName);
 						}
 						// 通过反射赋值
 						field.setAccessible(true);
 						Object bean = null;
 						if( !ClassUtil.isStatic(field) ){
 							bean = InstanceUtil.newInstance(cla);
-							BeanContainer.setBean(cla.getName(), bean);
+							beanContainer.setBean(cla.getName(), bean);
 						}
 						try {
 							field.set(bean, obj);
