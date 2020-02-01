@@ -67,6 +67,7 @@ public final class ApplicationStart {
 			logger.error("启动类" + clazz.getName() + "没有配置@Configure注解,应用程序无法启动!");
 			return ; 
 		}	
+		beanContainer.setBean(Beandefinition.class.getName(), beanContainer);
 		// 1.读取配置
 		initConfig();
 		// 2.搜索jar文件,并将jar文件放置到classpath内,并初始化classloader

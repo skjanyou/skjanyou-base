@@ -5,11 +5,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
@@ -170,13 +169,9 @@ public class MvcHandler extends HttpServerHandler {
 	}
 
 	private void autowired() throws ServerException{
-		Map<String,Object> beanMap = MvcApplicateContext.getAllBeans();
-		Iterator<Entry<String, Object>> it = beanMap.entrySet().iterator();
+		HashSet<?> beanSet = MvcApplicateContext.getAllBeans();
 		Field[] fileds = null;
-		while(it.hasNext()){
-			Entry<String, Object> entry = it.next();
-			
-			Object obj = entry.getValue();
+		for (Object obj : beanSet) {
 			
 			fileds = obj.getClass().getDeclaredFields();
 			for (Field field : fileds) {
@@ -186,7 +181,7 @@ public class MvcHandler extends HttpServerHandler {
 				Service service = field.getDeclaredAnnotation(Service.class);
 				if( service != null ){
 					String beanName = service.value();
-					filedObj = beanMap.get(beanName);
+					filedObj = MvcApplicateContext.getBean(beanName);
 					if( filedObj == null ){
 						throw new ServerException(fileds + "待装配对象在容器中不存在!");
 					}
@@ -196,7 +191,7 @@ public class MvcHandler extends HttpServerHandler {
 				Dao dao = field.getDeclaredAnnotation(Dao.class);
 				if( dao != null ){
 					String beanName = dao.value();
-					filedObj = beanMap.get(beanName);
+					filedObj = MvcApplicateContext.getBean(beanName);
 					if( filedObj == null ){
 						throw new ServerException(field + "待装配对象在容器中不存在!");
 					}					
@@ -205,7 +200,7 @@ public class MvcHandler extends HttpServerHandler {
 				// 自动装配
 				Autowired autowired = field.getDeclaredAnnotation(Autowired.class);
 				if( autowired != null ){
-					filedObj = getBeanByInterfaceClass(field.getType(),beanMap);
+					filedObj = MvcApplicateContext.getBeanByInterfaceClass(field.getType());
 					if( filedObj == null ){
 						throw new ServerException(field + "待装配对象在容器中不存在!");
 					}						
@@ -219,8 +214,9 @@ public class MvcHandler extends HttpServerHandler {
 					}
 				}
 			}
-			
 		}
+	
+		
 	}
 	
 	public static Object getBeanByInterfaceClass( Class<?> targetClass , Map<String,Object> beanMap ){

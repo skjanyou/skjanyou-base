@@ -1,7 +1,6 @@
 package com.skjanyou.db.mybatis.plugin;
 
 import java.lang.annotation.Annotation;
-import java.util.Iterator;
 import java.util.List;
 
 import com.skjanyou.beancontainer.factory.Beandefinition;
@@ -12,7 +11,6 @@ import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.adapter.PluginDefineAnnotationClassAdapter;
 import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.plugin.constant.DefineAnnotationClassPosition;
-import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.CommUtil;
 
 public class MybatisPlugin implements PluginSupport {

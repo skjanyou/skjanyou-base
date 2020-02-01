@@ -70,6 +70,8 @@ public class BeandefinitionImpl implements Beandefinition {
 				continue;
 			}
 			for (String realKey : map.keySet()) {
+				// 代理类不做处理
+				if(realKey.contains("Proxy")){ continue; }
 				beans.add(map.get(realKey));
 			}
 		}

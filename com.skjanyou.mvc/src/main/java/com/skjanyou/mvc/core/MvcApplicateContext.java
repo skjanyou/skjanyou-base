@@ -1,10 +1,15 @@
 package com.skjanyou.mvc.core;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 
+import com.skjanyou.annotation.api.Application.Bean;
+import com.skjanyou.annotation.api.Application.Component;
+import com.skjanyou.beancontainer.factory.Beandefinition;
+
+@Component
 public class MvcApplicateContext {
-	private static Map<String,Object> beans = new HashMap<>();
+	@Bean
+	private static Beandefinition beandefinition;
 	
 	private MvcApplicateContext(){}
 	
@@ -15,18 +20,22 @@ public class MvcApplicateContext {
 	
 	@SuppressWarnings("unchecked")
 	public static<T> T getBean( String clazzName ){
-		return (T) beans.get(clazzName);
+		return (T) beandefinition.getBean(clazzName);
+	}
+	
+	public static<T> T getBeanByInterfaceClass(Class<?> clazz) {
+		return beandefinition.getBeanByInterfaceClass(clazz);
 	}
 	
 	public static void putBean( String clazzName,Object bean ){
-		beans.put(clazzName, bean);
+		beandefinition.setBean(clazzName, bean);
 	}
 	
 	public static void putBean( Class<?> clazz , Object bean ){
 		putBean( clazz.getName(),bean );
 	}
 	
-	public static Map<String,Object> getAllBeans(){
-		return beans;
+	public static HashSet<?> getAllBeans(){
+		return beandefinition.getBeans();
 	}
 }
