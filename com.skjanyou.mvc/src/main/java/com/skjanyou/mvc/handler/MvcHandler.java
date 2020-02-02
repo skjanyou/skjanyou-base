@@ -22,7 +22,6 @@ import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.mvc.core.MvcApplicateContext;
-import com.skjanyou.mvc.core.convert.Converts;
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.api.inter.ServerHandler;
@@ -34,6 +33,7 @@ import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseBody;
 import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
 import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
 import com.skjanyou.util.ClassUtil;
+import com.skjanyou.util.convert.Converts;
 
 public class MvcHandler extends HttpServerHandler {
 	private Logger logger = LogUtil.getLogger(MvcHandler.class);

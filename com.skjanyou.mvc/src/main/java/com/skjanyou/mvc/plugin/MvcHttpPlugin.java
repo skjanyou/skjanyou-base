@@ -5,7 +5,7 @@ import java.util.List;
 import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
-import com.skjanyou.mvc.handler.CharacterEncodingFilter;
+import com.skjanyou.mvc.filter.CharacterEncodingFilter;
 import com.skjanyou.mvc.handler.MvcHandler;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.bean.PluginConfig;
@@ -13,15 +13,14 @@ import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.inter.Server;
 import com.skjanyou.server.simplehttpserver.http.HttpServer;
-import com.skjanyou.util.StringUtil;
 
 public class MvcHttpPlugin implements PluginSupport{
 	@Property("mvc.port")
-	private String port;
+	private int port;
 	@Property("mvc.ip")
 	private String ip;
 	@Property("mvc.timeout")
-	private String timeout;
+	private Long timeout;
 	@Property("mvc.scanPath")
 	private String scanPath;
 	
@@ -34,9 +33,9 @@ public class MvcHttpPlugin implements PluginSupport{
 	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) {
 		config = new ServerConfig();
 		config.setIp(ip);
-		config.setPort(Integer.parseInt(port));
-		if( !StringUtil.isBlank(timeout) ){
-			config.setTimeout(Long.parseLong(timeout));
+		config.setPort(port);
+		if( timeout != null ){
+			config.setTimeout(timeout);
 		}
 		ApplicateContext.setServerHandler(new MvcHandler(scanPath));
     	ApplicateContext.registFilter(new CharacterEncodingFilter());	

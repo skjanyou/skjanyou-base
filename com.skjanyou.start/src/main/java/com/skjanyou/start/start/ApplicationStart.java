@@ -42,6 +42,7 @@ import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.ResourcesUtil;
 import com.skjanyou.util.ScanUtil;
 import com.skjanyou.util.StringUtil;
+import com.skjanyou.util.convert.Converts;
 
 public final class ApplicationStart {
 	private ApplicationStart(){}
@@ -283,17 +284,20 @@ public final class ApplicationStart {
 	private static void fillPluginBeanWithProperties( Class<?> clazz,PluginSupport pluginSupport,PluginConfig properties ){
 		Field[] fileds = clazz.getDeclaredFields();
 		Property property = null;
-		String key = null;String value = null;
+		String key = null;Object value = null;
 		for (Field field : fileds) {
 			property = field.getAnnotation(Property.class);
 			if( property != null ){
 				key = property.value();
 				value = properties.getProperty(key);
 				field.setAccessible(true);
-				try {
-					field.set(pluginSupport, value);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					e.printStackTrace();
+				if( value != null && !StringUtil.isBlank(value.toString()) ){
+					value = Converts.convert(value, field.getType());
+					try {
+						field.set(pluginSupport, value);
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

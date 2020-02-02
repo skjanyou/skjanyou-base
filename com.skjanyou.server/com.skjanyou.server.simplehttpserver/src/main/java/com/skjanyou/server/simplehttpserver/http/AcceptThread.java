@@ -19,6 +19,7 @@ import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.ServerHandler;
 import com.skjanyou.util.CommUtil;
+import com.skjanyou.util.DateUtil;
 
 /**
  * 接收线程
@@ -79,6 +80,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             String statusLine = protocol + " " + statusCode;
             // 写状态头
             bw.write(statusLine);
+            bw.write(ServerConst.CRLF);
             byte[] bodyContent = response.responseBody().getBodyContent();
             if( bodyContent == null ){
             	bodyContent = new byte[0];
@@ -90,7 +92,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             }
             
             // Test
-            responseHeaders.put("Date", "Sun, 17 Mar 2020 08:12:54 GMT");
+            responseHeaders.put("Date", DateUtil.getFormatTime());
             responseHeaders.put("Server", "skjanyou simplehttpserver");
             responseHeaders.put("Expires", "Sun, 17 Mar 2020 08:12:54 GMT");
             responseHeaders.put("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
@@ -102,7 +104,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             String responseHeaderString = response.headers().toHttpHeaderString();
             bw.write(responseHeaderString);
             bw.write(ServerConst.CRLF);
-            String body = new String(bodyContent);
+            String body = new String(bodyContent,"utf-8");
             // 写正文
             bw.write(body);
             bw.flush();

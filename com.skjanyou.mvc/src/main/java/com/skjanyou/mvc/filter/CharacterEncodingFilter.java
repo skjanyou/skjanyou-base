@@ -1,4 +1,4 @@
-package com.skjanyou.mvc.handler;
+package com.skjanyou.mvc.filter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

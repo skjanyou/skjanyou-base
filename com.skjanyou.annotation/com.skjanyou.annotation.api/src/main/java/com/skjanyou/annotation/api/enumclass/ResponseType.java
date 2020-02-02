@@ -173,7 +173,7 @@ public enum ResponseType {
 	WSDL("text/xml"),
 	CSS("text/css"),
 	MFP("application/x-shockwave-flash"),
-	HTML("text/html;; charset=UTF-8"),
+	HTML("text/html; charset=UTF-8"),
 	PLS("audio/scpls"),
 	WRI("application/x-wri"),
 	PLT("application/x-plt"),

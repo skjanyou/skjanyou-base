@@ -1,6 +1,6 @@
 package com.skjanyou.mvc;
 
-import com.skjanyou.mvc.handler.CharacterEncodingFilter;
+import com.skjanyou.mvc.filter.CharacterEncodingFilter;
 import com.skjanyou.mvc.handler.MvcHandler;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
