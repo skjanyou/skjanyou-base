@@ -54,5 +54,6 @@ public interface Mvc {
 	@Retention(RetentionPolicy.RUNTIME)	
 	public @interface HttpParameter {
 		public String value();
+		public boolean required() default true;
 	}	
 }

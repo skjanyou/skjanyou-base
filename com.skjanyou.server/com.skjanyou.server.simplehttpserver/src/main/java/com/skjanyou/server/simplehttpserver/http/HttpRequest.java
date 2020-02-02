@@ -31,7 +31,7 @@ public class HttpRequest implements Request {
 		
 		@Override
 		public Requestbody readFromStream(InputStream is) {
-			String charset = request.headers().get("content-type");
+			String charset = request.headers().get("Content-type");
 			try {
 				this.requestBody = StreamUtil.convertToString(is, charset, false);
 			} catch (IOException e) {

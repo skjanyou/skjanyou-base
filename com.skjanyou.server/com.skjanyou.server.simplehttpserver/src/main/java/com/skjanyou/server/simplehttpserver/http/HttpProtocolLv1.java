@@ -11,7 +11,7 @@ public class HttpProtocolLv1 implements Protocol {
 	
 	@Override
 	public String protocol() {
-		return "http";
+		return "HTTP";
 	}
 
 }

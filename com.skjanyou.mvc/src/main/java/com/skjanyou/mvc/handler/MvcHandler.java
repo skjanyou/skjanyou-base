@@ -97,10 +97,12 @@ public class MvcHandler extends HttpServerHandler {
 				if( httpParameter != null ){
 					String p = httpParameter.value();
 					Object pObject = params.get(p);
-					if( pObject == null ){
+					if( pObject == null && httpParameter.required() ){
 						throw new ServerException("请求参数[" + p + "]未传");
 					}
-					pObject = Converts.convert(pObject, parameter.getType());
+					if( pObject != null ){
+						pObject = Converts.convert(pObject, parameter.getType());
+					}
 					linkList.add(pObject);
 					continue;
 				}
@@ -117,6 +119,7 @@ public class MvcHandler extends HttpServerHandler {
 				}
 				logger.info("invoke method{" + method + "}" + "argus{" + linkList + "}");
 				result = method.invoke(object,paras);
+				logger.info("return result " + result);
 			} catch (Exception e) {
 				throw new ServerException("方法调用失败" + method,e);
 			}
@@ -124,6 +127,8 @@ public class MvcHandler extends HttpServerHandler {
 			responseBody.setBodyContent(result.toString());
 		}else{
 			responseLine.setStatusCode(StatusCode.Not_Found);
+			responseBody.setBodyContent("<pre>找不到页面</pre>");
+			httpHeaders.put("Content-type", ResponseType.HTML.getValue());
 		}
 		
 	}	

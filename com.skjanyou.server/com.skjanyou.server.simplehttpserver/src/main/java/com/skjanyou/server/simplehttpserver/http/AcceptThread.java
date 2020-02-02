@@ -9,6 +9,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
 
+import com.skjanyou.log.core.Logger;
+import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
@@ -77,7 +79,6 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             String statusLine = protocol + " " + statusCode;
             // 写状态头
             bw.write(statusLine);
-            
             byte[] bodyContent = response.responseBody().getBodyContent();
             if( bodyContent == null ){
             	bodyContent = new byte[0];
@@ -87,13 +88,23 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             if(responseHeaders.get("Content-Type") == null){
             	responseHeaders.put("Content-Type", "text/plain;charset=UTF-8");
             }
+            
+            // Test
+            responseHeaders.put("Date", "Sun, 17 Mar 2020 08:12:54 GMT");
+            responseHeaders.put("Server", "skjanyou simplehttpserver");
+            responseHeaders.put("Expires", "Sun, 17 Mar 2020 08:12:54 GMT");
+            responseHeaders.put("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
+            responseHeaders.put("Keep-Alive", "timeout=5, max=100");
+            responseHeaders.put("Connection", "Keep-Alive");
+            
+            
             // 写返回头
             String responseHeaderString = response.headers().toHttpHeaderString();
             bw.write(responseHeaderString);
             bw.write(ServerConst.CRLF);
-            
+            String body = new String(bodyContent);
             // 写正文
-            bw.write(new String(bodyContent));
+            bw.write(body);
             bw.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
