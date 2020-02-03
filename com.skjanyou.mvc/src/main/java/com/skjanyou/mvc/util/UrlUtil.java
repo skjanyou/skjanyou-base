@@ -18,10 +18,9 @@ public class UrlUtil {
 			isr = new InputStreamReader(is,"utf-8");
 			//为字符输入流添加缓冲
 			br = new BufferedReader(isr);
-			String data = br.readLine();//读取数据
+			String data = null;//读取数据
 			
-			while (data!=null){//循环读取数据
-				data = br.readLine();
+			while ( ( data = br.readLine() ) != null ){//循环读取数据
 				sb.append(data);
 			}		
 		} catch (IOException e) {

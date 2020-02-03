@@ -45,8 +45,7 @@ public class StaticFileFilter implements Filter {
 
 	@Override
 	public Filter destroy() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.skjanyou.mvc.filter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
@@ -7,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.skjanyou.mvc.util.UrlUtil;
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Request;
@@ -58,8 +59,16 @@ public class ForwardFileter implements Filter {
 	            String val = conn.getHeaderField(key);
 	            httpHeaders.put(key, val);
 	        }			
-	        String html = UrlUtil.fechchHtml(conn.getInputStream());
-	        httpResponseBody.setBodyContent(html);
+	        InputStream is = conn.getInputStream();
+	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        int len = -1;byte[] buff = new byte[2048];
+	        while( ( len = is.read(buff) ) != -1 ){
+	        	baos.write(buff, 0, len);
+	        }
+	        byte[] bodyContent = baos.toByteArray();
+	        httpResponseBody.setBodyContent(bodyContent);
+//	        String html = UrlUtil.fechchHtml(conn.getInputStream());
+//	        httpResponseBody.setBodyContent(html);
 		}
 		return false;
 	}
