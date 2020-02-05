@@ -113,7 +113,7 @@ public final class DefaultConvert {
 			if( dist == null ){ return ""; }
 			String result = null;
 			try{
-				JSON.toJSONString(dist);
+				result = JSON.toJSONString(dist);
 			} catch( Exception e ){
 				result = dist.toString();
 			}

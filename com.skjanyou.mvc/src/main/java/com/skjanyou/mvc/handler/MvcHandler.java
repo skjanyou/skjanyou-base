@@ -72,7 +72,7 @@ public class MvcHandler extends HttpServerHandler {
 		String url = request.requestLine().url().split("\\?")[0]; 
 		// 查询参数
 		Map<String,Object> params = request.requestLine().queryParams();
-
+		
 		responseLine.setProtocol(new HttpProtocolLv1());
 		
 		Context context = mappings.get(url);
@@ -92,6 +92,11 @@ public class MvcHandler extends HttpServerHandler {
 					linkList.add(response);
 					continue;
 				}
+				// 参数为HttpHeaders
+				if( HttpHeaders.class.isAssignableFrom(parameter.getType()) ){
+					linkList.add(httpHeaders);
+				}
+				
 				// 查询参数
 				HttpParameter httpParameter = parameter.getAnnotation(HttpParameter.class);
 				if( httpParameter != null ){
@@ -113,13 +118,18 @@ public class MvcHandler extends HttpServerHandler {
 			Object result = null;
 			try {
 				method.setAccessible(true);
+				logger.info("invoke method{" + method + "}" + "argus{" + linkList + "}");
+				result = method.invoke(object,paras);
 				ResponseBody rb = method.getAnnotation(ResponseBody.class);
 				if( rb != null ){
 					httpHeaders.put("Content-Type", rb.type().getValue());
+					if( rb.type() == ResponseType.JSON ){
+						result = ConvertUtil.convert(result, String.class);
+					}
+				}else{
+					httpHeaders.put("Content-Type", ResponseType.JSON.getValue());
+					result = ConvertUtil.convert(result, String.class);
 				}
-				logger.info("invoke method{" + method + "}" + "argus{" + linkList + "}");
-				result = method.invoke(object,paras);
-				result = ConvertUtil.convert(result, String.class);
 				logger.info("return result " + result);
 			} catch (Exception e) {
 				throw new ServerException("方法调用失败" + method,e);
