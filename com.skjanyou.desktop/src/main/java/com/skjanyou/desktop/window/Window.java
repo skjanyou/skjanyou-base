@@ -1,5 +1,7 @@
 package com.skjanyou.desktop.window;
 
+import com.skjanyou.desktop.implant.Implant;
+
 public interface Window {
 	/** 设置宽 **/
 	public Window setWidth( float width );
@@ -21,4 +23,6 @@ public interface Window {
 	public Window executeJscriptWithoutReturn( String javaScript );
 	/** 执行js获得返回 **/
 	public Object executeJscript( String javaScript );
+	/** 添加注入脚本 **/
+	public Window addImplant( Implant... implants );
 }
