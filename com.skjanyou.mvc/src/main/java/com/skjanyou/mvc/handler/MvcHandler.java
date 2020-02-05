@@ -33,7 +33,7 @@ import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseBody;
 import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
 import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
 import com.skjanyou.util.ClassUtil;
-import com.skjanyou.util.convert.Converts;
+import com.skjanyou.util.convert.ConvertUtil;
 
 public class MvcHandler extends HttpServerHandler {
 	private Logger logger = LogUtil.getLogger(MvcHandler.class);
@@ -101,7 +101,7 @@ public class MvcHandler extends HttpServerHandler {
 						throw new ServerException("请求参数[" + p + "]未传");
 					}
 					if( pObject != null ){
-						pObject = Converts.convert(pObject, parameter.getType());
+						pObject = ConvertUtil.convert(pObject, parameter.getType());
 					}
 					linkList.add(pObject);
 					continue;
@@ -119,6 +119,7 @@ public class MvcHandler extends HttpServerHandler {
 				}
 				logger.info("invoke method{" + method + "}" + "argus{" + linkList + "}");
 				result = method.invoke(object,paras);
+				result = ConvertUtil.convert(result, String.class);
 				logger.info("return result " + result);
 			} catch (Exception e) {
 				throw new ServerException("方法调用失败" + method,e);

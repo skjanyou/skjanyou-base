@@ -3,7 +3,7 @@ package com.skjanyou.util.convert;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Converts {
+public class ConvertUtil {
 	private static List<ConvertProvider<?,?>> convertList = new ArrayList<>();
 	
 	public static void regist( ConvertProvider<?, ?> convertProvider ){

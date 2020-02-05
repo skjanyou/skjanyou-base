@@ -42,7 +42,7 @@ import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.ResourcesUtil;
 import com.skjanyou.util.ScanUtil;
 import com.skjanyou.util.StringUtil;
-import com.skjanyou.util.convert.Converts;
+import com.skjanyou.util.convert.ConvertUtil;
 
 public final class ApplicationStart {
 	private ApplicationStart(){}
@@ -292,7 +292,7 @@ public final class ApplicationStart {
 				value = properties.getProperty(key);
 				field.setAccessible(true);
 				if( value != null && !StringUtil.isBlank(value.toString()) ){
-					value = Converts.convert(value, field.getType());
+					value = ConvertUtil.convert(value, field.getType());
 					try {
 						field.set(pluginSupport, value);
 					} catch (IllegalArgumentException | IllegalAccessException e) {

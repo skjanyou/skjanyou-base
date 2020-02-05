@@ -1,12 +1,16 @@
 package com.skjanyou.util.convert;
 
+import com.alibaba.fastjson.JSON;
+import com.skjanyou.util.ClassUtil;
+
 public final class DefaultConvert {
 	static {
-		Converts.regist(new StringConvertToString());
-		Converts.regist(new StringConvertToInteger());
-		Converts.regist(new StringConvertToBoolean());
-		Converts.regist(new StringConvertToFloat());
-		Converts.regist(new StringConvertToDouble());
+		ConvertUtil.regist(new StringConvertToString());
+		ConvertUtil.regist(new StringConvertToInteger());
+		ConvertUtil.regist(new StringConvertToBoolean());
+		ConvertUtil.regist(new StringConvertToFloat());
+		ConvertUtil.regist(new StringConvertToDouble());
+		ConvertUtil.regist(new AnotherObjectConvertToString());
 	}
 	
 	
@@ -23,6 +27,11 @@ public final class DefaultConvert {
 			return dist;
 		}
 
+		@Override
+		public int order() {
+			return 100;
+		}
+
 	}	
 	/** String类型->Integer类型 **/
 	public static class StringConvertToInteger implements ConvertProvider<String, Integer> {
@@ -34,6 +43,11 @@ public final class DefaultConvert {
 		@Override
 		public Integer converTo(String dist) {
 			return Integer.parseInt(dist);
+		}
+
+		@Override
+		public int order() {
+			return 100;
 		}
 	}	
 	
@@ -48,6 +62,11 @@ public final class DefaultConvert {
 		public Boolean converTo(String dist) {
 			return Boolean.parseBoolean(dist);
 		}
+
+		@Override
+		public int order() {
+			return 100;
+		}
 	}
 	
 	/** String类型->float类型 **/
@@ -59,6 +78,10 @@ public final class DefaultConvert {
 		@Override
 		public Float converTo(String dist) {
 			return Float.parseFloat(dist);
+		}
+		@Override
+		public int order() {
+			return 100;
 		}
 	}
 	
@@ -72,5 +95,36 @@ public final class DefaultConvert {
 		public Double converTo(String dist) {
 			return Double.parseDouble(dist);
 		}
+		@Override
+		public int order() {
+			return 100;
+		}
+	}
+	
+	public static class AnotherObjectConvertToString implements ConvertProvider<Object,String> {
+
+		@Override
+		public boolean isMatch(Class<?> distClass, Class<?> targetClass) {
+			return !ClassUtil.isSimpleDataType(distClass);
+		}
+
+		@Override
+		public String converTo(Object dist) {
+			if( dist == null ){ return ""; }
+			String result = null;
+			try{
+				JSON.toJSONString(dist);
+			} catch( Exception e ){
+				result = dist.toString();
+			}
+			return result;
+		}
+
+		@Override
+		public int order() {
+			// 前面所有的转换器都没有使用的情况下,尝试使用这个进行转换
+			return Integer.MAX_VALUE;
+		}
+		
 	}
 }

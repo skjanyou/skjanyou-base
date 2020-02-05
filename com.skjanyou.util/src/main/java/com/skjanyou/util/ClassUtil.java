@@ -23,6 +23,11 @@ import java.util.jar.JarFile;
 public class ClassUtil {
 	public static final String CGLIB_CLASS_SEPARATOR = "$";
 	public static final List<String> SYSTEM_MATEHERS = new ArrayList<String>(Arrays.asList(new String[] { "java.", "javax." }));
+	public static final List<Class<?>> simpleDataTypeList = Arrays.asList( 
+			new Class<?>[]{ 
+					char.class,Character.class,String.class,int.class,Integer.class,short.class,Short.class,
+					long.class,Long.class,float.class,Float.class,double.class,Double.class,boolean.class,Boolean.class 
+	});
 	public static boolean isCglibProxyClassName(String className) {
 		return (className != null && className.contains(CGLIB_CLASS_SEPARATOR));
 	}
@@ -36,7 +41,9 @@ public class ClassUtil {
 		return Modifier.isStatic(field.getModifiers());
 	}
 	
-	
+	public static boolean isSimpleDataType( Class<?> targetClass ){
+		return simpleDataTypeList.contains(targetClass);
+	}
 	
 	/**
 	 * 获取代理类的原始类

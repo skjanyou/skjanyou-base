@@ -27,19 +27,23 @@
 			<version>0.9.12</version>
 		</dependency>
 		<dependency>
-		    <groupId>commons-beanutils</groupId>
-		    <artifactId>commons-beanutils</artifactId>
-		    <version>1.8.3</version>
-		</dependency>	
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.8.3</version>
+		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>		
+			<artifactId>cglib</artifactId>
 		</dependency>
 		<!-- xstream 处理xml格式 -->
-	    <dependency>
-	        <groupId>com.thoughtworks.xstream</groupId>
-	        <artifactId>xstream</artifactId>
-	        <version>1.4.10</version>
-	    </dependency>				
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.10</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+		</dependency>
 	</dependencies>
 </project>
