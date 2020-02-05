@@ -127,8 +127,8 @@ public class MvcHandler extends HttpServerHandler {
 			responseBody.setBodyContent(result.toString());
 		}else{
 			responseLine.setStatusCode(StatusCode.Not_Found);
-			responseBody.setBodyContent("<pre>找不到页面</pre>");
-			httpHeaders.put("Content-type", ResponseType.HTML.getValue());
+			responseBody.setBodyContent("<html>  <head>    <title>      找不到页面    </title>  </head>  <body>    <pre>找不到页面</pre>  </body></html>");
+			httpHeaders.put("Content-Type", ResponseType.HTML.getValue());
 		}
 		
 	}	

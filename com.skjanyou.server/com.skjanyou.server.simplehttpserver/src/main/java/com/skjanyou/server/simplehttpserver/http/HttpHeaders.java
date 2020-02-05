@@ -43,7 +43,7 @@ public class HttpHeaders implements Headers {
 			Entry<String, String> entry = it.next();
 			String key = entry.getKey();
 			String value = entry.getValue();
-			String header = MessageFormat.format("{0} : {1}{2}", key, value, ServerConst.CRLF );
+			String header = MessageFormat.format("{0}: {1}{2}", key, value, ServerConst.CRLF );
 			result += header;
 		}
 		

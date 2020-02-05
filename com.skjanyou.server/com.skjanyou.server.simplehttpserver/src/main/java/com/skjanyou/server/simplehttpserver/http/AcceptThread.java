@@ -9,8 +9,6 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
 
-import com.skjanyou.log.core.Logger;
-import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
@@ -94,10 +92,6 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             // Test
             responseHeaders.put("Date", DateUtil.getFormatTime());
             responseHeaders.put("Server", "skjanyou simplehttpserver");
-            responseHeaders.put("Expires", "Sun, 17 Mar 2020 08:12:54 GMT");
-            responseHeaders.put("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
-            responseHeaders.put("Keep-Alive", "timeout=5, max=100");
-            responseHeaders.put("Connection", "Keep-Alive");
             
             
             // 写返回头
@@ -125,7 +119,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 	}
 	
 	protected Request resolveRequest( BufferedReader br ) {
-		Request request = new HttpRequest();
+		HttpRequest request = new HttpRequest();
 		try {
             StringBuilder sb = new StringBuilder();
             // 1.获取第一行,获取请求类型和uri,构建RequestFeatures
@@ -139,7 +133,6 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             String requestInfo = sb.toString().trim();        
             request.headers().converToHeaders(requestInfo);
             // 3.Post请求要通过Control-length获取请求体内容
-            
             
 		} catch (Exception e) {
 			e.printStackTrace();
