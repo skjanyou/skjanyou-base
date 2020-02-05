@@ -38,6 +38,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.desktop</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
 		</dependency>

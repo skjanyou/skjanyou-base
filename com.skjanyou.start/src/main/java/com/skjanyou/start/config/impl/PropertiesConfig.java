@@ -13,6 +13,9 @@ public class PropertiesConfig implements ConfigManager,ConfigManagerFactory{
 	private Properties props = new Properties();
 	public PropertiesConfig(){
 		String file = System.getProperty("skjanyou.configfile");
+		if( file == null ){
+			throw new RuntimeException("skjanyou.configfile 没有配置");
+		}
 		InputStream is = null;
 		if( file.startsWith("classpath:") ){
 			String resources = file.substring(10);

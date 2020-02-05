@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin 
+	id="skjanyou.desktop" 
+	displayName="Desktop插件"
+	activator="com.skjanyou.desktop.plugin.DesktopPlugin" 
+	order="99999999"
+	enable="true" 
+	failOnInitError="true" 
+	defaultConfig="config/desktop.default.properties"
+	classScanPath="com.skjanyou.desktop"
+	/>
