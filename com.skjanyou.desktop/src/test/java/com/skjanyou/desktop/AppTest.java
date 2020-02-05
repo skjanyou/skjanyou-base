@@ -1,15 +1,21 @@
 package com.skjanyou.desktop;
 
-import com.skjanyou.desktop.shell.BrowserShellWindow;
-import com.skjanyou.desktop.shell.Window;
+import org.eclipse.swt.widgets.Display;
+
+import com.skjanyou.desktop.window.swt.AbstractBrowserWindow;
+import com.skjanyou.desktop.window.swt.SwtResourcesManager;
 
 
 
 public class AppTest {
 	public static void main(String[] args) {
-		Window window = new BrowserShellWindow() {};
-		window.setWidth(400).setHeight(400);
+		Display.DEBUG = true;
+		AbstractBrowserWindow window = new AbstractBrowserWindow(  ) {};
+		window.setWidth(4000).setHeight(400);
+		window.setUrl("http://www.baidu.com");
 		window.show();
+		
+		SwtResourcesManager.keep();
 	}
 
 }
