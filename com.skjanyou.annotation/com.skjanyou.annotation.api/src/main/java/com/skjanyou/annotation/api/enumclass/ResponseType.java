@@ -252,6 +252,7 @@ public enum ResponseType {
 	PRT("application/x-prt"),
 	EML("message/rfc822"),
 	IMG("application/x-img"),
+	IMAGE("image/png"),
 	MOCHA("application/x-javascript"),
 	CAL("application/x-cals"),
 	ULS("text/iuls"),

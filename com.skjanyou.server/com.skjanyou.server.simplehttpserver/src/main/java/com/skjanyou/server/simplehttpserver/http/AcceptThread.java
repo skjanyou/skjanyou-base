@@ -1,23 +1,18 @@
 package com.skjanyou.server.simplehttpserver.http;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
 
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
-import com.skjanyou.server.api.inter.Headers;
 import com.skjanyou.server.api.inter.Request;
-import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.ServerHandler;
 import com.skjanyou.util.CommUtil;
-import com.skjanyou.util.DateUtil;
 
 /**
  * 接收线程
@@ -38,13 +33,11 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 		if(socket == null){
 			throw new NullPointerException("Socket套接字为空!");
 		}
-		
+		HttpResponse response = new HttpResponse();
 		InputStream is = null;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
 		OutputStream os = null;
-		OutputStreamWriter osw = null;
-		BufferedWriter bw = null;		
 		try {
 			is = socket.getInputStream();
 			isr = new InputStreamReader(is);
@@ -52,10 +45,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 			Request request = resolveRequest( br );
 			
             os = socket.getOutputStream();
-            osw = new OutputStreamWriter(os);
-            bw = new BufferedWriter(osw);
             
-            Response response = createResponse( bw );
             
             List<Filter> filterList = ApplicateContext.getRegistedFilter();
             
@@ -72,41 +62,12 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             	handler.handler(request, response);
             }
             
-            
-            String statusCode = response.responseLine().statusCode().getCode() + " " + response.responseLine().statusCode().getName();
-            String protocol = response.responseLine().protocol().protocol() + "/" + response.responseLine().protocol().version();
-            String statusLine = protocol + " " + statusCode;
-            // 写状态头
-            bw.write(statusLine);
-            bw.write(ServerConst.CRLF);
-            byte[] bodyContent = response.responseBody().getBodyContent();
-            if( bodyContent == null ){
-            	bodyContent = new byte[0];
-            }
-            Headers responseHeaders = response.headers();
-            responseHeaders.put("Content-Length", String.valueOf(bodyContent.length));
-            if(responseHeaders.get("Content-Type") == null){
-            	responseHeaders.put("Content-Type", "text/plain;charset=UTF-8");
-            }
-            
-            // Test
-            responseHeaders.put("Date", DateUtil.getFormatTime());
-            responseHeaders.put("Server", "skjanyou simplehttpserver");
-            
-            
-            // 写返回头
-            String responseHeaderString = response.headers().toHttpHeaderString();
-            bw.write(responseHeaderString);
-            bw.write(ServerConst.CRLF);
-            String body = new String(bodyContent,"utf-8");
-            // 写正文
-            bw.write(body);
-            bw.flush();
+            byte[] responseBytes = ResponseBuilder.getResponseBytes(response);
+            os.write(responseBytes);
+            os.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			CommUtil.close(bw);
-			CommUtil.close(osw);
 			CommUtil.close(os);
 			
 			CommUtil.close(br);
@@ -142,11 +103,6 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 		return request;
 	}
 	
-	protected Response createResponse( BufferedWriter bw ){
-		Response response = new HttpResponse();
-		 	
-		return response;
-	}
 	
 	@Override
 	public int compareTo(AcceptThread o) {
