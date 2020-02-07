@@ -10,6 +10,7 @@ public final class DefaultConvert {
 		ConvertUtil.regist(new StringConvertToBoolean());
 		ConvertUtil.regist(new StringConvertToFloat());
 		ConvertUtil.regist(new StringConvertToDouble());
+		ConvertUtil.regist(new StringConvertToClass());
 		ConvertUtil.regist(new AnotherObjectConvertToString());
 	}
 	
@@ -124,6 +125,39 @@ public final class DefaultConvert {
 		public int order() {
 			// 前面所有的转换器都没有使用的情况下,尝试使用这个进行转换
 			return Integer.MAX_VALUE;
+		}
+		
+	}
+	
+	/** String->Class **/
+	public static class StringConvertToClass implements ConvertProvider<String,Class<?>> {
+
+		@Override
+		public boolean isMatch(Class<?> distClass, Class<?> targetClass) {
+			return String.class == distClass && Class.class == targetClass;
+		}
+
+		@Override
+		public Class<?> converTo(String dist) {
+			Class<?> resultClass = null;
+			ClassLoader loader = Thread.currentThread().getContextClassLoader();
+			try {
+				resultClass = loader.loadClass(dist);
+			} catch (ClassNotFoundException e) {
+			}
+			if( resultClass == null ){
+				try {
+					resultClass = Class.forName(dist);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+			return resultClass;
+		}
+
+		@Override
+		public int order() {
+			return 100;
 		}
 		
 	}
