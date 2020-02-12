@@ -27,6 +27,8 @@
 		<module>com.skjanyou.db</module>
 		<module>com.skjanyou.test</module>
 		<module>com.skjanyou.desktop</module>
+		<module>com.skjanyou.desktop.swt</module>
+		<module>com.skjanyou.desktop.jxbrowser</module>
 	</modules>
 
 	<properties>

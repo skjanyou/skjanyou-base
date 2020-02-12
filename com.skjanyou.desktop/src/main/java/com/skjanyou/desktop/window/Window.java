@@ -8,9 +8,9 @@ public interface Window {
 	/** 设置高 **/
 	public Window setHeight( float height );
 	/** 显示 **/
-	public Window show();
+	public void showWindow();
 	/** 隐藏 **/
-	public Window hide();
+	public void hideWindow();
 	/** 设置定点坐标 **/
 	public Window setLocation( float x,float y );
 	/** 关闭窗口并释放资源 **/
