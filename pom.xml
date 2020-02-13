@@ -93,11 +93,6 @@
 				<artifactId>swt</artifactId>
 				<version>3.2.1-v3235e</version>
 			</dependency>
-			<dependency>
-				<groupId>org.eclipse.swt</groupId>
-				<artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-				<version>4.3</version>
-			</dependency>
 
 			<!-- JSON文本解析 -->
 			<dependency>
@@ -219,12 +214,6 @@
 				<version>5.0.0</version>
 			</dependency>
 
-			<!-- lombok -->
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>1.18.0</version>
-			</dependency>
 			<!--Windows64平台打开这个 也可以打开Linux的配置jar -->
 			<dependency>
 				<groupId>org.eclipse.swt</groupId>

@@ -7,14 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lombok.Getter;
-
-import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.plugin.bean.Plugin;
-import com.skjanyou.plugin.util.InstanceUtil;
+import com.skjanyou.plugin.bean.PluginConfig;
 
 public class PluginManager {
-	@Getter
 	private static List<Plugin> pluginList = new ArrayList<>();
 	private static List<String> pluginIdList = new ArrayList<>();
 	private static List<PluginSupport> pluginSupportList = new ArrayList<>();
@@ -55,4 +51,9 @@ public class PluginManager {
 			support.shutdown();
 		}
 	}
+
+	public static List<Plugin> getPluginList() {
+		return pluginList;
+	}
+	
 }	

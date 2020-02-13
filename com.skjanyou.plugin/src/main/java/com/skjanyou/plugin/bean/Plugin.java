@@ -1,12 +1,9 @@
 package com.skjanyou.plugin.bean;
 
-import lombok.Data;
-
 import com.skjanyou.plugin.PluginSupport;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@Data
 @XStreamAlias("plugin")
 public class Plugin {
 	@XStreamAlias("id")
@@ -33,4 +30,52 @@ public class Plugin {
 	@XStreamAlias("classScanPath")
 	@XStreamAsAttribute
 	private String classScanPath;    					//扫描类路径
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getDisplayName() {
+		return displayName;
+	}
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+	public Class<? extends PluginSupport> getActivator() {
+		return activator;
+	}
+	public void setActivator(Class<? extends PluginSupport> activator) {
+		this.activator = activator;
+	}
+	public int getOrder() {
+		return order;
+	}
+	public void setOrder(int order) {
+		this.order = order;
+	}
+	public Boolean getEnable() {
+		return enable;
+	}
+	public void setEnable(Boolean enable) {
+		this.enable = enable;
+	}
+	public Boolean getFailOnInitError() {
+		return failOnInitError;
+	}
+	public void setFailOnInitError(Boolean failOnInitError) {
+		this.failOnInitError = failOnInitError;
+	}
+	public String getDefaultConfig() {
+		return defaultConfig;
+	}
+	public void setDefaultConfig(String defaultConfig) {
+		this.defaultConfig = defaultConfig;
+	}
+	public String getClassScanPath() {
+		return classScanPath;
+	}
+	public void setClassScanPath(String classScanPath) {
+		this.classScanPath = classScanPath;
+	}
 }

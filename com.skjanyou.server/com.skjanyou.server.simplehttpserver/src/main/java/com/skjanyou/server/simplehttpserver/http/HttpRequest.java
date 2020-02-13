@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.Setter;
-
 import com.skjanyou.server.api.inter.Headers;
 import com.skjanyou.server.api.inter.Protocol;
 import com.skjanyou.server.api.inter.Request;
@@ -24,7 +22,6 @@ public class HttpRequest implements Request {
 	
 	
 	public static class HttpRequestbody implements Requestbody {
-		@Setter
 		private String requestBody;
 		private HttpRequest request;
 		public HttpRequestbody(HttpRequest request){ this.request = request; }
@@ -45,14 +42,15 @@ public class HttpRequest implements Request {
 		public String getRequestbody() {
 			return this.requestBody;
 		}
+		
+		public void setRequestBody(String requestBody) {
+			this.requestBody = requestBody;
+		}
 	}
 	
 	public static class HttpRequestLine implements RequestLine {
-		@Setter
 		private String method;
-		@Setter
 		private String url;
-		@Setter
 		private Protocol protocol;
 		private Map<String,Object> params = new HashMap<String, Object>();
 		private HttpRequest request;
@@ -78,6 +76,18 @@ public class HttpRequest implements Request {
 			return this.params;
 		}
 
+		public void setUrl(String url) {
+			this.url = url;
+		}
+		
+		public void setMethod(String method) {
+			this.method = method;
+		}
+		
+		public void setProtocol(Protocol protocol) {
+			this.protocol = protocol;
+		}
+		
 		@Override
 		public RequestLine convertToRequestLine(String firstLine) {
 	        String[] parm = firstLine.split("\\s");
