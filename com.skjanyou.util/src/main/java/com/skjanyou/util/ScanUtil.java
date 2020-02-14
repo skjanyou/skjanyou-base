@@ -2,10 +2,12 @@ package com.skjanyou.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -87,9 +89,11 @@ public class ScanUtil {
 	
 	
 
-	private static Collection<? extends URL> fildFileResources(URL fileUrl) throws MalformedURLException {
+	private static Collection<? extends URL> fildFileResources(URL fileUrl) throws MalformedURLException, UnsupportedEncodingException {
 		List<URL> fileUrlList = new ArrayList<>();
 		String filePath = fileUrl.getFile();
+		// URL类会对中文进行base64编码,File类不能识别编码后的路径,导致找不到文件
+		filePath = URLDecoder.decode(filePath,"UTF-8");
 		File file = new File(filePath);
 		if( file.isFile() ){
 			fileUrlList.add(fileUrl);
