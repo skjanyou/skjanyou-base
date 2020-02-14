@@ -2,7 +2,7 @@
 <plugin 
 	id="skjanyou.desktop" 
 	displayName="Desktop插件"
-	activator="com.skjanyou.desktop.plugin.DesktopPlugin" 
+	activator="com.skjanyou.desktop.swt.plugin.DesktopPlugin" 
 	order="99999999"
 	enable="true" 
 	failOnInitError="true" 
