@@ -4,15 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.skjanyou.util.ClassUtil;
 
 public final class DefaultConvert {
-	static {
-		ConvertUtil.regist(new StringConvertToString());
-		ConvertUtil.regist(new StringConvertToInteger());
-		ConvertUtil.regist(new StringConvertToBoolean());
-		ConvertUtil.regist(new StringConvertToFloat());
-		ConvertUtil.regist(new StringConvertToDouble());
-		ConvertUtil.regist(new StringConvertToClass());
-		ConvertUtil.regist(new AnotherObjectConvertToString());
-	}
 	
 	
 	/** String类型->String类型 **/

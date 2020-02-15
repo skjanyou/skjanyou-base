@@ -40,6 +40,13 @@
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>1.4.10</version>
+			<!-- for android -->
+			<exclusions>
+				<exclusion>
+					<groupId>xmlpull</groupId>
+					<artifactId>xmlpull</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba</groupId>
