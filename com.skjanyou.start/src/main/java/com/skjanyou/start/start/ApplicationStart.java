@@ -56,7 +56,6 @@ public final class ApplicationStart {
 	private static String pluginPattern = "plugin/\\S+.plugin.xml$";
 	// bean容器
 	private static Beandefinition beanContainer = new BeandefinitionFactoryImpl().create();
-	
 	// 所有的类
 	private static Set<Class<?>> classSet;
 	// logger
@@ -143,6 +142,9 @@ public final class ApplicationStart {
 					Document document = sr.read(is);
 					Element root = document.getRootElement();
 					String id = root.attributeValue("id");	// 插件ID
+					// 判断插件是否为启动状态
+					String enableStart = manager.getString(id);
+					if( enableStart != null && !Boolean.valueOf(enableStart) ) { logger.info("插件" + id + "在配置文件中设置禁用,将不会启动。如需启动,请修改配置文件。" ); continue; }
 					String displayName = root.attributeValue("displayName"); //插件名称
 					String activatorString = root.attributeValue("activator");
 					Class activator = null;
