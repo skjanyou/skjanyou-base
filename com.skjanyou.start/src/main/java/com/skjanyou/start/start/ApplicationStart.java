@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,6 +33,7 @@ import com.skjanyou.start.config.ApplicationConst;
 import com.skjanyou.start.config.ComplexPluginConfig;
 import com.skjanyou.start.config.ConfigManager;
 import com.skjanyou.start.config.ConfigManagerFactory;
+import com.skjanyou.start.core.SkjanyouClassLoader;
 import com.skjanyou.start.exception.StartFailException;
 import com.skjanyou.start.util.InstanceUtil;
 import com.skjanyou.start.util.JarUtil;
@@ -48,7 +48,7 @@ public final class ApplicationStart {
 	private ApplicationStart(){}
 	
 	private static Class<?> startClass;
-	private static ClassLoader classLoader;
+	private static SkjanyouClassLoader classLoader = new SkjanyouClassLoader(new URL[]{});
 	// 配置中心
 	private static ConfigManager manager;
 	// 插件
@@ -69,12 +69,14 @@ public final class ApplicationStart {
 			return ; 
 		}	
 		beanContainer.setBean(Beandefinition.class.getName(), beanContainer);
+		// 3.设置当前运行上下文的classloader 
+		ClassLoader srcClassLoader = Thread.currentThread().getContextClassLoader();
+		classLoader.addClassLoader(srcClassLoader);
+		Thread.currentThread().setContextClassLoader(classLoader);		
 		// 1.读取配置
 		initConfig();
 		// 2.搜索jar文件,并将jar文件放置到classpath内,并初始化classloader
 		findJarFile();
-		// 3.设置当前运行上下文的classloader 
-		Thread.currentThread().setContextClassLoader(classLoader);
 		// 4.扫描classpath目录,获取所有的*.plugin.xml文件
 		findPlugin();
 		// 5.加载所有的类
@@ -116,7 +118,7 @@ public final class ApplicationStart {
 		}
 		// 创建ClassLoader
 		if( urlList == null ) { urlList = new ArrayList<>(); }
-		classLoader = new URLClassLoader( urlList.toArray( new URL[]{} ) );
+		classLoader.addClassUrls(urlList);
 	}
 	
 	/** 查找所有的插件 **/

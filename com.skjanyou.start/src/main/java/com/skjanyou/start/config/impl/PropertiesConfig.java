@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 import com.skjanyou.start.config.ConfigManager;
@@ -32,7 +33,7 @@ public class PropertiesConfig implements ConfigManager,ConfigManagerFactory{
 			throw new RuntimeException("找不到文件");
 		}
 		try {
-			props.load(is);
+			props.load(new InputStreamReader(is,"UTF-8"));
 		} catch (IOException e){
 			throw new RuntimeException("读取配置失败",e);
 		}

@@ -65,7 +65,7 @@ public class JarUtil {
 				for (File file : files) {
 					if( file.isDirectory() ){
 						urlList.addAll(getAllJarFileURL(file.getAbsolutePath()));
-					}else{
+					}else if( file.exists() && file.isFile() && file.getName().endsWith( JarUtil.suffix ) ){
 						System.out.println("扫描到Jar文件:[" + file.getAbsolutePath() +  "]");
 						urlList.add( converURL(file) );
 					}
@@ -106,9 +106,4 @@ public class JarUtil {
 		return resultURL;
 	}
 
-	public static void main(String[] args) throws IOException {
-		JarFile jarFile = new JarFile( new File("D:\\temp\\com.skjanyou.db.mybatis-0.0.1-SNAPSHOT.jar") );
-		ZipEntry ze = scanJarFile( jarFile,"plugin/\\S+.plugin.xml$");
-		System.out.println(ze);
-	}
 }
