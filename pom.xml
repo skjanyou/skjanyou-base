@@ -29,6 +29,7 @@
 		<module>com.skjanyou.desktop</module>
 		<module>com.skjanyou.desktop.swt</module>
 		<module>com.skjanyou.desktop.jxbrowser</module>
+		<module>com.skjanyou.db.mybatis.pagehelper</module>
 	</modules>
 
 	<properties>
@@ -272,6 +273,12 @@
 							</descriptorRef>
 						</descriptorRefs>
 					</configuration>
+				</plugin>
+				<!-- 打包单个可执行Jar的插件 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>3.1.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
