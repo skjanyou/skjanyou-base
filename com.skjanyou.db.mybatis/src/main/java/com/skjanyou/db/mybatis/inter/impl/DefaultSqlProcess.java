@@ -14,11 +14,14 @@ import com.skjanyou.db.mybatis.anno.DDL.Insert;
 import com.skjanyou.db.mybatis.anno.DDL.Select;
 import com.skjanyou.db.mybatis.anno.DDL.SqlParameter;
 import com.skjanyou.db.mybatis.anno.DDL.Update;
+import com.skjanyou.db.mybatis.bean.IntercepterSqlInfo;
 import com.skjanyou.db.mybatis.bean.Invocation;
+import com.skjanyou.db.mybatis.core.MybatisManager;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.db.mybatis.exception.DaoException;
 import com.skjanyou.db.mybatis.inter.SqlExceptionProcess;
 import com.skjanyou.db.mybatis.inter.SqlProcess;
+import com.skjanyou.db.mybatis.inter.SqlProcessIntercepter;
 
 public final class DefaultSqlProcess {
 	public static class SelectSqlProcess implements SqlProcess<Select>,SqlExceptionProcess {
@@ -73,13 +76,26 @@ public final class DefaultSqlProcess {
 				// 子类转父类
 				bean = beanMap;
 			}
-			// 4.返回结果
-			List<?> resultList = SqlSession.executeSelectListSql(sql, bean, resultClass);
-			// 4.1返回多条数据
+			// 4.拦截处理
+			IntercepterSqlInfo sqlInfo = new IntercepterSqlInfo(sql,bean);
+			SqlProcessIntercepter<Select> selectIntercepter = MybatisManager.getSqlProcessIntercepter(Select.class);
+			// 前置拦截
+			if( selectIntercepter != null ){
+				selectIntercepter.beforeIntercepter( sqlInfo );
+			}
+			// 5.返回结果
+			List<?> resultList = SqlSession.executeSelectListSql(sqlInfo.getSql(), sqlInfo.getBean(), resultClass);
+			// 后置拦截
+			if( selectIntercepter != null ){
+				selectIntercepter.afterIntercepter( resultList );
+			}
+			
+			
+			// 5.1返回多条数据
 			if( item.getMethod().getReturnType().isAssignableFrom(List.class) ){
 				return resultList;
 			}
-			// 4.2返回单条数据
+			// 5.2返回单条数据
 			if( resultList.size() == 0 ){
 				return null;
 			}else if( resultList.size() == 1 ){
@@ -143,8 +159,21 @@ public final class DefaultSqlProcess {
 				// 子类转父类
 				bean = beanMap;
 			}
-			// 4.返回结果
-			return SqlSession.executeInsertSql(sql, bean);
+			// 4.拦截处理
+			IntercepterSqlInfo sqlInfo = new IntercepterSqlInfo(sql,bean);
+			SqlProcessIntercepter<Insert> selectIntercepter = MybatisManager.getSqlProcessIntercepter(Insert.class);
+			// 前置拦截
+			if( selectIntercepter != null ){
+				selectIntercepter.beforeIntercepter( sqlInfo );
+			}			
+			// 5.返回结果
+			Object result = SqlSession.executeInsertSql(sqlInfo.getSql(), sqlInfo.getBean());
+			// 后置拦截
+			if( selectIntercepter != null ){
+				selectIntercepter.afterIntercepter( result );
+			}
+			
+			return result;
 		}
 
 		@Override
@@ -218,8 +247,20 @@ public final class DefaultSqlProcess {
 				// 子类转父类
 				bean = beanMap;
 			}
-			// 4.返回结果
-			return SqlSession.executeUpdateSql(sql, bean);
+			// 4.拦截处理
+			IntercepterSqlInfo sqlInfo = new IntercepterSqlInfo(sql,bean);
+			SqlProcessIntercepter<Update> selectIntercepter = MybatisManager.getSqlProcessIntercepter(Update.class);
+			// 前置拦截
+			if( selectIntercepter != null ){
+				selectIntercepter.beforeIntercepter( sqlInfo );
+			}				
+			// 5.返回结果
+			Object result = SqlSession.executeUpdateSql(sql, bean);
+			// 后置拦截
+			if( selectIntercepter != null ){
+				selectIntercepter.afterIntercepter( result );
+			}			
+			return result;
 		}
 
 		@Override
@@ -276,8 +317,20 @@ public final class DefaultSqlProcess {
 				// 子类转父类
 				bean = beanMap;
 			}
-			// 4.返回结果
-			return SqlSession.executeDeleteSql(sql, bean);			
+			// 4.拦截处理
+			IntercepterSqlInfo sqlInfo = new IntercepterSqlInfo(sql,bean);
+			SqlProcessIntercepter<Update> selectIntercepter = MybatisManager.getSqlProcessIntercepter(Update.class);
+			// 前置拦截
+			if( selectIntercepter != null ){
+				selectIntercepter.beforeIntercepter( sqlInfo );
+			}				
+			// 5.返回结果
+			Object result = SqlSession.executeDeleteSql(sql, bean);
+			// 后置拦截
+			if( selectIntercepter != null ){
+				selectIntercepter.afterIntercepter( result );
+			}					
+			return result;			
 		}
 
 		@Override
