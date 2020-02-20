@@ -26,9 +26,18 @@ public class AppTest extends MybatisTest {
     	userBean.setUser_id("skjanyou");
     	userBean.setUser_name("skjanyou");
     	userBean.setUser_pass("12345678");
+    	long time1 = System.currentTimeMillis();
     	User selectUser = SqlSession.executeSelectSql(sql, userBean, User.class);
+    	long time2 = System.currentTimeMillis();
+    	System.out.println( time2 - time1 );
     	System.out.println(selectUser.getUser_id());
         assertNotNull(selectUser);
+        long time3 = System.currentTimeMillis();
+    	User selectUser2 = SqlSession.executeSelectSql(sql, userBean, User.class);
+    	long time4 = System.currentTimeMillis();
+    	System.out.println( time4 - time3 );
+    	System.out.println(selectUser2.getUser_id());
+        assertNotNull(selectUser2);        
     }
     
     // 插入用户信息

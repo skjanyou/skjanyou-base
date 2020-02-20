@@ -8,11 +8,13 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.skjanyou.db.mybatis.anno.Mapper;
+import com.skjanyou.db.mybatis.bean.MybatisSqlExecuteCache;
 import com.skjanyou.db.mybatis.util.StringUtil;
 import com.skjanyou.db.pool.DataSource;
 import com.skjanyou.db.util.DbUtil;
@@ -20,7 +22,8 @@ import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 
 public class SqlSession {
-	private static Logger logger = LogUtil.getLogger(SqlSession.class);		
+	private static Logger logger = LogUtil.getLogger(SqlSession.class);	
+	private static Map<String,MybatisSqlExecuteCache> sqlExecuteCache = new HashMap<>();
 	
 	@SuppressWarnings("unchecked")
 	public static<T> T getMapper( Class<T> clazz ){
@@ -29,18 +32,39 @@ public class SqlSession {
 				new Class[]{ clazz }, new MapperHandler(clazz));
 	}
 	
+	
+	private static MybatisSqlExecuteCache getSqlExecuteCache( String sql ){
+		String prepareSql = null;
+		Set<String> sets = null;
+		// 1.从缓存中查询是否已经有进行编译
+		MybatisSqlExecuteCache sqlCache = sqlExecuteCache.get(sql);
+		if( sqlCache != null ){
+			prepareSql = sqlCache.getPrepareSql();
+			sets = sqlCache.getSets();
+		}else{ // 否则计算
+			// 1.1获取填充符的位置
+			Map<String,Integer> fieldMap = StringUtil.getWird( sql );
+			// 1.2将填充符转化为？
+			prepareSql = new String(sql);
+			sets = fieldMap.keySet();
+			for (String set : sets) {
+				String field = MessageFormat.format("#{0}#", set);
+				prepareSql = prepareSql.replaceFirst(field, "?");
+			}
+			sqlCache = new MybatisSqlExecuteCache(sql, prepareSql, sets);
+			synchronized ( sqlExecuteCache ) {
+				sqlExecuteCache.put(sql, sqlCache);
+			}
+		}	
+		return sqlCache;
+	}
+	
 	public static<T,V>  V executeSelectSql( String sql, T bean, Class<V> resultClass  ){
 		DataSource ds = DbUtil.get().getDataSource();
 		V result = null;
-		// 1.获取填充符的位置
-		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
-		// 2.将填充符转化为？
-		String prepareSql = new String(sql);
-		Set<String> sets = fieldMap.keySet();
-		for (String set : sets) {
-			String field = MessageFormat.format("#{0}#", set);
-			prepareSql = prepareSql.replaceFirst(field, "?");
-		}
+		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
+		String prepareSql = sqlCache.getPrepareSql();
+		Set<String> sets = sqlCache.getSets();
 		logger.debug("处理后的SQL:" + prepareSql);
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
@@ -103,15 +127,9 @@ public class SqlSession {
 	public static<T,V>  List<V> executeSelectListSql( String sql, T bean, Class<V> resultClass  ){
 		DataSource ds = DbUtil.get().getDataSource();
 		List<V> result = new ArrayList<>();
-		// 1.获取填充符的位置
-		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
-		// 2.将填充符转化为？
-		String prepareSql = new String(sql);
-		Set<String> sets = fieldMap.keySet();
-		for (String set : sets) {
-			String field = MessageFormat.format("#{0}#", set);
-			prepareSql = prepareSql.replaceFirst(field, "?");
-		}
+		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
+		String prepareSql = sqlCache.getPrepareSql();
+		Set<String> sets = sqlCache.getSets();
 		logger.debug("处理后的SQL:" + prepareSql);
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
@@ -184,16 +202,10 @@ public class SqlSession {
 	public static<T> int executeDeleteSql( String sql, T bean ) {
 		DataSource ds = DbUtil.get().getDataSource();
 		int resultCount = 0;
-		// 1.获取填充符的位置
-		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
-		// 2.将填充符转化为？
-		String prepareSql = new String(sql);
-		Set<String> sets = fieldMap.keySet();
-		for (String set : sets) {
-			String field = MessageFormat.format("#{0}#", set);
-			prepareSql = prepareSql.replaceFirst(field, "?");
-		}
-		logger.debug("处理后的SQL:" + prepareSql );
+		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
+		String prepareSql = sqlCache.getPrepareSql();
+		Set<String> sets = sqlCache.getSets();
+		logger.debug("处理后的SQL:" + prepareSql);
 
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
@@ -250,16 +262,10 @@ public class SqlSession {
 	public static <T> int executeInsertSql( String sql, T bean ){
 		DataSource ds = DbUtil.get().getDataSource();
 		int resultCount = 0;
-		// 1.获取填充符的位置
-		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
-		// 2.将填充符转化为？
-		String prepareSql = new String(sql);
-		Set<String> sets = fieldMap.keySet();
-		for (String set : sets) {
-			String field = MessageFormat.format("#{0}#", set);
-			prepareSql = prepareSql.replaceFirst(field, "?");
-		}
-		logger.debug("处理后的SQL:" + prepareSql );
+		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
+		String prepareSql = sqlCache.getPrepareSql();
+		Set<String> sets = sqlCache.getSets();
+		logger.debug("处理后的SQL:" + prepareSql);
 
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
@@ -317,16 +323,10 @@ public class SqlSession {
 	public static<T> int executeUpdateSql( String sql, T bean ){
 		DataSource ds = DbUtil.get().getDataSource();
 		int resultCount = 0;
-		// 1.获取填充符的位置
-		Map<String,Integer> fieldMap = StringUtil.getWird( sql );
-		// 2.将填充符转化为？
-		String prepareSql = new String(sql);
-		Set<String> sets = fieldMap.keySet();
-		for (String set : sets) {
-			String field = MessageFormat.format("#{0}#", set);
-			prepareSql = prepareSql.replaceFirst(field, "?");
-		}
-		logger.debug("处理后的SQL:" + prepareSql );
+		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
+		String prepareSql = sqlCache.getPrepareSql();
+		Set<String> sets = sqlCache.getSets();
+		logger.debug("处理后的SQL:" + prepareSql);
 
 		// 3.创建PreparedStatement对象，填充参数
 		PreparedStatement statement = null;
