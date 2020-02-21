@@ -10,7 +10,6 @@ import java.util.List;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
-import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.ServerHandler;
 import com.skjanyou.util.CommUtil;
 
@@ -34,17 +33,35 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 			throw new NullPointerException("Socket套接字为空!");
 		}
 		HttpResponse response = new HttpResponse();
+		HttpRequest request = new HttpRequest();
 		InputStream is = null;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
 		OutputStream os = null;
 		try {
 			is = socket.getInputStream();
+			os = socket.getOutputStream();
 			isr = new InputStreamReader(is);
 			br = new BufferedReader(isr);
-			Request request = resolveRequest( br );
-			
-            os = socket.getOutputStream();
+			// 防止readLine阻塞
+			socket.setSoTimeout(3000);
+            StringBuilder sb = new StringBuilder();
+            // 1.获取第一行,获取请求类型和uri,构建RequestFeatures
+            String firstLine = br.readLine();	
+            if( firstLine == null ){
+                os.write(new byte[0]);
+                os.flush();
+                return ;
+            }
+            request.requestLine().convertToRequestLine(firstLine);
+            // 2.从第二行开始,全部为请求头
+            String headerMsg = "";
+            while(( headerMsg = br.readLine() ) != null && headerMsg.length() > 0){
+                sb.append(headerMsg).append(ServerConst.CRLF);
+            }
+            String requestInfo = sb.toString().trim();        
+            request.headers().converToHeaders(requestInfo);
+            // 3.Post请求要通过Control-length获取请求体内容
             
             
             List<Filter> filterList = ApplicateContext.getRegistedFilter();
@@ -79,29 +96,6 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 		
 	}
 	
-	protected Request resolveRequest( BufferedReader br ) {
-		HttpRequest request = new HttpRequest();
-		try {
-            StringBuilder sb = new StringBuilder();
-            // 1.获取第一行,获取请求类型和uri,构建RequestFeatures
-            String firstLine = br.readLine();	
-            request.requestLine().convertToRequestLine(firstLine);
-            // 2.从第二行开始,全部为请求头
-            String headerMsg = "";
-            while(( headerMsg = br.readLine() ) != null && headerMsg.length() > 0){
-                sb.append(headerMsg).append(ServerConst.CRLF);
-            }
-            String requestInfo = sb.toString().trim();        
-            request.headers().converToHeaders(requestInfo);
-            // 3.Post请求要通过Control-length获取请求体内容
-            
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("读取数据出错!",e);
-		} 
-		
-		return request;
-	}
 	
 	
 	@Override

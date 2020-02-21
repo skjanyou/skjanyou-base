@@ -25,7 +25,6 @@ public class LogPlugin implements PluginSupport {
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		System.out.println(LogUtil.getLogger(LogPlugin.class));
 	}
 
 	@Override

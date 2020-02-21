@@ -33,7 +33,6 @@ public class DispatchThread extends Thread implements Runnable {
 			serverSocket = new ServerSocket(config.getPort());
 			serverSocket.setSoTimeout((int) config.getTimeout());
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new RuntimeException("启动服务失败",e);
 		}
 		while(isRunning){

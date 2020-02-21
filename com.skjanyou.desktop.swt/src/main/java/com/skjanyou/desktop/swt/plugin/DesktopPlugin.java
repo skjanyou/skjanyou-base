@@ -39,5 +39,4 @@ public class DesktopPlugin implements PluginSupport{
 	public void shutdown() {
 		SwtResourcesManager.exit();
 	}
-
 }
