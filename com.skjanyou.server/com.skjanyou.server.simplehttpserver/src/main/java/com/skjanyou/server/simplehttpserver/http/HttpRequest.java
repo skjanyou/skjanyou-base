@@ -88,6 +88,10 @@ public class HttpRequest implements Request {
 			this.protocol = protocol;
 		}
 		
+		public void setParams(Map<String, Object> params) {
+			this.params = params;
+		}
+		
 		@Override
 		public RequestLine convertToRequestLine(String firstLine) {
 	        String[] parm = firstLine.split("\\s");

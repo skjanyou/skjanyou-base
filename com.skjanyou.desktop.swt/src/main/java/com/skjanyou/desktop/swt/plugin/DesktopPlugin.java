@@ -17,6 +17,11 @@ public class DesktopPlugin implements PluginSupport{
 	private boolean enable;
 	@Property("desktop.url")
 	private String url;
+	@Property("desktop.width")
+	private int width;
+	@Property("desktop.height")
+	private int height;
+	
 	
 	@Override
 	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) {
@@ -29,6 +34,8 @@ public class DesktopPlugin implements PluginSupport{
 			Window window = new AbstractBrowserWindow();
 			window.setUrl(url);
 			window.showWindow();
+			window.setHeight(height);
+			window.setWidth(width);
 			logger.info("desktop url = [" +  url +  "]");
 			logger.error("启用desktop插件会阻塞主线程,导致【启动插件完成】信息不会打印,只要保证其他插件的启动顺序小于99999999,即对程序无影响,,如需关闭desktop插件,可设置{desktop.enable=false}");
 			SwtResourcesManager.keep();

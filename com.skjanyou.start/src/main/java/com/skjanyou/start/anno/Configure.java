@@ -16,4 +16,5 @@ import com.skjanyou.start.config.impl.WithoutConfig;
 public @interface Configure {
 	String name();
 	Class<? extends ConfigManagerFactory> configManagerFactory() default WithoutConfig.class;
+	String scanPath() default "";
 }

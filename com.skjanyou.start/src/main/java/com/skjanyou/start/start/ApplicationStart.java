@@ -6,8 +6,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +56,7 @@ public final class ApplicationStart {
 	// 插件
 	private static String pluginPackageName = "plugin/";
 	private static String pluginPattern = "plugin/\\S+.plugin.xml$";
+	private static List<String> pluginScanPath = new LinkedList<>( Arrays.asList( "com.skjanyou" ) );
 	// bean容器
 	private static Beandefinition beanContainer = new BeandefinitionFactoryImpl().create();
 	// 所有的类
@@ -90,8 +93,13 @@ public final class ApplicationStart {
 		logger.info("----------------开始启动插件----------------");
 		PluginManager.loadAllPlugins();
 		logger.info("----------------启动插件完成----------------");
-		// 10.绑定线程守护事件
-		
+		// 10.绑定线程关闭事件
+		Runtime.getRuntime().addShutdownHook(new Thread(){
+			@Override
+			public void run() {
+				PluginManager.shutdownAllPlugins();
+			}
+		});
 	} 
 	
 	/** 1.读取配置  **/
@@ -166,6 +174,9 @@ public final class ApplicationStart {
 					plugin.setDefaultConfig(defaultConfig);plugin.setClassScanPath(classScanPath);
 
 					PluginManager.registPlugin(plugin);
+					if( !StringUtil.isBlank(classScanPath) ){
+						pluginScanPath.add(classScanPath);
+					}
 				} catch (IOException | DocumentException | ClassNotFoundException e) {
 					if( plugin != null && plugin.getFailOnInitError() ){
 						throw new StartFailException("",e);
@@ -182,7 +193,10 @@ public final class ApplicationStart {
 	
 	/** 加载所有的类 **/
 	private static void loadAllClasses(){
-		List<Class<?>> pluginClass = ClassUtil.getClasses("", classLoader);
+		List<Class<?>> pluginClass = new ArrayList<>();
+		for( String scanPath : pluginScanPath){
+			pluginClass.addAll(ClassUtil.getClasses(scanPath, classLoader));
+		}
 		classSet = new HashSet<>(pluginClass);
 	}
 	

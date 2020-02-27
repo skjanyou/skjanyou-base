@@ -1,6 +1,7 @@
 package com.skjanyou.start.core;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -39,15 +40,17 @@ public class SkjanyouClassLoader extends URLClassLoader {
 		File classPathFile = new File( classPath );
 		File[] files = classPathFile.listFiles();
 		URL fileUrl = null;
-		for(File file : files){
-			if( file.isDirectory() ){
-				addClassPath( file.getAbsolutePath() );
-			}else if( file.isFile() ){
-				try {
-					fileUrl = file.toURI().toURL();
-					super.addURL(fileUrl);
-				} catch ( MalformedURLException e ){
-					
+		if( files != null ){
+			for(File file : files){
+				if( file.isDirectory() ){
+					addClassPath( file.getAbsolutePath() );
+				}else if( file.isFile() ){
+					try {
+						fileUrl = file.toURI().toURL();
+						super.addURL(fileUrl);
+					} catch ( MalformedURLException e ){
+						
+					}
 				}
 			}
 		}
@@ -65,6 +68,18 @@ public class SkjanyouClassLoader extends URLClassLoader {
 			super.addURL(url);
 		}
 		return this;
+	}
+	
+	@Override
+	public InputStream getResourceAsStream(String name) {
+		InputStream is = null;
+		for( ClassLoader classLoader : otherClassLoader ){
+			is = classLoader.getResourceAsStream(name);
+			if( is != null ){
+				return is;
+			}
+		}
+		return super.getResourceAsStream(name);
 	}
 	
 	@Override

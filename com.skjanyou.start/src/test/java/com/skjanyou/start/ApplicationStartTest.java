@@ -7,7 +7,8 @@ import com.skjanyou.start.start.ApplicationStart;
 
 @Configure(
 	configManagerFactory = PropertiesConfig.class,
-	name = "测试配置props"
+	name = "测试配置props",
+	scanPath = "com.skjanyou.start"
 )
 public class ApplicationStartTest {
 
