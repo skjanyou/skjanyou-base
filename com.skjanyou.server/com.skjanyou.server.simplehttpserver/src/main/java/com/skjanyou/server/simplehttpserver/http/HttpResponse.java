@@ -3,6 +3,7 @@ package com.skjanyou.server.simplehttpserver.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.inter.Headers;
@@ -26,7 +27,11 @@ public class HttpResponse implements Response {
 
 		@Override
 		public ResponseBody setBodyContent(String bodyContent) {
-			this.bodyContent = bodyContent.getBytes();
+			try {
+				this.bodyContent = bodyContent.getBytes("utf-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 			return this;
 		}
 

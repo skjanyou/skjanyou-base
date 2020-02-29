@@ -23,6 +23,16 @@
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.desktop</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.teamdev.jxbrowser.chromium</groupId>
+			<artifactId>jxbrowser</artifactId>
+			<version>6.23.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.teamdev.jxbrowser.chromium.internal.res</groupId>
+			<artifactId>jxbrowser-win64</artifactId>
+			<version>6.23.1</version>
 		</dependency>		
 	</dependencies>
 </project>

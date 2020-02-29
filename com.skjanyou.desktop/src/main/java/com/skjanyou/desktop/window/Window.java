@@ -25,4 +25,8 @@ public interface Window {
 	public Object executeJscript( String javaScript );
 	/** 添加注入脚本 **/
 	public Window addImplant( Implant... implants );
+	/** 是否可以移动 **/
+	public Window windowMoveable( boolean moveable );
+	/** 是否可以设置大小 **/
+	public Window windowResizeable( boolean resizeable );
 }

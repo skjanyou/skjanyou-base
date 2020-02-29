@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
-import javax.swing.WindowConstants;
 
 import com.skjanyou.desktop.implant.Implant;
 import com.skjanyou.desktop.window.Window;
@@ -105,6 +104,17 @@ public class JxbrowserWindow extends JFrame implements Window {
 
 	@Override
 	public Window addImplant(Implant... implants) {
+		return this;
+	}
+	
+	@Override
+	public Window windowMoveable(boolean moveable) {
+		return this;
+	}
+	
+	@Override
+	public Window windowResizeable(boolean resizeable) {
+		this.setResizable(resizeable);
 		return this;
 	}
 

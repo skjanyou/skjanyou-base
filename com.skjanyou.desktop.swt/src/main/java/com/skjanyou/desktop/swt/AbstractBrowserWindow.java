@@ -110,5 +110,17 @@ public class AbstractBrowserWindow implements Window {
 		}
 		return this;
 	}
+
+	@Override
+	public Window windowMoveable(boolean moveable) {
+		// TODO 原始Api不支持
+		return this;
+	}
+
+	@Override
+	public Window windowResizeable(boolean resizeable) {
+		// TODO 原始Api不支持
+		return this;
+	}
 	
 }

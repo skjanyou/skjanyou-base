@@ -70,6 +70,8 @@ public final class ApplicationStart {
 			logger.error("启动类" + clazz.getName() + "没有配置@Configure注解,应用程序无法启动!");
 			return ; 
 		}	
+		// 配置应用扫描路径
+		pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
 		beanContainer.setBean(Beandefinition.class.getName(), beanContainer);
 		// 3.设置当前运行上下文的classloader 
 		ClassLoader srcClassLoader = Thread.currentThread().getContextClassLoader();
@@ -151,8 +153,9 @@ public final class ApplicationStart {
 					Element root = document.getRootElement();
 					String id = root.attributeValue("id");	// 插件ID
 					// 判断插件是否为启动状态
-					String enableStart = manager.getString(id);
-					if( enableStart != null && !Boolean.valueOf(enableStart) ) { logger.info("插件" + id + "在配置文件中设置禁用,将不会启动。如需启动,请修改配置文件。" ); continue; }
+					String enableId = id + ".enable";
+					String enableStart = manager.getString(enableId);
+					if( enableStart != null && !Boolean.valueOf(enableStart) ) { logger.info("插件" + id + "在配置文件中设置禁用,将不会启动。如需启动,请修改配置文件,设置" + enableId +"=true。" ); continue; }
 					String displayName = root.attributeValue("displayName"); //插件名称
 					String activatorString = root.attributeValue("activator");
 					Class activator = null;
