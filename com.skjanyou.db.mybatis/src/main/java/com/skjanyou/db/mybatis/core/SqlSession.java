@@ -136,22 +136,18 @@ public class SqlSession {
 		ResultSet rs = null;
 		try {
 			statement = ds.getConnection().prepareStatement(prepareSql);
-			Class<?> targetClass = bean.getClass();
+			BeanWrapper beanWrapper = new BeanWrapper(bean);
 			int setIdx = 1;
 			for (String field : sets) {
 				Object setObj = null;
-				if( Map.class.isAssignableFrom(targetClass) ){
+				if( Map.class.isAssignableFrom(beanWrapper.getTargetClass()) ){
 					// Map接口通过get函数获取
-					Method getMethod = targetClass.getDeclaredMethod("get",Object.class);
+					Method getMethod = beanWrapper.getTargetClass().getDeclaredMethod("get",Object.class);
 					setObj = getMethod.invoke(bean, field);
 				}else{
 					// 通过反射获取bean内部的值
-					String getter = "get" + StringUtil.converFirstUpperCase(field);
-					Method method = targetClass.getDeclaredMethod(getter);
-					setObj = method.invoke(bean, new Object[]{});
+					setObj = beanWrapper.get(field);
 				}
-
-				
 				
 				// 填充参数
 				statement.setObject(setIdx, setObj);
@@ -166,11 +162,10 @@ public class SqlSession {
 			
 			while( rs.next() ){
 				V resultBean = resultClass.newInstance();
+				BeanWrapper resultBeanWrapper = new BeanWrapper(resultBean);
 				for( String metaName : metaList ){
 					Object value = rs.getObject(metaName);
-					String setter = "set" + StringUtil.converFirstUpperCase(metaName);
-					Method setterMethod = resultClass.getDeclaredMethod( setter ,value.getClass() );
-					setterMethod.invoke(resultBean, value);
+					resultBeanWrapper.set(metaName,value);
 				}
 				result.add(resultBean);
 			}
