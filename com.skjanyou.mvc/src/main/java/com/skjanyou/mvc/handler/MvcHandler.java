@@ -48,6 +48,7 @@ public class MvcHandler extends HttpServerHandler {
 	
 	@Override
 	public void handlerException( Exception e ,HttpRequest request, HttpResponse response ) {
+		logger.error(e);
 		// 响应行
 		HttpResponseLine responseLine = response.getHttpResponseLine();
 		// 响应体
