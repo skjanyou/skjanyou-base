@@ -11,9 +11,9 @@ import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.util.StreamUtil;
 
 public class HttpRequest implements Request {
-	private Headers headers;
-	private RequestLine requestLine;
-	private Requestbody requestbody;
+	private HttpHeaders headers;
+	private HttpRequestLine requestLine;
+	private HttpRequestbody requestbody;
 	public HttpRequest( ){
 		this.headers = new HttpHeaders();
 		this.requestLine = new HttpRequestLine(this);
@@ -24,7 +24,7 @@ public class HttpRequest implements Request {
 	public static class HttpRequestbody implements Requestbody {
 		private String requestBody;
 		private HttpRequest request;
-		private Map<String,String> requestBodyMap;
+		private Map<String,Object> requestBodyMap;
 		public HttpRequestbody(HttpRequest request){ 
 			this.request = request;
 			this.requestBodyMap = new HashMap<>();
@@ -54,6 +54,7 @@ public class HttpRequest implements Request {
 		@Override
 		public Requestbody convertToRequestbody(String formBody) {
 			if( formBody != null ){
+				setRequestBody(formBody);
 				String[] kvArr = formBody.split("&");
 				for (String kv : kvArr) {
 					String[] kvs = kv.split("=");
@@ -65,6 +66,10 @@ public class HttpRequest implements Request {
 				}
 			}
 			return this;
+		}
+
+		public Map<String, Object> getRequestBodyMap() {
+			return requestBodyMap;
 		}
 	}
 	
@@ -153,4 +158,15 @@ public class HttpRequest implements Request {
 		return headers;
 	}
 
+	public HttpHeaders getHttpHeaders() {
+		return headers;
+	}
+
+	public HttpRequestLine getHttpRequestLine() {
+		return requestLine;
+	}
+
+	public HttpRequestbody getHttpRequestbody() {
+		return requestbody;
+	}
 }

@@ -3,6 +3,8 @@ package com.skjanyou.mvc.handler;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,12 +20,14 @@ import com.skjanyou.mvc.anno.Mvc.Autowired;
 import com.skjanyou.mvc.anno.Mvc.Controller;
 import com.skjanyou.mvc.anno.Mvc.Dao;
 import com.skjanyou.mvc.anno.Mvc.HttpParameter;
+import com.skjanyou.mvc.anno.Mvc.HttpPostReuqestBody;
 import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.mvc.core.MvcApplicateContext;
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.exception.ServerException;
+import com.skjanyou.server.api.inter.Request.RequestLine;
 import com.skjanyou.server.api.inter.ServerHandler;
 import com.skjanyou.server.simplehttpserver.http.HttpHeaders;
 import com.skjanyou.server.simplehttpserver.http.HttpProtocolLv1;
@@ -33,6 +37,7 @@ import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseBody;
 import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
 import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
 import com.skjanyou.util.ClassUtil;
+import com.skjanyou.util.StringUtil;
 import com.skjanyou.util.convert.ConvertUtil;
 
 public class MvcHandler extends HttpServerHandler {
@@ -63,6 +68,8 @@ public class MvcHandler extends HttpServerHandler {
 	
 	@Override
 	public void handler(HttpRequest request, HttpResponse response) throws ServerException{
+		// 请求行
+		RequestLine requestLine = request.requestLine();
 		// 响应行
 		HttpResponseLine responseLine = response.getHttpResponseLine();
 		// 响应体
@@ -73,6 +80,8 @@ public class MvcHandler extends HttpServerHandler {
 		String url = request.requestLine().url().split("\\?")[0]; 
 		// 查询参数
 		Map<String,Object> params = request.requestLine().queryParams();
+		// POST请求参数正文,不一定有值,后续要通过是否为POST判断
+		Map<String,Object> requestBodyMap = request.getHttpRequestbody().getRequestBodyMap();
 		
 		responseLine.setProtocol(new HttpProtocolLv1());
 		
@@ -96,6 +105,39 @@ public class MvcHandler extends HttpServerHandler {
 				// 参数为HttpHeaders
 				if( HttpHeaders.class.isAssignableFrom(parameter.getType()) ){
 					linkList.add(httpHeaders);
+					continue;
+				}
+				
+				// Post请求的正文内容
+				HttpPostReuqestBody httpPostReuqestBody = parameter.getAnnotation(HttpPostReuqestBody.class);
+				if( httpPostReuqestBody != null ){
+					// 非POST请求
+					if( !"POST".equalsIgnoreCase(requestLine.method()) ){
+						throw new ServerException("@HttpPostReuqestBody注解必须为POST请求");
+					}
+					
+					// 为空的时候,说明该参数使用整个Map作为传参,此时要判断类型是否一致
+					if( StringUtil.isBlank(httpPostReuqestBody.value()) ){
+						if( Map.class.isAssignableFrom(parameter.getType()) ){
+							Type type = parameter.getParameterizedType();
+							
+							ParameterizedType p = (ParameterizedType)type;
+							Class<?> c1 = (Class<?>) p.getActualTypeArguments()[0];  
+							Class<?> c2 = (Class<?>) p.getActualTypeArguments()[1];
+							if( String.class == c1 && Object.class == c2 ){
+								linkList.add(requestBodyMap);
+							}else{
+								throw new ServerException("httpPostReuqestBody未指定key时,类型应为Map<String,Object>");
+							}
+						}
+					}else{
+						// 不为空时,说明为检索的key
+						String key = httpPostReuqestBody.value();
+						Object value = requestBodyMap.get(key);
+						value = ConvertUtil.convert(value, parameter.getType());
+						linkList.add(value);
+					}
+					continue;
 				}
 				
 				// 查询参数

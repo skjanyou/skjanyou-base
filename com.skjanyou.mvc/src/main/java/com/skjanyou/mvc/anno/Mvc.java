@@ -56,4 +56,13 @@ public interface Mvc {
 		public String value();
 		public boolean required() default true;
 	}	
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.PARAMETER)
+	@Retention(RetentionPolicy.RUNTIME)	
+	public @interface HttpPostReuqestBody {
+		public String value() default "";
+		public boolean required() default true;
+	}	
 }
