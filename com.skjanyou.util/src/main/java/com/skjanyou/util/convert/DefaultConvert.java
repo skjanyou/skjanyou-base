@@ -1,5 +1,7 @@
 package com.skjanyou.util.convert;
 
+import java.util.Map;
+
 import com.alibaba.fastjson.JSON;
 import com.skjanyou.util.ClassUtil;
 
@@ -144,6 +146,25 @@ public final class DefaultConvert {
 				}
 			}
 			return resultClass;
+		}
+
+		@Override
+		public int order() {
+			return 100;
+		}
+		
+	}
+	
+	public static class StringConvertToMap implements ConvertProvider<String,Map<?,?>> {
+
+		@Override
+		public boolean isMatch(Class<?> distClass, Class<?> targetClass) {
+			return String.class == distClass && Map.class == targetClass;
+		}
+
+		@Override
+		public Map<?, ?> converTo(String dist) {
+			return JSON.parseObject(dist).toJavaObject(Map.class);
 		}
 
 		@Override

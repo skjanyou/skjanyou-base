@@ -9,6 +9,7 @@ import com.skjanyou.server.api.inter.Headers;
 import com.skjanyou.server.api.inter.Protocol;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.util.StreamUtil;
+import com.skjanyou.util.convert.ConvertUtil;
 
 public class HttpRequest implements Request {
 	private HttpHeaders headers;
@@ -53,17 +54,26 @@ public class HttpRequest implements Request {
 
 		@Override
 		public Requestbody convertToRequestbody(String formBody) {
-			if( formBody != null ){
+			if( formBody != null && formBody.length() > 0 ){
 				setRequestBody(formBody);
-				String[] kvArr = formBody.split("&");
-				for (String kv : kvArr) {
-					String[] kvs = kv.split("=");
-					if( kvs.length == 2 ){
-						String key = kvs[0];
-						String value = kvs[1];
-						this.requestBodyMap.put(key, value);
-					}
+				// 这里有多种格式
+				Object result = ConvertUtil.convert(formBody, Map.class);
+				// 如果类型仍旧没有变化
+				if( formBody.equals(result) ){
+					String[] kvArr = formBody.split("&");
+					for (String kv : kvArr) {
+						String[] kvs = kv.split("=");
+						if( kvs.length == 2 ){
+							String key = kvs[0];
+							String value = kvs[1];
+							this.requestBodyMap.put(key, value);
+						}
+					}					
+				}else{
+					this.requestBodyMap.putAll((Map)result);
 				}
+				
+
 			}
 			return this;
 		}

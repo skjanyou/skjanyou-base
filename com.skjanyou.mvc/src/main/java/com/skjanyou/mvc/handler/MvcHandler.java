@@ -134,7 +134,14 @@ public class MvcHandler extends HttpServerHandler {
 						// 不为空时,说明为检索的key
 						String key = httpPostReuqestBody.value();
 						Object value = requestBodyMap.get(key);
-						value = ConvertUtil.convert(value, parameter.getType());
+						if( value != null ){
+							value = ConvertUtil.convert(value, parameter.getType());
+						}else{
+							// 必输的情况下,获取到为空时报错
+							if( httpPostReuqestBody.required() ){
+								throw new ServerException("POST请求正文内容[" + key + "]未传");
+							}
+						}
 						linkList.add(value);
 					}
 					continue;

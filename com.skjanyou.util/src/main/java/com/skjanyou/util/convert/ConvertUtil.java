@@ -10,6 +10,7 @@ import com.skjanyou.util.convert.DefaultConvert.StringConvertToDouble;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToFloat;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToInteger;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToString;
+import com.skjanyou.util.convert.DefaultConvert.StringConvertToMap;
 
 public class ConvertUtil {
 	private static List<ConvertProvider<?,?>> convertList = new ArrayList<>();
@@ -20,6 +21,7 @@ public class ConvertUtil {
 		ConvertUtil.regist(new StringConvertToFloat());
 		ConvertUtil.regist(new StringConvertToDouble());
 		ConvertUtil.regist(new StringConvertToClass());
+		ConvertUtil.regist(new StringConvertToMap());
 		ConvertUtil.regist(new AnotherObjectConvertToString());
 	}
 	
