@@ -3,6 +3,10 @@ package com.skjanyou.desktop.window;
 import com.skjanyou.desktop.implant.Implant;
 
 public interface Window {
+	/** 设置标题 **/
+	public Window setWindowTitle( String title );
+	/** 设置窗口图标 **/
+	public Window setWindowIcon(String image);
 	/** 设置宽 **/
 	public Window setWidth( float width );
 	/** 设置高 **/

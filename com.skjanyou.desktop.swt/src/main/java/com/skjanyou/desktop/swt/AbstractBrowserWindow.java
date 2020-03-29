@@ -1,19 +1,26 @@
 package com.skjanyou.desktop.swt;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
 import com.skjanyou.desktop.implant.Implant;
 import com.skjanyou.desktop.window.Window;
+import com.skjanyou.util.StreamUtil;
 
 
 public class AbstractBrowserWindow implements Window {
@@ -120,6 +127,27 @@ public class AbstractBrowserWindow implements Window {
 	@Override
 	public Window windowResizeable(boolean resizeable) {
 		// TODO 原始Api不支持
+		return this;
+	}
+
+	@Override
+	public Window setWindowTitle(String title) {
+		shell.setText(title);
+		return this;
+	}
+
+	@Override
+	public Window setWindowIcon(String image) {
+		InputStream is = null;
+		try {
+			is = StreamUtil.getInputStreamIgnoreLocation(image);
+			if( is != null ){
+				shell.setImage(new Image(shell.getDisplay(), new ImageData(is)));
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}		
+		
 		return this;
 	}
 	

@@ -18,7 +18,10 @@ public class DesktopPlugin implements PluginSupport{
 	private int width;
 	@Property("desktop.height")
 	private int height;
-	
+	@Property("desktop.title")
+	private String title;
+	@Property("desktop.icon")
+	private String icon;
 	
 	@Override
 	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) {
@@ -30,8 +33,10 @@ public class DesktopPlugin implements PluginSupport{
 		Window window = new JxbrowserWindow();
 		window.setUrl(url);
 		window.showWindow();
-		window.setHeight(height);
-		window.setWidth(width);
+		window.setWindowTitle(title)
+			  .setWindowIcon(icon)
+			  .setHeight(height)
+			  .setWidth(width);
 		logger.info("desktop url = [" +  url +  "]");
 		logger.error("desktop插件已启用,该插件使用谷歌内核,如需关闭desktop插件,可设置{desktop.enable=false}");
 	}

@@ -2,11 +2,15 @@ package com.skjanyou.desktop.jxbrowser;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.IOException;
+import java.io.InputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import com.skjanyou.desktop.implant.Implant;
 import com.skjanyou.desktop.window.Window;
+import com.skjanyou.util.StreamUtil;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
@@ -115,6 +119,24 @@ public class JxbrowserWindow extends JFrame implements Window {
 	@Override
 	public Window windowResizeable(boolean resizeable) {
 		this.setResizable(resizeable);
+		return this;
+	}
+	@Override
+	public Window setWindowTitle(String title) {
+		this.setTitle(title);
+		return this;
+	}
+	@Override
+	public Window setWindowIcon(String image) {
+		InputStream is = null;
+		try {
+			is = StreamUtil.getInputStreamIgnoreLocation(image);
+			if( is != null ){
+				this.setIconImage(ImageIO.read(is));
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		return this;
 	}
 

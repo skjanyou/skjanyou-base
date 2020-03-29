@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+
 public class StreamUtil {
 	/** 输入流转字符串 **/
 	public static String convertToString( InputStream inputstream, String charset, boolean isClose )
@@ -50,6 +51,22 @@ public class StreamUtil {
 		} catch (FileNotFoundException e) {
 			throw e;
 		}
+		return is;
+	}
+	
+	public static InputStream getInputStreamIgnoreLocation( String file ) throws FileNotFoundException{
+		InputStream is = null;
+		if( file.startsWith("classpath:") ){
+			String resources = file.substring(10);
+//			if( !resources.startsWith("/")){ resources = "/" + resources; }
+			is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resources);
+		}else{
+			try{
+				is = new FileInputStream(file);
+			} catch ( FileNotFoundException e ){
+				throw e;
+			}
+		}	
 		return is;
 	}
 	
