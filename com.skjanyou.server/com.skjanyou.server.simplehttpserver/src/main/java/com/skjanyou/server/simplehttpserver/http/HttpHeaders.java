@@ -61,7 +61,8 @@ public class HttpHeaders implements Headers {
 			String key = null;
 			String value = null;
 			if( headerArr.length == 2 ){
-				this.header.put(StringUtil.trim(headerArr[0]), headerArr[1]);
+				key = headerArr[0];
+				value = headerArr[1];
 			}else if( headerArr.length > 2 ){
 				int idx = lineHeader.indexOf(":");
 				key = lineHeader.substring(0, idx);
@@ -69,7 +70,7 @@ public class HttpHeaders implements Headers {
 			}else{
 				continue;
 			}
-			this.header.put(StringUtil.trim(key), StringUtil.trim(value));
+			this.header.put(StringUtil.trim(key).toLowerCase(), StringUtil.trim(value));
 		}
 		
 		return this;

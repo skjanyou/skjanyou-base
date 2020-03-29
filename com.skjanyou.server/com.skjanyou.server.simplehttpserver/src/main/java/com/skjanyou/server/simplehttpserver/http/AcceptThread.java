@@ -10,8 +10,10 @@ import java.util.List;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
+import com.skjanyou.server.api.inter.Headers;
 import com.skjanyou.server.api.inter.ServerHandler;
 import com.skjanyou.util.CommUtil;
+import com.skjanyou.util.StringUtil;
 
 /**
  * 接收线程
@@ -61,8 +63,16 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             }
             String requestInfo = sb.toString().trim();        
             request.headers().converToHeaders(requestInfo);
-            // 3.Post请求要通过Control-length获取请求体内容
-            
+            // 3.Post请求要通过Content-Length获取请求体内容
+            if( "POST".equalsIgnoreCase(request.requestLine().method()) ){
+            	String controlLengthString = request.headers().get("content-length");
+            	if( !StringUtil.isBlank(controlLengthString) ){
+            		int controlLength = Integer.parseInt(controlLengthString);
+            		char[] buffChar = new char[controlLength];
+            		br.read(buffChar, 0, controlLength);
+            		request.requestBody().convertToRequestbody(new String(buffChar));
+            	}
+            }
             
             List<Filter> filterList = ApplicateContext.getRegistedFilter();
             

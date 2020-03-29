@@ -15,6 +15,7 @@ public interface Request {
 	public static interface Requestbody{
 		public Requestbody readFromStream( InputStream is );
 		public String getRequestbody();
+		public Requestbody convertToRequestbody( String formBody );
 	}
 	public static interface RequestLine{
 	    String method();

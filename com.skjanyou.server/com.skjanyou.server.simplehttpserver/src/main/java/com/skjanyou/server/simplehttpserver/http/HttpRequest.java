@@ -24,11 +24,15 @@ public class HttpRequest implements Request {
 	public static class HttpRequestbody implements Requestbody {
 		private String requestBody;
 		private HttpRequest request;
-		public HttpRequestbody(HttpRequest request){ this.request = request; }
+		private Map<String,String> requestBodyMap;
+		public HttpRequestbody(HttpRequest request){ 
+			this.request = request;
+			this.requestBodyMap = new HashMap<>();
+		}
 		
 		@Override
 		public Requestbody readFromStream(InputStream is) {
-			String charset = request.headers().get("Content-type");
+			String charset = request.headers().get("content-type");
 			try {
 				this.requestBody = StreamUtil.convertToString(is, charset, false);
 			} catch (IOException e) {
@@ -45,6 +49,22 @@ public class HttpRequest implements Request {
 		
 		public void setRequestBody(String requestBody) {
 			this.requestBody = requestBody;
+		}
+
+		@Override
+		public Requestbody convertToRequestbody(String formBody) {
+			if( formBody != null ){
+				String[] kvArr = formBody.split("&");
+				for (String kv : kvArr) {
+					String[] kvs = kv.split("=");
+					if( kvs.length == 2 ){
+						String key = kvs[0];
+						String value = kvs[1];
+						this.requestBodyMap.put(key, value);
+					}
+				}
+			}
+			return this;
 		}
 	}
 	

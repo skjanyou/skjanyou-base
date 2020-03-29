@@ -119,21 +119,27 @@ public class MvcHandler extends HttpServerHandler {
 			Object result = null;
 			try {
 				method.setAccessible(true);
-				logger.info("invoke method{" + method + "}" + "argus{" + linkList + "}");
+				logger.debug("invoke method{" + method + "}" + "argus{" + linkList + "}");
 				result = method.invoke(object,paras);
-				ResponseBody rb = method.getAnnotation(ResponseBody.class);
-				if( rb != null ){
-					httpHeaders.put("Content-Type", rb.type().getValue());
-					if( rb.type() == ResponseType.JSON ){
+				if( result != null ){
+					ResponseBody rb = method.getAnnotation(ResponseBody.class);
+					if( rb != null ){
+						httpHeaders.put("Content-Type", rb.type().getValue());
+						if( rb.type() == ResponseType.JSON ){
+							result = ConvertUtil.convert(result, String.class);
+						}
+					}else{
+						httpHeaders.put("Content-Type", ResponseType.JSON.getValue());
 						result = ConvertUtil.convert(result, String.class);
 					}
 				}else{
-					httpHeaders.put("Content-Type", ResponseType.JSON.getValue());
-					result = ConvertUtil.convert(result, String.class);
+					result = "";
 				}
-				logger.info("return result " + result);
+				
+				logger.debug("return result :[ " + result + " ]");
 			} catch (Exception e) {
-				throw new ServerException("方法调用失败" + method,e);
+				logger.error(e);
+				throw new ServerException("方法调用失败:" + method,e);
 			}
 			responseLine.setStatusCode(StatusCode.Ok);
 			responseBody.setBodyContent(result.toString());
