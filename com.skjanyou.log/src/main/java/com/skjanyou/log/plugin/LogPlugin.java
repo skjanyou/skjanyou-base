@@ -1,6 +1,5 @@
 package com.skjanyou.log.plugin;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import com.skjanyou.annotation.api.Util.Property;
@@ -17,14 +16,8 @@ public class LogPlugin implements PluginSupport {
 	@Override
 	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) {
 		// 自动配置日志工厂类
-		try {
-			LoggerFactory logFactory = InstanceUtil.newInstance(logFactoryClass);
-			Field field = LogUtil.class.getDeclaredField("loggerFactory");
-			field.setAccessible(true);
-			field.set(null, logFactory);
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		LoggerFactory logFactory = InstanceUtil.newInstance(logFactoryClass);
+		LogUtil.setLoggerFactory(logFactory);
 	}
 
 	@Override
