@@ -155,7 +155,7 @@ public final class ApplicationStart {
 					// 判断插件是否为启动状态
 					String enableId = id + ".enable";
 					String enableStart = manager.getString(enableId);
-					if( enableStart != null && !Boolean.valueOf(enableStart) ) { logger.info("插件" + id + "在配置文件中设置禁用,将不会启动。如需启动,请修改配置文件,设置" + enableId +"=true。" ); continue; }
+					if( enableStart != null && !Boolean.valueOf(enableStart) ) { logger.error("插件" + id + "在配置文件中设置禁用,将不会启动。如需启动,请修改配置文件,设置" + enableId +"=true。" ); continue; }
 					String displayName = root.attributeValue("displayName"); //插件名称
 					String activatorString = root.attributeValue("activator");
 					Class activator = null;
