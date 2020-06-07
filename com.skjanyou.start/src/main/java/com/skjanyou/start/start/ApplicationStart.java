@@ -282,7 +282,11 @@ public final class ApplicationStart {
 			if( plugin.getEnable() ){
 				logger.info("开始加载插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}");
 				properties = new ComplexPluginConfig( manager, ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader) );
-				classList = scanPluginClassList(plugin.getClassScanPath());
+				if( !CommUtil.isNullOrEmpty(plugin.getClassScanPath()) ){
+					classList = scanPluginClassList(plugin.getClassScanPath());
+				}else{
+					classList = null;
+				}
 				activatorClass = plugin.getActivator();
 				pluginSupport = InstanceUtil.newInstance(activatorClass);
 				// 填充值
