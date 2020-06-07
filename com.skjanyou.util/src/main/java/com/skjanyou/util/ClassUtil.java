@@ -253,4 +253,26 @@ public class ClassUtil {
 			}
 		}
 	}
+	
+	public static boolean isClass( String classString ){
+		boolean result = true;
+		try {
+			Class.forName(classString, false, Thread.currentThread().getContextClassLoader());
+		} catch (ClassNotFoundException e) {
+			result = false;
+		}
+		return result;
+	}
+	
+	public static Class<?> convert2Class( String classString ){
+		Class<?> resultClass = null;
+		
+		try {
+			resultClass = Class.forName(classString, true, Thread.currentThread().getContextClassLoader());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return resultClass;
+	}
 }

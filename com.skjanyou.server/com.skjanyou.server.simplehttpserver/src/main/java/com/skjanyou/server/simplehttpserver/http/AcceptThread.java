@@ -10,8 +10,10 @@ import java.util.List;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
-import com.skjanyou.server.api.inter.Headers;
 import com.skjanyou.server.api.inter.ServerHandler;
+import com.skjanyou.server.core.HttpRequest;
+import com.skjanyou.server.core.HttpResponse;
+import com.skjanyou.server.core.ResponseBuilder;
 import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.StringUtil;
 

@@ -6,10 +6,10 @@ import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
-import com.skjanyou.server.simplehttpserver.http.HttpProtocolLv1;
-import com.skjanyou.server.simplehttpserver.http.HttpRequest;
-import com.skjanyou.server.simplehttpserver.http.HttpResponse;
-import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
+import com.skjanyou.server.core.HttpProtocolLv1;
+import com.skjanyou.server.core.HttpRequest;
+import com.skjanyou.server.core.HttpResponse;
+import com.skjanyou.server.core.HttpResponse.HttpResponseLine;
 
 
 // 静态资源过滤器

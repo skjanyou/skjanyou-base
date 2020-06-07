@@ -9,8 +9,8 @@ import java.util.Set;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
-import com.skjanyou.server.simplehttpserver.http.HttpRequest;
-import com.skjanyou.server.simplehttpserver.http.HttpRequest.HttpRequestLine;
+import com.skjanyou.server.core.HttpRequest;
+import com.skjanyou.server.core.HttpRequest.HttpRequestLine;
 
 public class CharacterEncodingFilter implements Filter {
 

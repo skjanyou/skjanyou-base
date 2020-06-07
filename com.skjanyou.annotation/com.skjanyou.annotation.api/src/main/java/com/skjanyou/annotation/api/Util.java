@@ -100,4 +100,17 @@ public @interface Util {
 	public @interface Property {
 		String value() ;
 	}	
+	
+	/**
+	 * 
+	 * @author skjanyou
+	 * 时间 : 2020年6月7日
+	 * 作用 : PropertyBean注解,从Property中获取类,然后实例化成对象
+	 */		
+	@Target( { ElementType.TYPE,ElementType.FIELD } )
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface PropertyBean {
+		String value() ;
+	}		
 }

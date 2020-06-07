@@ -11,11 +11,11 @@ import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.Server;
-import com.skjanyou.server.simplehttpserver.http.HttpHeaders;
-import com.skjanyou.server.simplehttpserver.http.HttpRequest;
-import com.skjanyou.server.simplehttpserver.http.HttpResponse;
-import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseBody;
-import com.skjanyou.server.simplehttpserver.http.HttpResponse.HttpResponseLine;
+import com.skjanyou.server.core.HttpHeaders;
+import com.skjanyou.server.core.HttpRequest;
+import com.skjanyou.server.core.HttpResponse;
+import com.skjanyou.server.core.HttpResponse.HttpResponseBody;
+import com.skjanyou.server.core.HttpResponse.HttpResponseLine;
 import com.skjanyou.server.simplehttpserver.http.HttpServer;
 import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
 

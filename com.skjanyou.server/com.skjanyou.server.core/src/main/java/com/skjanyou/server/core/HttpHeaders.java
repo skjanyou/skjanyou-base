@@ -1,4 +1,4 @@
-package com.skjanyou.server.simplehttpserver.http;
+package com.skjanyou.server.core;
 
 import java.text.MessageFormat;
 import java.util.HashMap;

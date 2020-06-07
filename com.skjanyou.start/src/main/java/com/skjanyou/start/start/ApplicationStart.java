@@ -21,6 +21,7 @@ import org.dom4j.io.SAXReader;
 import com.skjanyou.annotation.api.Application.Bean;
 import com.skjanyou.annotation.api.Application.Component;
 import com.skjanyou.annotation.api.Util.Property;
+import com.skjanyou.annotation.api.Util.PropertyBean;
 import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.beancontainer.factory.impl.BeandefinitionFactoryImpl;
 import com.skjanyou.log.core.Logger;
@@ -309,6 +310,7 @@ public final class ApplicationStart {
 	private static void fillPluginBeanWithProperties( Class<?> clazz,PluginSupport pluginSupport,PluginConfig properties ){
 		Field[] fileds = clazz.getDeclaredFields();
 		Property property = null;
+		PropertyBean propertyBean = null;
 		String key = null;Object value = null;
 		for (Field field : fileds) {
 			property = field.getAnnotation(Property.class);
@@ -322,6 +324,22 @@ public final class ApplicationStart {
 						field.set(pluginSupport, value);
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						e.printStackTrace();
+					}
+				}
+			}
+			propertyBean = field.getAnnotation(PropertyBean.class);
+			if( propertyBean != null ){
+				key = propertyBean.value();
+				value = properties.getProperty(key);
+				field.setAccessible(true);
+				if( value != null && !StringUtil.isBlank(value.toString()) ){
+					if( ClassUtil.isClass(value.toString()) ){
+						value = InstanceUtil.newInstance(ClassUtil.convert2Class(value.toString()));
+						try {
+							field.set(pluginSupport, value);
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							e.printStackTrace();
+						}						
 					}
 				}
 			}

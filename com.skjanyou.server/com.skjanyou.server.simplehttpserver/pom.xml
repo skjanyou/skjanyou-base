@@ -37,6 +37,11 @@
 		</dependency>	
 		<dependency>
 			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.server.core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.plugin</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>	

@@ -1,7 +1,17 @@
 package com.skjanyou.server.api.inter;
 
+import com.skjanyou.server.api.bean.ServerConfig;
+
 
 public interface Server {
+	/**
+	 * 设置配置文件
+	 * @param config
+	 * @return
+	 */
+	public Server setConfig(ServerConfig config);
+	
+	public Server init();
 	/**
 	 * 启动服务
 	 * @return

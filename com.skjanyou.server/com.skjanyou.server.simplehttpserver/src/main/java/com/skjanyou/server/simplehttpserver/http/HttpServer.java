@@ -8,9 +8,11 @@ import com.skjanyou.server.simplehttpserver.AbstractServer;
 
 public class HttpServer extends AbstractServer {
 	private DispatchThread dispatchThread;
+	public HttpServer(){}
 	public HttpServer(ServerConfig config) {
 		super(config);
 	}
+	
 	
 	@Override
 	public Server init(){
@@ -49,6 +51,12 @@ public class HttpServer extends AbstractServer {
 		for( Filter filter : ApplicateContext.getRegistedFilter()){
 			filter.destroy();
 		};		
+		return this;
+	}
+
+	@Override
+	public Server setConfig(ServerConfig config) {
+		this.config = config;
 		return this;
 	}
 

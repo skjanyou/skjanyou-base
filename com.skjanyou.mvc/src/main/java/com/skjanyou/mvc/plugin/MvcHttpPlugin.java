@@ -3,6 +3,7 @@ package com.skjanyou.mvc.plugin;
 import java.util.List;
 
 import com.skjanyou.annotation.api.Util.Property;
+import com.skjanyou.annotation.api.Util.PropertyBean;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.mvc.filter.CharacterEncodingFilter;
@@ -12,7 +13,6 @@ import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.inter.Server;
-import com.skjanyou.server.simplehttpserver.http.HttpServer;
 
 public class MvcHttpPlugin implements PluginSupport{
 	@Property("mvc.port")
@@ -23,9 +23,9 @@ public class MvcHttpPlugin implements PluginSupport{
 	private Long timeout;
 	@Property("mvc.scanPath")
 	private String scanPath;
-	
-	private ServerConfig config;
+	@PropertyBean("mvc.httpserverclass")
 	private Server server;
+	private ServerConfig config;
 	private Logger logger = LogUtil.getLogger(MvcHttpPlugin.class);
 	
 	
@@ -39,11 +39,12 @@ public class MvcHttpPlugin implements PluginSupport{
 		}
 		ApplicateContext.setServerHandler(new MvcHandler(scanPath));
     	ApplicateContext.registFilter(new CharacterEncodingFilter());	
+    	server.setConfig(config);
 	}
 
 	@Override
 	public void startup() {
-    	server = new HttpServer(config);
+		server.init();
 		server.startup();
 		logger.info("MVC服务器启动成功,信息:{ IP:" + config.getIp() + ",端口:" + config.getPort() + "}");
 	}

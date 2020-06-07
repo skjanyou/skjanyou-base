@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.skjanyou</groupId>
-		<artifactId>com.skjanyou.base</artifactId>
+		<artifactId>com.skjanyou.server</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>com.skjanyou.server</artifactId>
-	<name>com.skjanyou.server</name>
+	<artifactId>com.skjanyou.server.core</artifactId>
+	<name>com.skjanyou.server.niohttpserver</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,14 +23,12 @@
 		<dependency>
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.util</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.server.api</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
-	<packaging>pom</packaging>
-	<modules>
-		<module>com.skjanyou.server.api</module>
-		<module>com.skjanyou.server.simplehttpserver</module>
-		<module>com.skjanyou.server.niohttpserver</module>
-		<module>com.skjanyou.server.core</module>
-	</modules>
 </project>
