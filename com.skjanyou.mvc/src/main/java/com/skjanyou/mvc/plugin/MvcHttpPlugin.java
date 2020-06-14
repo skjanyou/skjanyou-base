@@ -10,7 +10,6 @@ import com.skjanyou.mvc.filter.CharacterEncodingFilter;
 import com.skjanyou.mvc.handler.MvcHandler;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.bean.PluginConfig;
-import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.inter.Server;
 
@@ -37,8 +36,8 @@ public class MvcHttpPlugin implements PluginSupport{
 		if( timeout != null ){
 			config.setTimeout(timeout);
 		}
-		ApplicateContext.setServerHandler(new MvcHandler(scanPath));
-    	ApplicateContext.registFilter(new CharacterEncodingFilter());	
+		server.handler(new MvcHandler(scanPath));
+		server.addFilter(new CharacterEncodingFilter());	
     	server.setConfig(config);
 	}
 
