@@ -8,7 +8,6 @@ import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.bean.PluginConfig;
-import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.api.inter.Filter;
@@ -40,20 +39,8 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 			return ;
 		}
 		logger.info("因为系统配置[simplehttpserver.use=" + use + "],所以simplehttpserver即将启动,若需要关闭需要将该项设置为false。");
-		ApplicateContext.setServerHandler(new ServerHandler() {
-			
-			@Override
-			public ServerHandler init() throws ServerException {
-				return this;
-			}
-			
-			@Override
-			public void handler(Request request, Response response)
-					throws ServerException {
-				
-			}
-		});
-		ApplicateContext.registFilter(new Filter() {
+		
+		server.addFilter(new Filter() {
 			@Override
 			public int priority() {
 				return 0;
@@ -72,6 +59,19 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 				return this;
 			}
 		});
+		server.handler(new ServerHandler() {
+			
+			@Override
+			public ServerHandler init() throws ServerException {
+				return this;
+			}
+			
+			@Override
+			public void handler(Request request, Response response)
+					throws ServerException {
+				
+			}
+		});
 		config = new ServerConfig();
 		config.setIp(ip);
 		config.setPort(Integer.parseInt(port));
@@ -86,7 +86,8 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 			logger.error("因为系统配置[simplehttpserver.use=" + use + "],所以simplehttpserver未启动,若需要启动需要移除该项配置或者将设置为true。");
 			return ;
 		}
-		server = new HttpServer(config);
+		server = new HttpServer();
+		server.setConfig(config);
 		server.startup();
 		logger.info("simplehttpserver服务器启动成功,信息:{ IP:" + config.getIp() + ",端口:" + config.getPort() + "}");
 	}

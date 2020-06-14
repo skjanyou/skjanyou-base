@@ -10,22 +10,23 @@ import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
 
-import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
+import com.skjanyou.server.api.inter.AbstractServer;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Server;
 
-public class NioHttpServer implements Server {
-	private ServerConfig config;
+public class NioHttpServer extends AbstractServer {
 	private ServerBootstrap bootstrap;
 	private EventLoopGroup boss;
 	private EventLoopGroup work;
 	private ChannelFuture future;
+	
 
 	public NioHttpServer() {
 		bootstrap  = new ServerBootstrap();
 		boss = new NioEventLoopGroup();
 		work = new NioEventLoopGroup();
+		
 		
 		bootstrap.group(boss,work)
 		.handler(new LoggingHandler(LogLevel.DEBUG))
@@ -36,20 +37,15 @@ public class NioHttpServer implements Server {
 
 	@Override
 	public Server setConfig(ServerConfig config) {
-		this.config = config;
 		return this;
 	}
 
 	@Override
 	public Server init() {
-		for( Filter filter : ApplicateContext.getRegistedFilter()){
+		for( Filter filter : this.filters){
 			filter.init();
-		};
-		try {
-			ApplicateContext.getServerHandler().init();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
+		};		
+		this.handler.init();
 		return this;
 	}
 
@@ -72,6 +68,15 @@ public class NioHttpServer implements Server {
 
 	@Override
 	public Server shutdown() {
+		for( Filter filter : this.filters){
+			filter.destroy();
+		};	
+		return this;
+	}
+
+	@Override
+	public Server addFilter(Filter filter) {
+		this.filters.add(filter);
 		return this;
 	}
 

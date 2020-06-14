@@ -19,16 +19,17 @@ import com.skjanyou.server.api.bean.ServerConfig;
  */
 public class DispatchThread extends Thread implements Runnable {
 	private static ExecutorService pool;
-	private ServerConfig config;
+	private HttpServer httpServer;
 	private ServerSocket serverSocket;
 	private boolean isRunning;
-	public DispatchThread( ServerConfig config ){
-		this.config = config;
-		this.isRunning = true;
+	public DispatchThread( HttpServer httpServer ){
+		this.httpServer = httpServer;
 		pool = new ThreadPoolExecutor(1, 2, 1000, TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>(),Executors.defaultThreadFactory(),new ThreadPoolExecutor.AbortPolicy());
+		this.isRunning = true;
 	}
 	@Override
 	public void run() {
+		ServerConfig config = httpServer.getConfig();
 		try {
 			serverSocket = new ServerSocket(config.getPort());
 			serverSocket.setSoTimeout((int) config.getTimeout());
@@ -38,7 +39,7 @@ public class DispatchThread extends Thread implements Runnable {
 		while(isRunning){
 			try {
 				Socket socket = serverSocket.accept();
-				Runnable runnable = new AcceptThread(socket);
+				Runnable runnable = new AcceptThread(httpServer,socket);
 				pool.execute(runnable);
 			} catch (IOException e) {
 				e.printStackTrace();

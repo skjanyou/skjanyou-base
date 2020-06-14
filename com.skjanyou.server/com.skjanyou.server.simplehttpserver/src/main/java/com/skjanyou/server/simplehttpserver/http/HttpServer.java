@@ -1,30 +1,25 @@
 package com.skjanyou.server.simplehttpserver.http;
 
-import com.skjanyou.server.api.bean.ApplicateContext;
+import java.util.List;
+
 import com.skjanyou.server.api.bean.ServerConfig;
+import com.skjanyou.server.api.inter.AbstractServer;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Server;
-import com.skjanyou.server.simplehttpserver.AbstractServer;
+import com.skjanyou.server.api.inter.ServerHandler;
 
 public class HttpServer extends AbstractServer {
 	private DispatchThread dispatchThread;
 	public HttpServer(){}
-	public HttpServer(ServerConfig config) {
-		super(config);
-	}
 	
 	
 	@Override
 	public Server init(){
-		for( Filter filter : ApplicateContext.getRegistedFilter()){
+		for( Filter filter : this.filters){
 			filter.init();
-		};
-		try {
-			ApplicateContext.getServerHandler().init();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		dispatchThread = new DispatchThread(this.config);
+		};		
+		this.handler.init();		
+		dispatchThread = new DispatchThread(this);
 		return this;
 	}
 	
@@ -48,9 +43,9 @@ public class HttpServer extends AbstractServer {
 		if( dispatchThread != null ){
 			dispatchThread.setRunning(false);
 		}
-		for( Filter filter : ApplicateContext.getRegistedFilter()){
+		for( Filter filter : this.filters){
 			filter.destroy();
-		};		
+		};			
 		return this;
 	}
 
@@ -60,4 +55,19 @@ public class HttpServer extends AbstractServer {
 		return this;
 	}
 
+	/**
+	 * 方便Dispatch获取信息
+	 * @return
+	 */
+	ServerConfig getConfig(){
+		return this.config;
+	}
+	
+	List<Filter> getFilters(){
+		return this.filters;
+	}
+	
+	ServerHandler getHandler(){
+		return this.handler;
+	}
 }

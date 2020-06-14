@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 
-import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.ServerHandler;
@@ -26,8 +25,9 @@ import com.skjanyou.util.StringUtil;
 public class AcceptThread extends Thread implements Runnable,Comparable<AcceptThread> {
 	private Socket socket;
 	private int priority;
-	private ServerHandler handler = ApplicateContext.getServerHandler();
-	public AcceptThread( Socket socket ){
+	private HttpServer httpServer;
+	public AcceptThread( HttpServer httpServer,Socket socket ){
+		this.httpServer = httpServer;
 		this.socket = socket;
 	}
 	
@@ -76,7 +76,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             	}
             }
             
-            List<Filter> filterList = ApplicateContext.getRegistedFilter();
+            List<Filter> filterList = httpServer.getFilters();
             
             boolean allPass = true;
         	for (Filter filter : filterList) {
@@ -88,7 +88,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
         	}
             	
             if( allPass ){
-            	handler.handler(request, response);
+            	httpServer.getHandler().handler(request, response);
             }
             
             byte[] responseBytes = ResponseBuilder.getResponseBytes(response);

@@ -3,7 +3,6 @@ package com.skjanyou.server.simplehttpserver;
 import java.io.File;
 
 import com.skjanyou.annotation.api.enumclass.ResponseType;
-import com.skjanyou.server.api.bean.ApplicateContext;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.exception.ServerException;
@@ -61,8 +60,9 @@ public class AppTest {
 	}
 	
 	public static void main(String[] args) {
-		ApplicateContext.setServerHandler(new MyServerHandler());
-		ApplicateContext.registFilter(new Filter() {
+		Server server = new HttpServer();
+		server.handler(new MyServerHandler());
+		server.addFilter(new Filter() {
 			
 			@Override
 			public int priority() {
@@ -87,7 +87,6 @@ public class AppTest {
 		});
 		ServerConfig config = new ServerConfig();
 		config.setIp("127.0.0.1");config.setPort(2333);config.setTimeout(5000000);
-		Server server = new HttpServer(config);
 		server.startup();
 	}
 }
