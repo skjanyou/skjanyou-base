@@ -14,6 +14,7 @@ public abstract class AbstractServer implements Server{
 	protected boolean isAlive;
 	public AbstractServer(){
 		filters = new ArrayList<>();
+		
 	}
 	
 	@Override
