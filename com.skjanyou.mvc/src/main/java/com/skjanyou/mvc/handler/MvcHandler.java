@@ -1,9 +1,11 @@
 package com.skjanyou.mvc.handler;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
@@ -218,7 +220,24 @@ public class MvcHandler extends HttpServerHandler {
 				// 包含Service
 				Service service = clazz.getDeclaredAnnotation(Service.class);
 				if( service != null ){
-					Object object = clazz.newInstance();
+					Object object = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{ clazz }, new InvocationHandler() {
+						@Override
+						public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+							Object result = null;
+							try{
+								// 开启事务
+								result = method.invoke(proxy, args);
+								// 提交事务
+							} catch( Exception e ){
+								// 回滚事务
+							} finally {
+								
+								
+							}
+							
+							return result;
+						}
+					});
 					String serviceName = service.value();
 					MvcApplicateContext.putBean(serviceName, object);				
 				}

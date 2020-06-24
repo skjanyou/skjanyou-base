@@ -2,13 +2,13 @@ package com.skjanyou.log.simple;
 
 import java.io.PrintStream;
 
-import com.skjanyou.annotation.api.Application.Bean;
 import com.skjanyou.log.core.Logger;
-import com.skjanyou.log.core.LoggerFactory;
 
-@Bean
-public class SystemLogger implements Logger,LoggerFactory {
+public class SystemLogger implements Logger {
 	private String className ;
+	SystemLogger( String className ){
+		this.className = className;
+	}
 	@Override
 	public Logger trace(Object... msg) {
 		return printLine(System.out,msg);
@@ -50,15 +50,4 @@ public class SystemLogger implements Logger,LoggerFactory {
 		return this;
 	}
 
-	@Override
-	public Logger create( Class<?> clazz) {
-		this.className = clazz.getName();
-		return this;
-	}
-	
-	@Override
-	public Logger create( String className ) {
-		this.className = className;
-		return this;
-	}
 }

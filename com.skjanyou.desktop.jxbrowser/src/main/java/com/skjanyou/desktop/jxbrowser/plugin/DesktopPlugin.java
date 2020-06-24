@@ -1,6 +1,7 @@
 package com.skjanyou.desktop.jxbrowser.plugin;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.List;
@@ -21,6 +22,7 @@ import com.skjanyou.plugin.adapter.PluginDefineAnnotationClassAdapter;
 import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.plugin.constant.DefineAnnotationClassPosition;
 import com.skjanyou.util.ScanUtil;
+import com.teamdev.jxbrowser.chromium.BrowserCore;
 
 public class DesktopPlugin implements PluginSupport{
 	private Logger logger = LogUtil.getLogger(DesktopPlugin.class);
@@ -39,6 +41,7 @@ public class DesktopPlugin implements PluginSupport{
 	
 	@Override
 	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) {
+		ignoreJxbrowserInfo();
 		window = new JxbrowserWindow();
 		
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -86,5 +89,23 @@ public class DesktopPlugin implements PluginSupport{
 
 	@Override
 	public void shutdown() {
+	}
+	
+	private void ignoreJxbrowserInfo(){
+		final PrintStream oldOut = System.out;
+		PrintStream newOut = new PrintStream(oldOut){
+			@Override
+			public void println(String arg0) {
+				StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+				if(ste[2].getClassName().startsWith("com.teamdev.jxbrowser.chromium")){
+					return;
+				}
+				super.println(arg0);
+			}
+		};
+		System.setOut(newOut);
+		BrowserCore.initialize();
+		System.setOut(oldOut);
+		newOut = null;
 	}
 }
