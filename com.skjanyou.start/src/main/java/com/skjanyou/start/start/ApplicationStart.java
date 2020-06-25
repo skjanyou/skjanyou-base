@@ -307,6 +307,7 @@ public final class ApplicationStart {
 	}
 	
 	/** 向插件类中的成员变量注入值  **/
+	@SuppressWarnings("unchecked")
 	private static void fillPluginBeanWithProperties( Class<?> clazz,PluginSupport pluginSupport,PluginConfig properties ){
 		Field[] fileds = clazz.getDeclaredFields();
 		Property property = null;
@@ -332,14 +333,35 @@ public final class ApplicationStart {
 				key = propertyBean.value();
 				value = properties.getProperty(key);
 				field.setAccessible(true);
-				if( value != null && !StringUtil.isBlank(value.toString()) ){
-					if( ClassUtil.isClass(value.toString()) ){
-						value = InstanceUtil.newInstance(ClassUtil.convert2Class(value.toString()));
-						try {
-							field.set(pluginSupport, value);
-						} catch (IllegalArgumentException | IllegalAccessException e) {
-							e.printStackTrace();
-						}						
+				// 1.判断一下成员变量类型
+				if(field.getType().isAssignableFrom(List.class)){
+					// 多条数据,value的数据应当为[A,B]这种格式
+					List list = new ArrayList<>();
+					String arrString = value.toString();
+					arrString = arrString.substring(1, arrString.length()-1);
+					String[] arr = arrString.split(",");
+					for (String cla : arr) {
+						if( ClassUtil.isClass( cla ) ){
+							list.add(InstanceUtil.newInstance(ClassUtil.convert2Class(cla)));
+						}
+					}
+					try {
+						value = list;
+						field.set(pluginSupport, value);
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						e.printStackTrace();
+					}							
+				}else{
+					// 单个数据
+					if( value != null && !StringUtil.isBlank(value.toString()) ){
+						if( ClassUtil.isClass(value.toString()) ){
+							value = InstanceUtil.newInstance(ClassUtil.convert2Class(value.toString()));
+							try {
+								field.set(pluginSupport, value);
+							} catch (IllegalArgumentException | IllegalAccessException e) {
+								e.printStackTrace();
+							}						
+						}
 					}
 				}
 			}

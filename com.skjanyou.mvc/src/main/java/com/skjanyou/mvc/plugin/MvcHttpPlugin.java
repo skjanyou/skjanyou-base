@@ -11,6 +11,7 @@ import com.skjanyou.mvc.handler.MvcHandler;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.server.api.bean.ServerConfig;
+import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Server;
 
 public class MvcHttpPlugin implements PluginSupport{
@@ -24,6 +25,8 @@ public class MvcHttpPlugin implements PluginSupport{
 	private String scanPath;
 	@PropertyBean("mvc.httpserverclass")
 	private Server server;
+	@PropertyBean("mvc.filters")
+	private List<Filter> filters;
 	private ServerConfig config;
 	private Logger logger = LogUtil.getLogger(MvcHttpPlugin.class);
 	
@@ -37,7 +40,10 @@ public class MvcHttpPlugin implements PluginSupport{
 			config.setTimeout(timeout);
 		}
 		server.handler(new MvcHandler(scanPath));
-		server.addFilter(new CharacterEncodingFilter());	
+		server.addFilter(new CharacterEncodingFilter());
+		this.filters.forEach( filter -> {
+			server.addFilter(filter);
+		});
     	server.setConfig(config);
 	}
 
