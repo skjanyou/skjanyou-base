@@ -46,7 +46,7 @@ public class ComplexPluginConfig implements PluginConfig {
 					findValue = getProperty(newKey);
 				}
 				if( findValue != null ){
-					resultBuilder.replace(patternString, findValue);
+					resultBuilder = resultBuilder.replace(patternString, findValue);
 				}
 			}
 			result = resultBuilder.toString();
