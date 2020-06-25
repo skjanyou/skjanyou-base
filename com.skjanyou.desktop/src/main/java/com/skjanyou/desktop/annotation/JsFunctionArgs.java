@@ -7,10 +7,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 @Documented
 @Inherited
-@Target({ElementType.TYPE})
+@Target( {ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JsClass {
+public @interface JsFunctionArgs {
 	public String value();
+	public boolean required() default false;
 }

@@ -11,6 +11,7 @@ import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.desktop.annotation.JsClass;
 import com.skjanyou.desktop.constant.DesktopConstant;
 import com.skjanyou.desktop.implant.Implant;
+import com.skjanyou.desktop.implant.JsFunctionManager;
 import com.skjanyou.desktop.implant.impl.UrlResourcesImplant;
 import com.skjanyou.desktop.jxbrowser.JxbrowserWindow;
 import com.skjanyou.desktop.window.Window;
@@ -70,7 +71,7 @@ public class DesktopPlugin implements PluginSupport{
 			
 			@Override
 			public void classProcess(Class<?> targetClass, Beandefinition beandefinition) {
-				
+				JsFunctionManager.INSTANCE.resolveClass(targetClass);
 			}
 		});
 	}

@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import com.skjanyou.desktop.implant.Implant;
+import com.skjanyou.desktop.implant.JsFunctionManager;
 import com.skjanyou.desktop.jxbrowser.adapter.ListenerAdapter;
 import com.skjanyou.desktop.window.Window;
 import com.skjanyou.util.StreamUtil;
@@ -83,6 +84,9 @@ public class JxbrowserWindow extends JFrame implements Window {
 			@Override
 			public void onFinishLoadingFrame(FinishLoadingEvent arg0) {
 				System.out.println("onFinishLoadingFrame");
+				// Java方法与Js函数绑定
+				JSValue window = browser.executeJavaScriptAndReturnValue("window");
+				window.asObject().setProperty("Skjanyou", JsFunctionManager.INSTANCE);
 			}
 
 			@Override
