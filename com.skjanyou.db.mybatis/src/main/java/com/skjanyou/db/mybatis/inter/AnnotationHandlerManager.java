@@ -10,6 +10,7 @@ import com.skjanyou.db.mybatis.anno.DDL.Insert;
 import com.skjanyou.db.mybatis.anno.DDL.Select;
 import com.skjanyou.db.mybatis.anno.DDL.Update;
 import com.skjanyou.db.mybatis.bean.Invocation;
+import com.skjanyou.db.mybatis.core.BeanAnnotation;
 import com.skjanyou.db.mybatis.inter.impl.DefaultAnnotationDispatchHandler;
 
 public class AnnotationHandlerManager {
@@ -21,6 +22,14 @@ public class AnnotationHandlerManager {
 		$this.on(Insert.class, new DefaultAnnotationDispatchHandler.InsertAnnotationHander());
 		$this.on(Update.class, new DefaultAnnotationDispatchHandler.UpdateAnnotationHander());
 		$this.on(Delete.class, new DefaultAnnotationDispatchHandler.DeleteAnnotationHandler());
+		
+		AnnotationHandler<Annotation> baseHandler = new BeanAnnotation.BeanBaseHandler();
+		$this.on(BeanAnnotation.SelectOne.class, baseHandler);
+		$this.on(BeanAnnotation.SelectFirst.class, baseHandler);
+		$this.on(BeanAnnotation.Insert.class, baseHandler);
+		$this.on(BeanAnnotation.Query.class, baseHandler);
+		$this.on(BeanAnnotation.QueryPage.class, baseHandler);
+		$this.on(BeanAnnotation.Update.class, baseHandler);
 	}
 	
 	private AnnotationHandlerManager(){}
