@@ -209,4 +209,9 @@ public class DefaultPluginProcess implements PluginProcess {
 		}
 		
 	}
+
+	@Override
+	public void listAllPluginInfo() {
+		
+	}
 }
