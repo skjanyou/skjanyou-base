@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -211,7 +212,29 @@ public class DefaultPluginProcess implements PluginProcess {
 	}
 
 	@Override
-	public void listAllPluginInfo() {
+	public void listAllPluginInfo( ConfigManager manager,ClassLoader classLoader ) {
+		List<Plugin> pluginList = PluginManager.getPluginList();
+		for (Plugin plugin : pluginList) {
+			// 插件类
+			Class<?> support = plugin.getActivator();
+			// 插件名
+			String id = plugin.getId();
+			// 插件描述
+			String displayName = plugin.getDisplayName();
+			// 默认配置
+			Properties defaultProperties = ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader);
+			// 当前配置
+			ComplexPluginConfig currentProperties = new ComplexPluginConfig(manager, defaultProperties);
+			
+			
+		}
+		
+		
+		
+		
+		
+		
+		
 		
 	}
 }

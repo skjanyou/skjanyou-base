@@ -23,13 +23,12 @@ public class AnnotationHandlerManager {
 		$this.on(Update.class, new DefaultAnnotationDispatchHandler.UpdateAnnotationHander());
 		$this.on(Delete.class, new DefaultAnnotationDispatchHandler.DeleteAnnotationHandler());
 		
-		AnnotationHandler<Annotation> baseHandler = new BeanAnnotation.BeanBaseHandler();
-		$this.on(BeanAnnotation.SelectOne.class, baseHandler);
-		$this.on(BeanAnnotation.SelectFirst.class, baseHandler);
-		$this.on(BeanAnnotation.Insert.class, baseHandler);
-		$this.on(BeanAnnotation.Query.class, baseHandler);
-		$this.on(BeanAnnotation.QueryPage.class, baseHandler);
-		$this.on(BeanAnnotation.Update.class, baseHandler);
+		$this.on(BeanAnnotation.SelectOne.class, new BeanAnnotation.SelectOneAnnotationHandler());
+		$this.on(BeanAnnotation.SelectFirst.class, new BeanAnnotation.SelectFirstAnnotationHandler());
+		$this.on(BeanAnnotation.Insert.class, new BeanAnnotation.InsertAnnotationHandler());
+		$this.on(BeanAnnotation.Query.class, new BeanAnnotation.QueryAnnotationHandler());
+		$this.on(BeanAnnotation.QueryPage.class, new BeanAnnotation.QueryPageAnnotationHandler());
+		$this.on(BeanAnnotation.Update.class, new BeanAnnotation.UpdateAnnotationHandler());
 	}
 	
 	private AnnotationHandlerManager(){}

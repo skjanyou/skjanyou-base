@@ -1,25 +1,148 @@
 package com.skjanyou.db.mybatis.core;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
 
 import com.skjanyou.db.mybatis.bean.Invocation;
+import com.skjanyou.db.mybatis.exception.DaoException;
 import com.skjanyou.db.mybatis.inter.AnnotationHandler;
 import com.skjanyou.db.mybatis.inter.SqlExceptionProcess;
 import com.skjanyou.db.mybatis.inter.SqlProcess;
+import com.skjanyou.db.mybatis.util.BeanUtil;
+import com.skjanyou.db.mybatis.util.SqlUtil;
+import com.skjanyou.log.core.Logger;
+import com.skjanyou.log.util.LogUtil;
 
 public final class BeanAnnotation {
-	public static class BeanBaseHandler implements AnnotationHandler<Annotation>{
+	
+	public static class SelectOneAnnotationHandler implements AnnotationHandler<SelectOne>{
 		@Override
-		public Object handler(Invocation<Annotation> item) {
-			return null;
+		public Object handler(Invocation<SelectOne> item) {
+			Object result = null;
+			SelectOne selectOne = item.getAnno();
+			Class<? extends SqlProcess<SelectOne>> sqlProcessClass = selectOne.handler();
+			Class<? extends SqlExceptionProcess> sqlExceptionProcessClass = selectOne.exception();
+			
+			SqlProcess<SelectOne> selectProcess = BeanUtil.getBean(sqlProcessClass);
+			SqlExceptionProcess exceptionProcess = BeanUtil.getBean(sqlExceptionProcessClass);
+			
+			
+			try{
+				result = selectProcess.process(item);
+			}catch(Exception e){
+				exceptionProcess.handlerException(e);
+			}
+			return result;
 		}
 	}
+	
+	public static class SelectFirstAnnotationHandler implements AnnotationHandler<SelectFirst>{
+		@Override
+		public Object handler(Invocation<SelectFirst> item) {
+			Object result = null;
+			SelectFirst selectFirst = item.getAnno();
+			Class<? extends SqlProcess<SelectFirst>> sqlProcessClass = selectFirst.handler();
+			Class<? extends SqlExceptionProcess> sqlExceptionProcessClass = selectFirst.exception();
+			
+			SqlProcess<SelectFirst> selectProcess = BeanUtil.getBean(sqlProcessClass);
+			SqlExceptionProcess exceptionProcess = BeanUtil.getBean(sqlExceptionProcessClass);
+			
+			
+			try{
+				result = selectProcess.process(item);
+			}catch(Exception e){
+				exceptionProcess.handlerException(e);
+			}
+			return result;
+		}
+	}	
+	
+	public static class InsertAnnotationHandler implements AnnotationHandler<Insert>{
+		@Override
+		public Object handler(Invocation<Insert> item) {
+			Object result = null;
+			Insert insert = item.getAnno();
+			Class<? extends SqlProcess<Insert>> sqlProcessClass = insert.handler();
+			Class<? extends SqlExceptionProcess> sqlExceptionProcessClass = insert.exception();
+			
+			SqlProcess<Insert> selectProcess = BeanUtil.getBean(sqlProcessClass);
+			SqlExceptionProcess exceptionProcess = BeanUtil.getBean(sqlExceptionProcessClass);
+			
+			try{
+				result = selectProcess.process(item);
+			}catch(Exception e){
+				exceptionProcess.handlerException(e);
+			}
+			return result;
+		}
+	}	
+	
+	public static class QueryAnnotationHandler implements AnnotationHandler<Query>{
+		@Override
+		public Object handler(Invocation<Query> item) {
+			Object result = null;
+			Query query = item.getAnno();
+			Class<? extends SqlProcess<Query>> sqlProcessClass = query.handler();
+			Class<? extends SqlExceptionProcess> sqlExceptionProcessClass = query.exception();
+			
+			SqlProcess<Query> selectProcess = BeanUtil.getBean(sqlProcessClass);
+			SqlExceptionProcess exceptionProcess = BeanUtil.getBean(sqlExceptionProcessClass);
+			
+			try{
+				result = selectProcess.process(item);
+			}catch(Exception e){
+				exceptionProcess.handlerException(e);
+			}
+			return result;
+		}
+	}		
+	
+	public static class QueryPageAnnotationHandler implements AnnotationHandler<QueryPage>{
+		@Override
+		public Object handler(Invocation<QueryPage> item) {
+			Object result = null;
+			QueryPage queryPage = item.getAnno();
+			Class<? extends SqlProcess<QueryPage>> sqlProcessClass = queryPage.handler();
+			Class<? extends SqlExceptionProcess> sqlExceptionProcessClass = queryPage.exception();
+			
+			SqlProcess<QueryPage> selectProcess = BeanUtil.getBean(sqlProcessClass);
+			SqlExceptionProcess exceptionProcess = BeanUtil.getBean(sqlExceptionProcessClass);
+			
+			try{
+				result = selectProcess.process(item);
+			}catch(Exception e){
+				exceptionProcess.handlerException(e);
+			}
+			return result;
+		}
+	}	
+	
+	public static class UpdateAnnotationHandler implements AnnotationHandler<Update>{
+		@Override
+		public Object handler(Invocation<Update> item) {
+			Object result = null;
+			Update update = item.getAnno();
+			Class<? extends SqlProcess<Update>> sqlProcessClass = update.handler();
+			Class<? extends SqlExceptionProcess> sqlExceptionProcessClass = update.exception();
+			
+			SqlProcess<Update> selectProcess = BeanUtil.getBean(sqlProcessClass);
+			SqlExceptionProcess exceptionProcess = BeanUtil.getBean(sqlExceptionProcessClass);
+			
+			try{
+				result = selectProcess.process(item);
+			}catch(Exception e){
+				exceptionProcess.handlerException(e);
+			}
+			return result;
+		}
+	}		
 	
 	@Documented
 	@Inherited
@@ -31,13 +154,31 @@ public final class BeanAnnotation {
 		public Class<? extends SqlExceptionProcess> exception() default SelectOneProcess.class;
 		
 		class SelectOneProcess implements SqlProcess<SelectOne>,SqlExceptionProcess {
+			private Logger logger = LogUtil.getLogger(SelectOneProcess.class);
 			@Override
 			public void handlerException(Throwable throwable) {
-				
+				logger.error(throwable);
 			}
 			@Override
 			public Object process(Invocation<SelectOne> pi) {
-				return null;
+				// 获取Mapper类的泛型
+				Class<?> mapperClass = pi.getMapperClass();
+				ParameterizedType pt = (ParameterizedType )mapperClass.getGenericInterfaces()[0];
+				Type trueType = pt.getActualTypeArguments()[0];
+				Class<?> typeClass = (Class<?>)trueType;
+				// 参数检查
+				if( pi.getArgs().length != 1 || pi.getArgs()[0].getClass() != typeClass ){
+					throw new DaoException("查询参数数量必须为1,并且类型为"+typeClass.getName());
+				}
+				Object bean = pi.getArgs()[0];
+				String sql = SqlUtil.generateSelectSQL(typeClass);
+				List<?> list = SqlSession.executeSelectListSql(sql, bean, typeClass);
+				if( list.size() > 1 ){
+					throw new DaoException("查询的到的数据量为" + list.size() + "大于0");
+				}else if( list.size() == 0 ){
+					return null;
+				}
+				return list.get(0);
 			}
 		}
 	}

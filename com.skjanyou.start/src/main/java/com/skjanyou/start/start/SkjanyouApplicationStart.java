@@ -43,7 +43,7 @@ public abstract class SkjanyouApplicationStart {
 	private PluginProcess pluginProcess;
 	private Set<Class<?>> classSet;
 	private List<String> pluginScanPath = new LinkedList<>(Arrays.asList(new String[]{ "com.skjanyou" }));
-	SkjanyouApplicationStart(){
+	public SkjanyouApplicationStart(){
 		this.classLoaderProvider = ServiceLoaderUtil.load(ClassLoaderProvider.class);
 		this.configureProvider = ServiceLoaderUtil.load(ConfigureProvider.class);
 		this.beandefinition = ServiceLoaderUtil.load(BeandefinitionFactory.class).create();
@@ -72,7 +72,8 @@ public abstract class SkjanyouApplicationStart {
 	
 	
 	public static void start( Class<?> configClass,String[] args ){
-
+		start.configClass = configClass;
+		CommandManager.processCommand(args[0]);
 	}
 	
 	protected void help(){
