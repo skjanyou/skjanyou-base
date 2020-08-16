@@ -1,5 +1,8 @@
 package com.skjanyou.desktop.window;
 
+import java.util.List;
+
+import com.skjanyou.desktop.implant.Filter;
 import com.skjanyou.desktop.implant.Implant;
 
 public interface Window {
@@ -29,6 +32,10 @@ public interface Window {
 	public Object executeJscript( String javaScript );
 	/** 添加注入脚本 **/
 	public Window addImplant( Implant... implants );
+	/** 添加过滤器**/
+	public Window addFilter( Filter... filters );
+	/** 设置过滤器 **/
+	public Window setFilters( List<Filter> filters );
 	/** 是否可以移动 **/
 	public Window windowMoveable( boolean moveable );
 	/** 是否可以设置大小 **/

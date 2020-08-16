@@ -4,19 +4,26 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+import com.skjanyou.desktop.implant.Filter;
 import com.skjanyou.desktop.implant.Implant;
 import com.skjanyou.desktop.implant.JsFunctionManager;
 import com.skjanyou.desktop.jxbrowser.adapter.ListenerAdapter;
 import com.skjanyou.desktop.window.Window;
 import com.skjanyou.util.StreamUtil;
 import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.BrowserContext;
+import com.teamdev.jxbrowser.chromium.BrowserContextParams;
 import com.teamdev.jxbrowser.chromium.JSValue;
+import com.teamdev.jxbrowser.chromium.ResourceHandler;
+import com.teamdev.jxbrowser.chromium.ResourceParams;
 import com.teamdev.jxbrowser.chromium.events.FailLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.FrameLoadEvent;
@@ -35,30 +42,55 @@ public class JxbrowserWindow extends JFrame implements Window {
 	private Browser debuggerBrowser = null;
 	private BrowserView debuggerView = null;
 	private List<Implant> implantList = null;
-	
+	private List<Filter> filterList = null;
+
 	public JxbrowserWindow(){
-		this.browser = new Browser();
+		// 通过datadir来区分browser,由此可以打开多个浏览器页面
+		BrowserContextParams params = new BrowserContextParams("1");
+		BrowserContext context = new BrowserContext(params);
+		context.getNetworkService().setResourceHandler(new ResourceHandler() {
+
+			@Override
+			public boolean canLoadResource(ResourceParams params) {
+				// 在这个里面可以拦截请求,返回true时可以加载,false为不加载
+				try {
+					URL url = new URL(params.getURL());
+					if( filterList != null ){
+						for (Filter filter : filterList) {
+							if( !filter.doProcess(url) ){
+								return false;
+							}
+						}
+					}
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return true;
+			}
+		});
+		this.browser = new Browser(context);
 		this.browserView = new BrowserView(browser);
 		this.add(browserView,BorderLayout.CENTER);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setWidth(700);
 		this.setHeight(500);
-        this.setLocationRelativeTo(null);
-        this.implantList = new ArrayList<>();
-        
-        // debug
-        this.debuggerJFrame = new JFrame();
-        this.debuggerBrowser = new Browser();
-        this.debuggerView = new BrowserView(debuggerBrowser);
-        this.remoteDebuggingURL = browser.getRemoteDebuggingURL();
-        System.out.println(this.remoteDebuggingURL);
-        this.debuggerJFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.debuggerJFrame.add(debuggerView, BorderLayout.CENTER);
-        this.debuggerJFrame.setSize(700, 500);
-        this.debuggerJFrame.setLocationRelativeTo(null);
-        this.debuggerJFrame.setVisible(false);
-        this.debuggerBrowser.loadURL(remoteDebuggingURL);
-        
+		this.setLocationRelativeTo(null);
+		this.implantList = new ArrayList<>();
+		this.filterList = new ArrayList<>();
+		// debug
+		this.debuggerJFrame = new JFrame();
+		this.debuggerBrowser = new Browser();
+		this.debuggerView = new BrowserView(debuggerBrowser);
+		this.remoteDebuggingURL = browser.getRemoteDebuggingURL();
+		System.out.println(this.remoteDebuggingURL);
+		this.debuggerJFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.debuggerJFrame.add(debuggerView, BorderLayout.CENTER);
+		this.debuggerJFrame.setSize(700, 500);
+		this.debuggerJFrame.setLocationRelativeTo(null);
+		this.debuggerJFrame.setVisible(false);
+		this.debuggerBrowser.loadURL(remoteDebuggingURL);
+
 		this.browser.addLoadListener(new ListenerAdapter() {
 
 			@Override
@@ -98,8 +130,9 @@ public class JxbrowserWindow extends JFrame implements Window {
 			public void onStartLoadingFrame(StartLoadingEvent arg0) {
 				System.out.println("onStartLoadingFrame");
 			}
-			
-		});        
+
+		});      
+
 	}
 	@Override
 	public Window setWidth(float width) {
@@ -168,12 +201,26 @@ public class JxbrowserWindow extends JFrame implements Window {
 		}
 		return this;
 	}
-	
+
+	@Override
+	public Window addFilter(Filter... filters) {
+		for (Filter filter : filters) {
+			this.filterList.add(filter);
+		}
+		return this;
+	}	
+
+	@Override
+	public Window setFilters(List<Filter> filters) {
+		this.filterList = filters;
+		return this;
+	}	
+
 	@Override
 	public Window windowMoveable(boolean moveable) {
 		return this;
 	}
-	
+
 	@Override
 	public Window windowResizeable(boolean resizeable) {
 		this.setResizable(resizeable);
@@ -197,5 +244,7 @@ public class JxbrowserWindow extends JFrame implements Window {
 		}
 		return this;
 	}
+
+
 
 }

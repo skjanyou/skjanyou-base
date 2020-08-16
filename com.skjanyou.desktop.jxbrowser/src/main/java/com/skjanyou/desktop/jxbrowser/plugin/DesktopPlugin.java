@@ -7,9 +7,11 @@ import java.net.URL;
 import java.util.List;
 
 import com.skjanyou.annotation.api.Util.Property;
+import com.skjanyou.annotation.api.Util.PropertyBean;
 import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.desktop.annotation.JsClass;
 import com.skjanyou.desktop.constant.DesktopConstant;
+import com.skjanyou.desktop.implant.Filter;
 import com.skjanyou.desktop.implant.Implant;
 import com.skjanyou.desktop.implant.JsFunctionManager;
 import com.skjanyou.desktop.implant.impl.UrlResourcesImplant;
@@ -37,6 +39,8 @@ public class DesktopPlugin implements PluginSupport{
 	private String title;
 	@Property("desktop.icon")
 	private String icon;
+	@PropertyBean("desktop.filters")
+	private List<Filter> filters;
 	
 	private Window window;
 	
@@ -56,7 +60,10 @@ public class DesktopPlugin implements PluginSupport{
 			logger.error("扫描到注入脚本:" + url);
 			Implant implant = new UrlResourcesImplant(url);
 			window.addImplant(implant);
-		}				
+		}			
+		if( filters != null  ){
+			window.setFilters(filters);
+		}
 		PluginDefineAnnotationClassManager.regist(new PluginDefineAnnotationClassAdapter(){
 
 			@Override

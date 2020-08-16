@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -18,6 +16,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
+import com.skjanyou.desktop.implant.Filter;
 import com.skjanyou.desktop.implant.Implant;
 import com.skjanyou.desktop.window.Window;
 import com.skjanyou.util.StreamUtil;
@@ -150,5 +149,14 @@ public class AbstractBrowserWindow implements Window {
 		
 		return this;
 	}
+
+	@Override
+	public Window addFilter(Filter... filters) {
+		return this;
+	}
 	
+	@Override
+	public Window setFilters(List<Filter> filters) {
+		return this;
+	}	
 }
