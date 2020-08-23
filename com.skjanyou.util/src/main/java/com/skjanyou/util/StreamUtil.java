@@ -70,4 +70,24 @@ public class StreamUtil {
 		return is;
 	}
 	
+	public static byte[] getDataByStream( InputStream input,boolean autoClose ) throws IOException{
+		byte[] result = null;
+		ByteArrayOutputStream out = null;
+		
+		try {
+			out = new ByteArrayOutputStream();
+			byte[] buff = new byte[4*1024];
+			int len = -1;
+			while( ( len = input.read(buff) )  != -1 )  {
+				out.write(buff,0,len);
+			}
+		} finally {
+			CommUtil.close(out);
+			if( autoClose ){
+				CommUtil.close(input);
+			}
+		}
+		return result;
+	}
+	
 }

@@ -7,4 +7,7 @@
   </parent>
   <artifactId>com.skjanyou.rpc</artifactId>
   <packaging>pom</packaging>
+  <modules>
+  	<module>com.skjanyou.rpc.api</module>
+  </modules>
 </project>

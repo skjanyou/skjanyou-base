@@ -30,6 +30,7 @@
 		<module>com.skjanyou.desktop.swt</module>
 		<module>com.skjanyou.desktop.jxbrowser</module>
 		<module>com.skjanyou.db.mybatis.pagehelper</module>
+		<module>skjanyou-maven-plugin</module>
 	</modules>
 
 	<properties>
