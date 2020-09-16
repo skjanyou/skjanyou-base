@@ -44,11 +44,15 @@ public class ServiceLoaderUtil {
 		try {
 			// 1.Skjanyou Spi
 			Enumeration<URL> e = classLoader.getResources(SKJANYOU_SPI_PATTERN + name);
-			url = e.nextElement();
+			if( e.hasMoreElements() ) {
+				url = e.nextElement();
+			}
 			if( url == null ){
 				// 2.兼容Java Spi
 				e = classLoader.getResources(JAVA_SPI_PATTERN + name);
-				url = e.nextElement();
+				if( e.hasMoreElements() ) {
+					url = e.nextElement();
+				}
 			}
 			
 		} catch ( IOException e ) {

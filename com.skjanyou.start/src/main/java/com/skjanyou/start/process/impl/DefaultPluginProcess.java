@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -111,17 +112,24 @@ public class DefaultPluginProcess implements PluginProcess {
 			// 启动开启的插件
 			if( plugin.getEnable() ){
 				logger.info("开始加载插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}");
-				properties = new ComplexPluginConfig( manager, ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader) );
-				if( !CommUtil.isNullOrEmpty(plugin.getClassScanPath()) ){
-					classList = scanPluginClassList(plugin.getClassScanPath(),classLoader);
-				}else{
-					classList = null;
-				}
+				Properties defaultProps = CommUtil.isNullOrEmpty(plugin.getDefaultConfig()) ? new Properties() : ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader);
+				properties = new ComplexPluginConfig( manager, defaultProps );
+				classList = CommUtil.isNullOrEmpty(plugin.getClassScanPath()) ? Collections.emptyList() : scanPluginClassList(plugin.getClassScanPath(),classLoader);
 				activatorClass = plugin.getActivator();
 				pluginSupport = InstanceUtil.newInstance(activatorClass);
 				// 填充值
 				fillPluginBeanWithProperties(activatorClass,pluginSupport,properties);
-				PluginManager.initPlugin(pluginSupport, classList, properties);
+				try{
+					PluginManager.initPlugin(pluginSupport, classList, properties);
+				} catch( Exception e ) {
+					logger.error(String.format("插件[%s]启动失败,原因:[%s]", plugin.getDisplayName(),e.getMessage()),e);
+					PluginManager.getPluginList().remove(plugin);
+					// 失败终止
+					if(plugin.getFailOnInitError()) {
+						throw new RuntimeException(String.format("插件[%s]启动失败,原因:[%s]", plugin.getDisplayName(),e.getMessage()));
+					}
+				}
+				
 				logger.info("加载插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}完成");
 			}else{
 				logger.info("插件:{id:",plugin.getId(),",displayName:",plugin.getDisplayName(),"}因未启用,不会进行加载。");

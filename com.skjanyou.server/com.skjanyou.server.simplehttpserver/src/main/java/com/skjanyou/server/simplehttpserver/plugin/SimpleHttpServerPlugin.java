@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.skjanyou.annotation.api.Application.Plugin;
 import com.skjanyou.annotation.api.Util.Property;
+import com.skjanyou.annotation.api.Util.PropertyBean;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.plugin.PluginSupport;
@@ -31,6 +32,7 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 	private String use;
 	
 	private ServerConfig config;
+	@PropertyBean("simplehttpserver")
 	private Server server;
 	
 	@Override
@@ -40,6 +42,22 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 		}
 		logger.info("因为系统配置[simplehttpserver.use=" + use + "],所以simplehttpserver即将启动,若需要关闭需要将该项设置为false。");
 		
+		config = new ServerConfig();
+		config.setIp(ip);
+		config.setPort(Integer.parseInt(port));
+		if( !StringUtil.isBlank(timeout) ){
+			config.setTimeout(Long.parseLong(timeout));
+		}
+	}
+
+	@Override
+	public void startup() {
+		if( !Boolean.valueOf(use) ){
+			logger.error("因为系统配置[simplehttpserver.use=" + use + "],所以simplehttpserver未启动,若需要启动需要移除该项配置或者将设置为true。");
+			return ;
+		}
+		server = new HttpServer();
+		server.setConfig(config);
 		server.addFilter(new Filter() {
 			@Override
 			public int priority() {
@@ -72,22 +90,7 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 				
 			}
 		});
-		config = new ServerConfig();
-		config.setIp(ip);
-		config.setPort(Integer.parseInt(port));
-		if( !StringUtil.isBlank(timeout) ){
-			config.setTimeout(Long.parseLong(timeout));
-		}
-	}
-
-	@Override
-	public void startup() {
-		if( !Boolean.valueOf(use) ){
-			logger.error("因为系统配置[simplehttpserver.use=" + use + "],所以simplehttpserver未启动,若需要启动需要移除该项配置或者将设置为true。");
-			return ;
-		}
-		server = new HttpServer();
-		server.setConfig(config);
+		server.init();
 		server.startup();
 		logger.info("simplehttpserver服务器启动成功,信息:{ IP:" + config.getIp() + ",端口:" + config.getPort() + "}");
 	}
