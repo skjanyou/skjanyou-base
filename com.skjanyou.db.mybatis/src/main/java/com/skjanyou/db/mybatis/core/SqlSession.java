@@ -17,7 +17,8 @@ import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.bean.MybatisSqlExecuteCache;
 import com.skjanyou.db.mybatis.util.StringUtil;
 import com.skjanyou.db.pool.DataSource;
-import com.skjanyou.db.util.DbUtil;
+import com.skjanyou.db.util.DaoUtil;
+import com.skjanyou.db.util.DataSourceManager;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 
@@ -26,10 +27,10 @@ public class SqlSession {
 	private static Map<String,MybatisSqlExecuteCache> sqlExecuteCache = new HashMap<>();
 	
 	@SuppressWarnings("unchecked")
-	public static<T> T getMapper( Class<T> clazz ){
+	public static<T> T getMapper( Class<T> clazz, DataSourceManager dataSourceManager ){
 		if(clazz.getAnnotation(Mapper.class) == null){ throw new RuntimeException("Mapper类必须添加@Mapper注解"); }
 		return (T) Proxy.newProxyInstance(SqlSession.class.getClassLoader(), 
-				new Class[]{ clazz }, new MapperHandler(clazz));
+				new Class[]{ clazz }, new MapperHandler(clazz,dataSourceManager));
 	}
 	
 	
@@ -59,8 +60,8 @@ public class SqlSession {
 		return sqlCache;
 	}
 	
-	public static<T,V>  V executeSelectSql( String sql, T bean, Class<V> resultClass  ){
-		DataSource ds = DbUtil.get().getDataSource();
+	public static<T,V>  V executeSelectSql( String sql, T bean, Class<V> resultClass,DataSourceManager dataSourceManager  ){
+		DataSource ds = dataSourceManager.getDataSource();
 		V result = null;
 		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
 		String prepareSql = sqlCache.getPrepareSql();
@@ -87,7 +88,7 @@ public class SqlSession {
 			// 执行查询sql
 			rs = statement.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
-			List<String> metaList = DbUtil.getMetaData(metaData);
+			List<String> metaList = DaoUtil.getMetaData(metaData);
 			
 			
 			result = resultClass.newInstance();
@@ -118,14 +119,14 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			DbUtil.get().releaseConnection(ds);
+			dataSourceManager.releaseConnection(ds);
 		}
 		
 		return result;
 	}
 	
-	public static<T,V>  List<V> executeSelectListSql( String sql, T bean, Class<V> resultClass  ){
-		DataSource ds = DbUtil.get().getDataSource();
+	public static<T,V>  List<V> executeSelectListSql( String sql, T bean, Class<V> resultClass,DataSourceManager dataSourceManager  ){
+		DataSource ds = dataSourceManager.getDataSource();
 		List<V> result = new ArrayList<>();
 		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
 		String prepareSql = sqlCache.getPrepareSql();
@@ -157,7 +158,7 @@ public class SqlSession {
 			// 执行查询sql
 			rs = statement.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
-			List<String> metaList = DbUtil.getMetaData(metaData);
+			List<String> metaList = DaoUtil.getMetaData(metaData);
 			
 			
 			while( rs.next() ){
@@ -188,14 +189,14 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			DbUtil.get().releaseConnection(ds);
+			dataSourceManager.releaseConnection(ds);
 		}
 		
 		return result;
 	}	
 	
-	public static<T> int executeDeleteSql( String sql, T bean ) {
-		DataSource ds = DbUtil.get().getDataSource();
+	public static<T> int executeDeleteSql( String sql, T bean,DataSourceManager dataSourceManager ) {
+		DataSource ds = dataSourceManager.getDataSource();
 		int resultCount = 0;
 		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
 		String prepareSql = sqlCache.getPrepareSql();
@@ -248,14 +249,14 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			DbUtil.get().releaseConnection(ds);
+			dataSourceManager.releaseConnection(ds);
 		}
 				
 		return resultCount;		
 	}
 	
-	public static <T> int executeInsertSql( String sql, T bean ){
-		DataSource ds = DbUtil.get().getDataSource();
+	public static <T> int executeInsertSql( String sql, T bean,DataSourceManager dataSourceManager ){
+		DataSource ds = dataSourceManager.getDataSource();
 		int resultCount = 0;
 		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
 		String prepareSql = sqlCache.getPrepareSql();
@@ -309,14 +310,14 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			DbUtil.get().releaseConnection(ds);
+			dataSourceManager.releaseConnection(ds);
 		}
 				
 		return resultCount;
 	}
 	
-	public static<T> int executeUpdateSql( String sql, T bean ){
-		DataSource ds = DbUtil.get().getDataSource();
+	public static<T> int executeUpdateSql( String sql, T bean,DataSourceManager dataSourceManager ){
+		DataSource ds = dataSourceManager.getDataSource();
 		int resultCount = 0;
 		MybatisSqlExecuteCache sqlCache = getSqlExecuteCache( sql );
 		String prepareSql = sqlCache.getPrepareSql();
@@ -369,7 +370,7 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			DbUtil.get().releaseConnection(ds);
+			dataSourceManager.releaseConnection(ds);
 		}
 				
 		return resultCount;

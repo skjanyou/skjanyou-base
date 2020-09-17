@@ -22,7 +22,7 @@ public class SelectUserTest extends MybatisTest {
 
     // 情况1,由一个对象查一条数据
     public void testSelectUser(){
-    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class);
+    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class,defaultDataSourceManager);
     	
     	User userBean = new User();
     	userBean.setUser_id("skjanyou");
@@ -36,14 +36,14 @@ public class SelectUserTest extends MybatisTest {
     
     // 情况2,不输入条件查所有
     public void testQueryUser(){
-    	SelectUserMapper userMapper = SqlSession.getMapper(SelectUserMapper.class);
+    	SelectUserMapper userMapper = SqlSession.getMapper(SelectUserMapper.class,defaultDataSourceManager);
     	List<User> list = userMapper.query();
     	assertNotNull(list);
     }        
     
     // 情况3,使用Map查询一条数据
     public void testSelectUserByMap(){
-    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class);
+    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class,defaultDataSourceManager);
     	Map<String,Object> map = new HashMap<>();
     	map.put("user_id","skjanyou1");
     	map.put("user_name","skjanyou1");
@@ -55,7 +55,7 @@ public class SelectUserTest extends MybatisTest {
     
     // 情况4,使用Map查询所有
     public void testselectListByMap(){
-    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class);
+    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class,defaultDataSourceManager);
     	Map<String,Object> map = new HashMap<>();
     	map.put("user_id","skjanyou%");
     	List<User> userList = userMapper.selectListByMap(map);
@@ -66,7 +66,7 @@ public class SelectUserTest extends MybatisTest {
 
     // 情况5,使用注解SqlParameter查询一条数据
     public void testselectBySqlParameter(){
-    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class);
+    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class,defaultDataSourceManager);
     	
     	String user_id = "skjanyou";
     	String user_name = "skjanyou";
@@ -79,7 +79,7 @@ public class SelectUserTest extends MybatisTest {
 
     // 情况6,使用注解SqlParameter查询全部数据
     public void testselectListBySqlParameter(){
-    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class);
+    	SelectUserMapper userMapper = SqlSession.getMapper(UserMapper.SelectUserMapper.class,defaultDataSourceManager);
     	String user_id = "skjanyou%";
     	List<User> selectUsers = userMapper.selectListBySqlParameter(user_id);
         assertNotNull(selectUsers);

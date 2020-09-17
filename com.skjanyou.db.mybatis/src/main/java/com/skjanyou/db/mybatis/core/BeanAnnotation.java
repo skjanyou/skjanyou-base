@@ -172,7 +172,7 @@ public final class BeanAnnotation {
 				}
 				Object bean = pi.getArgs()[0];
 				String sql = SqlUtil.generateSelectSQL(typeClass);
-				List<?> list = SqlSession.executeSelectListSql(sql, bean, typeClass);
+				List<?> list = SqlSession.executeSelectListSql(sql, bean, typeClass,pi.getDataSourceManager());
 				if( list.size() > 1 ){
 					throw new DaoException("查询的到的数据量为" + list.size() + "大于0");
 				}else if( list.size() == 0 ){

@@ -5,7 +5,7 @@ import java.util.List;
 import com.skjanyou.annotation.api.Application.Plugin;
 import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.db.bean.DatabaseInfo;
-import com.skjanyou.db.util.DbUtil;
+import com.skjanyou.db.util.DataSourceManager;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.bean.PluginConfig;
 
@@ -21,6 +21,7 @@ public class DBPlugin implements PluginSupport{
 	private String password;
 	
 	private DatabaseInfo info;
+	private static DataSourceManager dataSourceManager;
 	
 	@Override
 	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) {
@@ -29,12 +30,16 @@ public class DBPlugin implements PluginSupport{
 
 	@Override
 	public void startup() {
-		DbUtil.init(info);	
+		dataSourceManager = new DataSourceManager(info);
 	}
 
 	@Override
 	public void shutdown() {
 		
 	}
-
+	
+	public static DataSourceManager getDefaultDataSourceManager() {
+		return dataSourceManager;
+	}
+	
 }

@@ -2,20 +2,24 @@ package com.skjanyou.db.mybatis.bean;
 
 import java.lang.reflect.Method;
 
+import com.skjanyou.db.util.DataSourceManager;
+
 public class Invocation<T> {
 	private Class<?> mapperClass;
 	private Object proxy;
 	private Method method;
 	private Object[] args;
 	private T anno;
+	private DataSourceManager dataSourceManager;
 	public Invocation(Class<?> mapperClass, Object proxy, Method method,
-			Object[] args, T anno) {
+			Object[] args, T anno,DataSourceManager dataSourceManager) {
 		super();
 		this.mapperClass = mapperClass;
 		this.proxy = proxy;
 		this.method = method;
 		this.args = args;
 		this.anno = anno;
+		this.dataSourceManager = dataSourceManager;
 	}
 	public Class<?> getMapperClass() {
 		return mapperClass;
@@ -46,5 +50,11 @@ public class Invocation<T> {
 	}
 	public void setAnno(T anno) {
 		this.anno = anno;
+	}
+	public DataSourceManager getDataSourceManager() {
+		return dataSourceManager;
+	}
+	public void setDataSourceManager(DataSourceManager dataSourceManager) {
+		this.dataSourceManager = dataSourceManager;
 	}
 }

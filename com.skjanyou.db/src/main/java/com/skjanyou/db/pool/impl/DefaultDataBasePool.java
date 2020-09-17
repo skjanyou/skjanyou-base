@@ -15,7 +15,6 @@ public class DefaultDataBasePool implements DatabasePool {
 	public DefaultDataBasePool( DatabaseInfo info ){
 		this.info = info;
 		this.initDatabase();
-		this.initDatabasePool();
 	}
 
 	/** 初始化数据 */
@@ -30,7 +29,7 @@ public class DefaultDataBasePool implements DatabasePool {
 	}
 
 	/** 初始化数据库连接池 */
-	private void initDatabasePool() {
+	public DatabasePool initDatabasePool() {
 		String url = this.info.getUrl();
 		String user = this.info.getUser();
 		String password = this.info.getPassword();
@@ -44,9 +43,9 @@ public class DefaultDataBasePool implements DatabasePool {
 				pools.addLast(ds);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+		return this;
 	} 
 
 

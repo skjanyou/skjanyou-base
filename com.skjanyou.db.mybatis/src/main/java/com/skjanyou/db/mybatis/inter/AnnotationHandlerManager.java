@@ -12,6 +12,7 @@ import com.skjanyou.db.mybatis.anno.DDL.Update;
 import com.skjanyou.db.mybatis.bean.Invocation;
 import com.skjanyou.db.mybatis.core.BeanAnnotation;
 import com.skjanyou.db.mybatis.inter.impl.DefaultAnnotationDispatchHandler;
+import com.skjanyou.db.util.DataSourceManager;
 
 public class AnnotationHandlerManager {
 	private static AnnotationHandlerManager $this = new AnnotationHandlerManager();
@@ -44,13 +45,13 @@ public class AnnotationHandlerManager {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Object process( Class<?> mapperClass, Object proxy, Method method,Object[] args ) throws Throwable{
+	public Object process( Class<?> mapperClass, Object proxy, Method method,Object[] args,DataSourceManager dataSourceManager ) throws Throwable{
 		Annotation[] annos = method.getAnnotations();
 		for (Annotation annotation : annos) {
 			Class<?> cls = annotation.annotationType();
 			AnnotationHandler<?> handler = map.get(cls);
 			if( handler != null ){
-				return handler.handler(new Invocation(mapperClass,proxy,method,args,annotation));
+				return handler.handler(new Invocation(mapperClass,proxy,method,args,annotation,dataSourceManager));
 			}
 		}
 		

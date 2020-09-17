@@ -84,7 +84,7 @@ public final class DefaultSqlProcess {
 				selectIntercepter.beforeIntercepter( sqlInfo );
 			}
 			// 5.返回结果
-			List<?> resultList = SqlSession.executeSelectListSql(sqlInfo.getSql(), sqlInfo.getBean(), resultClass);
+			List<?> resultList = SqlSession.executeSelectListSql(sqlInfo.getSql(), sqlInfo.getBean(), resultClass,item.getDataSourceManager());
 			// 后置拦截
 			if( selectIntercepter != null ){
 				selectIntercepter.afterIntercepter( resultList );
@@ -167,7 +167,7 @@ public final class DefaultSqlProcess {
 				selectIntercepter.beforeIntercepter( sqlInfo );
 			}			
 			// 5.返回结果
-			Object result = SqlSession.executeInsertSql(sqlInfo.getSql(), sqlInfo.getBean());
+			Object result = SqlSession.executeInsertSql(sqlInfo.getSql(), sqlInfo.getBean(),item.getDataSourceManager());
 			// 后置拦截
 			if( selectIntercepter != null ){
 				selectIntercepter.afterIntercepter( result );
@@ -255,7 +255,7 @@ public final class DefaultSqlProcess {
 				selectIntercepter.beforeIntercepter( sqlInfo );
 			}				
 			// 5.返回结果
-			Object result = SqlSession.executeUpdateSql(sql, bean);
+			Object result = SqlSession.executeUpdateSql(sql, bean,item.getDataSourceManager());
 			// 后置拦截
 			if( selectIntercepter != null ){
 				selectIntercepter.afterIntercepter( result );
@@ -325,7 +325,7 @@ public final class DefaultSqlProcess {
 				selectIntercepter.beforeIntercepter( sqlInfo );
 			}				
 			// 5.返回结果
-			Object result = SqlSession.executeDeleteSql(sql, bean);
+			Object result = SqlSession.executeDeleteSql(sql, bean,item.getDataSourceManager());
 			// 后置拦截
 			if( selectIntercepter != null ){
 				selectIntercepter.afterIntercepter( result );

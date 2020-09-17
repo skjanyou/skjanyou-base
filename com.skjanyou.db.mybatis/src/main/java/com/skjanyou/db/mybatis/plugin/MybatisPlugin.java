@@ -6,6 +6,7 @@ import java.util.List;
 import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.core.SqlSession;
+import com.skjanyou.db.plugin.DBPlugin;
 import com.skjanyou.plugin.PluginDefineAnnotationClassManager;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.adapter.PluginDefineAnnotationClassAdapter;
@@ -37,7 +38,7 @@ public class MybatisPlugin implements PluginSupport {
 				}else{
 					beanName = targetClass.getName();
 				}
-				beandefinition.setBean(beanName, SqlSession.getMapper(targetClass));
+				beandefinition.setBean(beanName, SqlSession.getMapper(targetClass,DBPlugin.getDefaultDataSourceManager()));
 			}
 		});
 	}

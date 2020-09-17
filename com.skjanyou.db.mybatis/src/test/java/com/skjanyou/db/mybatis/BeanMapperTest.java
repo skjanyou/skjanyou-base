@@ -22,7 +22,7 @@ public class BeanMapperTest extends MybatisTest {
 	// 情况1,通过bean删除单条数据  
 	public void testBeanMapper( ){
 
-		TestUserMapper userMapper = SqlSession.getMapper(TestUserMapper.class);
+		TestUserMapper userMapper = SqlSession.getMapper(TestUserMapper.class,defaultDataSourceManager);
 		
 		User user = new User();
 		user.setUser_id("skjanyou");

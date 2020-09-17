@@ -18,7 +18,7 @@ public class InsertUserTest extends MybatisTest  {
 	
 	// 情况1,通过bean插入单条记录
 	public void testinsertUser(){
-		InsertUserMapper userMapper = SqlSession.getMapper(InsertUserMapper.class);
+		InsertUserMapper userMapper = SqlSession.getMapper(InsertUserMapper.class,defaultDataSourceManager);
 		
 		User user = new User();
 		user.setUser_id("test_1");
@@ -30,7 +30,7 @@ public class InsertUserTest extends MybatisTest  {
 	
 	// 情况2,通过Map插入数据
 	public void testinsertUserByMap(){
-		InsertUserMapper userMapper = SqlSession.getMapper(InsertUserMapper.class);
+		InsertUserMapper userMapper = SqlSession.getMapper(InsertUserMapper.class,defaultDataSourceManager);
 		
 		Map<String,Object> map = new HashMap<>();
 		map.put("user_id", "test_2");
@@ -42,7 +42,7 @@ public class InsertUserTest extends MybatisTest  {
 	
 	// 情况3,通过SqlParameter插入数据		
 	public void testinsertUserBySqlParameter(){
-		InsertUserMapper userMapper = SqlSession.getMapper(InsertUserMapper.class);
+		InsertUserMapper userMapper = SqlSession.getMapper(InsertUserMapper.class,defaultDataSourceManager);
 		
 		String user_id = "test_3";
 		String user_name = "测试3";

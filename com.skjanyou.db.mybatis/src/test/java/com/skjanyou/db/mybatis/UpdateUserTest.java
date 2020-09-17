@@ -18,7 +18,7 @@ public class UpdateUserTest extends MybatisTest {
 	
 	// 情况1,通过bean更新单条数据  
 	public void testupdateUser(  ) {
-		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class);
+		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class,defaultDataSourceManager);
 		
 		User user = new User();
 		user.setUser_id("skjanyou");
@@ -30,7 +30,7 @@ public class UpdateUserTest extends MybatisTest {
 	}
 	// 情况2,通过Map更新单条数据
 	public void testupdateUserByMap(  ){
-		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class);
+		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class,defaultDataSourceManager);
 		
 		Map<String,Object> map = new HashMap<>();
 		map.put("user_id","skjanyou");
@@ -42,7 +42,7 @@ public class UpdateUserTest extends MybatisTest {
 	}
 	// 情况3,通过SqlParameter更新单条数据
 	public void testupdateUserBySqlParameter(  ){
-		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class);
+		UpdateUserMapper userMapper = SqlSession.getMapper(UpdateUserMapper.class,defaultDataSourceManager);
 		
 		String user_id = "skjanyou";
 		String user_name = "a super man3!";
