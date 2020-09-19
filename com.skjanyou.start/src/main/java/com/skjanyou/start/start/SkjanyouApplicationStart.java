@@ -64,7 +64,7 @@ public abstract class SkjanyouApplicationStart {
 		CommandManager.regist(new Cmd("help", new CommandProcess() {
 			@Override
 			public void process() {
-				
+				help();
 			}
 		}));			
 	}

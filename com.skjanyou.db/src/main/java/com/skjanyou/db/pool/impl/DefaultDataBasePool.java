@@ -3,14 +3,18 @@ package com.skjanyou.db.pool.impl;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.skjanyou.db.bean.DatabaseInfo;
 import com.skjanyou.db.pool.DataSource;
 import com.skjanyou.db.pool.DatabasePool;
 
 public class DefaultDataBasePool implements DatabasePool {
-	public LinkedList<DataSource> pools = new LinkedList<>();
+	protected LinkedList<DataSource> pools = new LinkedList<>();
+	// 已经加载了的jdbc驱动,不再次加载
+	private static List<String> classNameList = new ArrayList<>();
 	private DatabaseInfo info;
 	public DefaultDataBasePool( DatabaseInfo info ){
 		this.info = info;
@@ -19,10 +23,14 @@ public class DefaultDataBasePool implements DatabasePool {
 
 	/** 初始化数据 */
 	private void initDatabase(){
+		String className = this.info.getClassName();
+		if( classNameList.contains(className) ) {
+			return ;
+		}
 		try {
-			Class.forName(this.info.getClassName());
+			Class.forName(className);
+			classNameList.add(className);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 

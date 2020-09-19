@@ -237,11 +237,23 @@ public final class BeanAnnotation {
 		class QueryProcess implements SqlProcess<Query>,SqlExceptionProcess {
 			@Override
 			public void handlerException(Throwable throwable) {
-				
+				throw new RuntimeException(throwable);
 			}
 			@Override
 			public Object process(Invocation<Query> pi) {
-				return null;
+				// 获取Mapper类的泛型
+				Class<?> mapperClass = pi.getMapperClass();
+				ParameterizedType pt = (ParameterizedType )mapperClass.getGenericInterfaces()[0];
+				Type trueType = pt.getActualTypeArguments()[0];
+				Class<?> typeClass = (Class<?>)trueType;
+				// 参数检查
+				if( pi.getArgs().length != 0 || pi.getArgs()[0].getClass() != typeClass ){
+					throw new DaoException("查询参数数量必须为0");
+				}
+				Object bean = new Object();
+				String sql = SqlUtil.generateSelectSQL(typeClass);
+				List<?> list = SqlSession.executeSelectListSql(sql, bean, typeClass,pi.getDataSourceManager());
+				return list;	
 			}
 		}
 	}

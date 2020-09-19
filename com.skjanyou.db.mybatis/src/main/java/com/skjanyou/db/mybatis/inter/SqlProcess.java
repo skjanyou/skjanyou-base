@@ -5,5 +5,5 @@ import java.lang.annotation.Annotation;
 import com.skjanyou.db.mybatis.bean.Invocation;
 
 public interface SqlProcess<T extends Annotation> {
-	public Object process( Invocation<T> pi );
+	public Object process( Invocation<T> pi ) throws Exception;
 }
