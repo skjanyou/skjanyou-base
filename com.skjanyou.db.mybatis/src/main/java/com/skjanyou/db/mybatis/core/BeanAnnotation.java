@@ -247,7 +247,7 @@ public final class BeanAnnotation {
 				Type trueType = pt.getActualTypeArguments()[0];
 				Class<?> typeClass = (Class<?>)trueType;
 				// 参数检查
-				if( pi.getArgs().length != 0 || pi.getArgs()[0].getClass() != typeClass ){
+				if( pi.getArgs() != null && pi.getArgs().length != 0 ){
 					throw new DaoException("查询参数数量必须为0");
 				}
 				Object bean = new Object();

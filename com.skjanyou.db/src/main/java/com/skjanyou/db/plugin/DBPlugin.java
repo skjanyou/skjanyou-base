@@ -26,11 +26,11 @@ public class DBPlugin implements PluginSupport{
 	@Override
 	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) {
     	info = new DatabaseInfo(className,url,user,password,20,2000);
+    	dataSourceManager = new DataSourceManager(info);
 	}
 
 	@Override
 	public void startup() {
-		dataSourceManager = new DataSourceManager(info);
 	}
 
 	@Override
