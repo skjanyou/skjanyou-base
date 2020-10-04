@@ -90,4 +90,17 @@ public class StreamUtil {
 		return result;
 	}
 	
+	public static String readerFile2String( String path,String charset ) {
+		String result = null;
+		InputStream is = null;
+		try {
+			is = getInputStreamIgnoreLocation(path);
+			result = convertToString(is, charset, false);
+		} catch ( Exception e ) {
+			throw new RuntimeException(e);
+		}
+		
+		return result;
+	}
+	
 }

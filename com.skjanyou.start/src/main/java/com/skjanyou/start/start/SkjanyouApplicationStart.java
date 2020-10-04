@@ -31,6 +31,7 @@ import com.skjanyou.start.util.InstanceUtil;
 import com.skjanyou.start.util.JarUtil;
 import com.skjanyou.start.util.ServiceLoaderUtil;
 import com.skjanyou.util.ClassUtil;
+import com.skjanyou.util.StreamUtil;
 import com.skjanyou.util.StringUtil;
 
 public abstract class SkjanyouApplicationStart {
@@ -43,6 +44,8 @@ public abstract class SkjanyouApplicationStart {
 	private PluginProcess pluginProcess;
 	private Set<Class<?>> classSet;
 	private List<String> pluginScanPath = new LinkedList<>(Arrays.asList(new String[]{ "com.skjanyou" }));
+	// Banner
+	private static String BANNER = "classpath:banner.txt";
 	public SkjanyouApplicationStart(){
 		this.classLoaderProvider = ServiceLoaderUtil.load(ClassLoaderProvider.class);
 		this.configureProvider = ServiceLoaderUtil.load(ConfigureProvider.class);
@@ -52,23 +55,31 @@ public abstract class SkjanyouApplicationStart {
 		CommandManager.regist(new Cmd("start", new CommandProcess() {
 			@Override
 			public void process() {
+				versionInfo();
 				start();
 			}
 		}));
 		CommandManager.regist(new Cmd("stop", new CommandProcess() {
 			@Override
 			public void process() {
-				
+				versionInfo();
 			}
 		}));		
 		CommandManager.regist(new Cmd("help", new CommandProcess() {
 			@Override
 			public void process() {
+				versionInfo();
 				help();
 			}
 		}));			
 	}
 	
+	protected void versionInfo() {
+		logger.info("开始启动Skjanyou应用");
+		logger.info( 
+				"\n" + StreamUtil.readerFile2String(BANNER, "UTF-8") + "\n" 
+				);
+	}
 	
 	
 	public static void start( Class<?> configClass,String[] args ){
