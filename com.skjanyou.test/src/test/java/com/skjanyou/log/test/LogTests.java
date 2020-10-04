@@ -1,16 +1,16 @@
 package com.skjanyou.log.test;
 
-import junit.framework.TestCase;
-
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.start.LogStart;
 import com.skjanyou.log.util.LogUtil;
-import com.skjanyou.start.start.ApplicationStart;
+import com.skjanyou.start.start.SkjanyouApplicationStart;
+
+import junit.framework.TestCase;
 
 public class LogTests extends TestCase {
 	@Override
 	public void runBare() throws Throwable {
-		ApplicationStart.start(LogStart.class);
+		SkjanyouApplicationStart.start(LogStart.class,new String[] { "start" });
 		super.runBare();
 	}
 	

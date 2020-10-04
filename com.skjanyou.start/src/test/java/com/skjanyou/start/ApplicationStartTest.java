@@ -2,7 +2,7 @@ package com.skjanyou.start;
 
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.impl.PropertiesConfig;
-import com.skjanyou.start.start.ApplicationStart;
+import com.skjanyou.start.start.SkjanyouApplicationStart;
 
 
 @Configure(
@@ -14,7 +14,7 @@ public class ApplicationStartTest {
 
 	public static void main(String[] args) {
 		System.setProperty("skjanyou.configfile", "classpath:skjanyou.config.properties");
-		ApplicationStart.start(ApplicationStartTest.class);
+		SkjanyouApplicationStart.start(ApplicationStartTest.class,args);
 	}
 
 }

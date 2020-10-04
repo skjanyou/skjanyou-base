@@ -1,7 +1,7 @@
 package com.skjanyou.log.start;
 
 import com.skjanyou.start.anno.Configure;
-import com.skjanyou.start.start.ApplicationStart;
+import com.skjanyou.start.start.SkjanyouApplicationStart;
 
 @Configure(
 	name = "log配置Props",
@@ -10,7 +10,7 @@ import com.skjanyou.start.start.ApplicationStart;
 public class LogStart {
 
 	public static void main(String[] args) {
-		ApplicationStart.start(LogStart.class);
+		SkjanyouApplicationStart.start(LogStart.class,args);
 	}
 
 }
