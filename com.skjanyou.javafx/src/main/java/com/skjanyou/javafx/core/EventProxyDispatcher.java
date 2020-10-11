@@ -7,20 +7,20 @@ import javafx.event.EventDispatchChain;
 import javafx.event.EventDispatcher;
 
 //这里需要两个事件分发器才能拿到正确的事件触发源
-public class DoubleEventDispatcher implements EventDispatcher {
+public class EventProxyDispatcher implements EventDispatcher {
 	// 控制器
-	private SkjanyouController skjanyouController;
+	private ControllerHelper skjanyouController;
 	
 	/***
 	 * @param eventDispatchOrigin 	事件委托触发源
 	 * @param skjanyouController	控制器
 	 */
-	public DoubleEventDispatcher( Object eventDispatchOrigin,SkjanyouController skjanyouController ) {
+	public EventProxyDispatcher( Object eventDispatchOrigin,ControllerHelper skjanyouController ) {
 		this.skjanyouController = skjanyouController;
 		this.setEventDispatchOrigin(eventDispatchOrigin);
 	}
 	
-	public DoubleEventDispatcher( SkjanyouController skjanyouController ) {
+	public EventProxyDispatcher( ControllerHelper skjanyouController ) {
 		this.skjanyouController = skjanyouController;
 	}
 	
@@ -41,7 +41,7 @@ public class DoubleEventDispatcher implements EventDispatcher {
 	private EventDispatcher eventDispatcherHandler = new EventDispatcher() {
 		@Override
 		public Event dispatchEvent(Event event, EventDispatchChain tail) {
-			DoubleEventDispatcher.this.skjanyouController.doMatcherAndDispatcher(event);
+			EventProxyDispatcher.this.skjanyouController.doMatcherAndDispatcher(event);
 			return tail.dispatchEvent(event);
 		}
 	};

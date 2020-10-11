@@ -9,10 +9,10 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
-public class ControllerProxy implements MethodInterceptor {
+public class ControllerMethodInterceptor implements MethodInterceptor {
 	private Class<?> controllerClass;
 	private FxController fxControllerAnno;
-	public ControllerProxy( Class<?> controllerClass ) {
+	public ControllerMethodInterceptor( Class<?> controllerClass ) {
 		this.controllerClass = controllerClass;
 		this.fxControllerAnno = controllerClass.getAnnotation(FxController.class);
 		if( fxControllerAnno == null ) {

@@ -9,24 +9,24 @@ import javafx.util.Callback;
 
 public class SkjanyouFXMLLoader extends FXMLLoader implements Callback<Class<?>, Object>{
 	/** **/
-	private SkjanyouController skjanyouController;
+	private ControllerHelper skjanyouController;
 	/** **/
-	private ControllerProxy controllerProxy;
+	private ControllerMethodInterceptor controllerProxy;
 	/** **/
-	private DoubleEventDispatcher eventDispatcher;
+	private EventProxyDispatcher eventDispatcher;
 	private Class<?> controllerClass;
 	private Object proxyObject;
 	
 	
 	public SkjanyouFXMLLoader( Class<?> controllerClass ) {
 		this.controllerClass = controllerClass;
-		this.controllerProxy = new ControllerProxy(controllerClass);
+		this.controllerProxy = new ControllerMethodInterceptor(controllerClass);
 		this.proxyObject = controllerProxy.createProxy();
-		this.skjanyouController = new SkjanyouController(proxyObject, controllerClass);
+		this.skjanyouController = new ControllerHelper(proxyObject, controllerClass);
 		
 		this.setLocation(this.controllerProxy.getFXMLURL());
 //		this.setRoot(proxyObject);
-		this.eventDispatcher = new DoubleEventDispatcher(skjanyouController);
+		this.eventDispatcher = new EventProxyDispatcher(skjanyouController);
 		this.setControllerFactory(this);
 	}
 	
@@ -54,16 +54,16 @@ public class SkjanyouFXMLLoader extends FXMLLoader implements Callback<Class<?>,
 	public Object call(Class<?> controllerClass) {
 		System.err.println(controllerClass);
 		if( this.controllerClass != controllerClass ) { 
-			return new ControllerProxy(controllerClass).createProxy();
+			return new ControllerMethodInterceptor(controllerClass).createProxy();
 		}
 		return proxyObject;
 	}
 
-	public DoubleEventDispatcher getEventDispatcher() {
+	public EventProxyDispatcher getEventDispatcher() {
 		return eventDispatcher;
 	}
 
-	public SkjanyouController getSkjanyouController() {
+	public ControllerHelper getSkjanyouController() {
 		return skjanyouController;
 	}
 

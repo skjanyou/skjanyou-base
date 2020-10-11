@@ -8,7 +8,7 @@ import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.core.ApplicationContext;
-import com.skjanyou.javafx.core.DoubleEventDispatcher;
+import com.skjanyou.javafx.core.EventProxyDispatcher;
 import com.skjanyou.javafx.core.SkjanyouFXMLLoader;
 import com.skjanyou.plugin.PluginDefineAnnotationClassManager;
 import com.skjanyou.plugin.PluginSupport;
@@ -86,7 +86,7 @@ public class JavaFxPlugin implements PluginSupport{
 							Stage stage = new Stage();
 							Scene scene = new Scene(root);
 							// 这里
-							scene.setEventDispatcher(new DoubleEventDispatcher(scene,loader.getSkjanyouController()));
+							scene.setEventDispatcher(new EventProxyDispatcher(scene,loader.getSkjanyouController()));
 							
 							stage.setScene(scene);
 							stage.setTitle(title);

@@ -12,8 +12,11 @@ import com.skjanyou.util.MethodUtil;
 import com.skjanyou.util.StringUtil;
 
 import javafx.event.Event;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 /**
  * 	代理控制器,提供事件监听,响应式数据等功能</br>
@@ -22,7 +25,9 @@ import javafx.scene.input.MouseEvent;
  * 	时间 : 2020-10-11
  * 	作用 :
  */
-public class SkjanyouController {
+public class ControllerHelper {
+	private Scene scene;
+	private Stage stage;
 	/**  **/
 	protected Parent root;
 	
@@ -40,7 +45,7 @@ public class SkjanyouController {
 	// 响应式Bean相关
 	private List<Field> responsiveBeanFields;
 	
-	public SkjanyouController( Object controller,Class<?> targetClass ) {
+	public ControllerHelper( Object controller,Class<?> targetClass ) {
 		this.controller = controller;
 		this.targetClass = targetClass;
 		this.initMethodCollection();
@@ -101,8 +106,8 @@ public class SkjanyouController {
 	}
 	
 	
-	
-	public void doMatcherAndDispatcher( Event event ) {
+	/** 用于匹配并且触发事件的函数 **/
+	protected void doMatcherAndDispatcher( Event event ) {
 		Object source = event.getSource();
 		if(!(event instanceof MouseEvent)) {return;}
 		if( event.getEventType() != MouseEvent.MOUSE_CLICKED ) {return;}
@@ -137,16 +142,33 @@ public class SkjanyouController {
 		
 	}
 
+	/** 得到Controller类 **/
 	public Object getController() {
 		return controller;
 	}
 
+	/** 得到Controller类的Class对象 **/
 	public Class<?> getTargetClass() {
 		return targetClass;
 	}
 
+	/** 得到该Controller的Root节点 **/
 	public Parent getRoot() {
 		return root;
 	}
 	
+	/** 通过选择器查询节点 **/
+	public Node findNodeById( String selector ) {
+		throw new UnsupportedOperationException("方法暂未实现");
+	}
+	
+	/** 获取场景 **/
+	public Scene getScene() {
+		return this.scene;
+	}
+	
+	/** 获取Stage **/
+	public Stage getStage() {
+		return this.stage;
+	}
 }
