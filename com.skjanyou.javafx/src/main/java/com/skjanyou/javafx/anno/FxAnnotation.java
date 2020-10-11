@@ -1,0 +1,86 @@
+package com.skjanyou.javafx.anno;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+public final class FxAnnotation {
+	
+	/**
+	 * 	@author skjanyou
+	 * 	时间 : 2020-10-7
+	 * 	作用 : fx的事件监听注解,支持id、class、属性绑定
+	 */
+	@Documented
+	@Inherited
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface FxEventHandler {
+		/**
+		 * @return 是否可以冒泡
+		 */
+		boolean bubble() default false;
+		/**
+		 * 	通过Id选择器进行选择
+		 */
+		String id() default "";
+		/**
+		 * 	通过类选择器进行选择
+		 */
+		String clazz() default "";
+		/**
+		 * 	通过属性选择器进行选择
+		 */
+		String attr() default "";
+		/**
+		 *	混合型选择器 
+		 */
+		String[] complexSelectors() default {};
+	}
+	
+	/**
+	 * 
+	 * 	@author skjanyou
+	 * 	时间 : 2020-10-7
+	 * 	作用 : 该注解用于标识一个Controller
+	 */
+	@Documented
+	@Inherited
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface FxController{
+		/** 窗口唯一ID **/
+		String id();
+		/** 窗口的图标 **/
+		String icon() default "";
+		/** 标题 **/
+		String title() default "";
+		/** fxml文件 **/
+		String fxml() default "";
+		/** 皮肤 **/
+		String skin() default "";
+		/** css样式表 **/
+		String css() default "";
+		/** 样式 **/
+		String[] styles() default {};
+	}
+	
+	/**
+	 * 
+	 * 	@author skjanyou
+	 * 	时间 : 2020-10-7
+	 * 	作用 : 响应式bean,用于与页面进行双向绑定
+	 */
+	@Documented
+	@Inherited
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface ResponsiveBean{
+		String[] value() default {};
+	}
+	
+	
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin 
+	id="skjanyou.javafx" 
+	displayName="JavaFx插件"
+	activator="com.skjanyou.javafx.plugin.JavaFxPlugin" 
+	order="99999999"
+	enable="true" 
+	failOnInitError="true" 
+	defaultConfig="config/javafx.default.properties"
+	/>
