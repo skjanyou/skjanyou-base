@@ -39,6 +39,10 @@ public final class FxAnnotation {
 		 *	混合型选择器 
 		 */
 		String[] complexSelectors() default {};
+		/**
+		 * 	监听的事件
+		 */
+		String[] eventType() ;
 	}
 	
 	/**
@@ -66,6 +70,20 @@ public final class FxAnnotation {
 		String css() default "";
 		/** 样式 **/
 		String[] styles() default {};
+	}
+	
+	/**
+	 * 
+	 * 	@author skjanyou
+	 * 	时间 : 2020-10-13
+	 * 	作用 : 该注解用于给窗体设置装饰
+	 */
+	@Documented
+	@Inherited
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface Decorator {
+		
 	}
 	
 	/**

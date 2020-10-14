@@ -19,6 +19,8 @@ import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.StreamUtil;
 import com.sun.javafx.application.PlatformImpl;
 
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -85,10 +87,9 @@ public class JavaFxPlugin implements PluginSupport{
 							Parent root = loader.getSkjanyouController().getRoot();
 							Stage stage = new Stage();
 							Scene scene = new Scene(root);
-							// 这里
-							scene.setEventDispatcher(new EventProxyDispatcher(scene,loader.getSkjanyouController()));
 							
 							stage.setScene(scene);
+							System.out.println(title);
 							stage.setTitle(title);
 							stage.getIcons().add(new Image(StreamUtil.getInputStreamIgnoreLocation(icon)));
 							stage.show();

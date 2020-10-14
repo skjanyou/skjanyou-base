@@ -3,6 +3,7 @@ package com.skjanyou.javafx.core;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.util.Callback;
@@ -35,6 +36,7 @@ public class SkjanyouFXMLLoader extends FXMLLoader implements Callback<Class<?>,
 		T result = super.load();
 		if( result != null ) {
 			this.skjanyouController.root = (Parent) result;
+			this.skjanyouController.root.addEventFilter(Event.ANY, this.eventDispatcher);
 		}
 		return result;
 	}
@@ -44,6 +46,7 @@ public class SkjanyouFXMLLoader extends FXMLLoader implements Callback<Class<?>,
 		T result = super.load(inputStream);
 		if( result != null ) {
 			this.skjanyouController.root = (Parent) result;
+			this.skjanyouController.root.addEventFilter(Event.ANY, this.eventDispatcher);
 		}
 		return result;
 	}
@@ -52,8 +55,8 @@ public class SkjanyouFXMLLoader extends FXMLLoader implements Callback<Class<?>,
 	
 	@Override
 	public Object call(Class<?> controllerClass) {
-		System.err.println(controllerClass);
 		if( this.controllerClass != controllerClass ) { 
+			System.out.println(controllerClass);
 			return new ControllerMethodInterceptor(controllerClass).createProxy();
 		}
 		return proxyObject;
