@@ -8,6 +8,7 @@ import com.skjanyou.javafx.inter.FxEventDispatcher;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
 
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 
 public class DefaultFxControllerFactory implements FxControllerFactory,FxControllerFactoryProperty {
@@ -28,7 +29,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	
 	@Override
 	public FxEventDispatcher getFxEventDispatcher() {
-		return this.eventDispatcher = this.eventDispatcher == null ? new DefaultFxEventDispatcher() : this.eventDispatcher;
+		return this.eventDispatcher = this.eventDispatcher == null ? new DefaultFxEventDispatcher(this.proxyController,this.controllerClass) : this.eventDispatcher;
 	}
 
 
@@ -45,6 +46,10 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			LoadResult loadResult = initControllerBean();
 			this.parent = loadResult.getParent();
 			this.proxyController = loadResult.getController();
+			EventHandler<Event> handler = getFxEventDispatcher().getEventHandler();
+			this.parent.addEventFilter(Event.ANY, handler);
+			
+			
 			initFxml( this.proxyController,this.parent );
 			initEventHandler( this.proxyController,this.parent );
 			initResponsiveBean( this.proxyController,this.parent );

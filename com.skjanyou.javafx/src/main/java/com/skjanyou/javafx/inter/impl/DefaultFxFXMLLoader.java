@@ -29,6 +29,8 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 	@Override
 	public LoadResult loader() {
 		LoadResult loadResult = new LoadResult();
+		
+		
 		try {
 			Parent parent = super.load();
 			loadResult.setParent(parent);

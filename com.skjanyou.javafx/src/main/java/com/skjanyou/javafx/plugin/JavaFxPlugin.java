@@ -10,6 +10,8 @@ import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.core.ApplicationContext;
 import com.skjanyou.javafx.core.EventProxyDispatcher;
 import com.skjanyou.javafx.core.SkjanyouFXMLLoader;
+import com.skjanyou.javafx.inter.FxControllerFactory;
+import com.skjanyou.javafx.inter.impl.DefaultFxControllerFactory;
 import com.skjanyou.plugin.PluginDefineAnnotationClassManager;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.adapter.PluginDefineAnnotationClassAdapter;
@@ -51,19 +53,9 @@ public class JavaFxPlugin implements PluginSupport{
 
 			@Override
 			public void classProcess(Class<?> targetClass, Beandefinition beandefinition) {
-				PlatformImpl.startup(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							SkjanyouFXMLLoader loader = new SkjanyouFXMLLoader(targetClass);
-							loader.load();
-
-							beandefinition.setBean(targetClass.getName(), loader);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				});
+				FxControllerFactory controllerFactory = new DefaultFxControllerFactory(targetClass);
+				Object bean = controllerFactory.createController();
+				beandefinition.setBean(targetClass.getName(), bean);
 
 			}
 		});
