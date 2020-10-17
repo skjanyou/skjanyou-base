@@ -56,7 +56,6 @@ public class JavaFxPlugin implements PluginSupport{
 				FxControllerFactory controllerFactory = new DefaultFxControllerFactory(targetClass);
 				Object bean = controllerFactory.createController();
 				beandefinition.setBean(targetClass.getName(), bean);
-
 			}
 		});
 

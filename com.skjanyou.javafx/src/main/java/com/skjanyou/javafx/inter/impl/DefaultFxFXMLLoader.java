@@ -3,10 +3,12 @@ package com.skjanyou.javafx.inter.impl;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.concurrent.CountDownLatch;
 
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
+import com.sun.javafx.application.PlatformImpl;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,6 +17,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
+@SuppressWarnings("restriction")
 public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Callback<Class<?>, Object>,MethodInterceptor {
 	private FxController fxControllerAnno;
 	public DefaultFxFXMLLoader( Class<?> controllerClass ) {
@@ -26,16 +29,30 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 		this.setControllerFactory(this);
 	}
 	
+	@SuppressWarnings("restriction")
 	@Override
 	public LoadResult loader() {
 		LoadResult loadResult = new LoadResult();
-		
-		
+		CountDownLatch latch = new CountDownLatch(1);
+		PlatformImpl.startup(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Parent parent = DefaultFxFXMLLoader.super.load();
+					Object controller = DefaultFxFXMLLoader.super.getController();
+					loadResult.setParent(parent);
+					loadResult.setController(controller);
+				} catch (IOException e) {
+					throw new RuntimeException("加载FXML文件出现异常",e);
+				} finally {
+					latch.countDown();
+				}
+			}
+		});
 		try {
-			Parent parent = super.load();
-			loadResult.setParent(parent);
-		} catch (IOException e) {
-			throw new RuntimeException("加载FXML文件出现异常",e);
+			latch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		return loadResult;
 	}

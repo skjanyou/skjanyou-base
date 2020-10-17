@@ -41,7 +41,6 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	@SuppressWarnings("unchecked")
 	@Override
 	public<R> R createController() {
-		R result = null;
 		if( this.proxyController == null ) {
 			LoadResult loadResult = initControllerBean();
 			this.parent = loadResult.getParent();
@@ -53,10 +52,8 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			initFxml( this.proxyController,this.parent );
 			initEventHandler( this.proxyController,this.parent );
 			initResponsiveBean( this.proxyController,this.parent );
-		} else {
-			result = (R) proxyController;
-		}
-		return result;
+		} 
+		return (R) this.proxyController;
 	}
 
 	protected LoadResult initControllerBean() {
