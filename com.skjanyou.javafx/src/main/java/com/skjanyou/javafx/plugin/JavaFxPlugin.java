@@ -1,17 +1,18 @@
 package com.skjanyou.javafx.plugin;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
 import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
+import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.core.ApplicationContext;
-import com.skjanyou.javafx.core.EventProxyDispatcher;
 import com.skjanyou.javafx.core.SkjanyouFXMLLoader;
+import com.skjanyou.javafx.inter.ControllerLifeCycle;
 import com.skjanyou.javafx.inter.FxControllerFactory;
 import com.skjanyou.javafx.inter.impl.DefaultFxControllerFactory;
+import com.skjanyou.javafx.inter.impl.NoneControllerLifeCycle;
 import com.skjanyou.plugin.PluginDefineAnnotationClassManager;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.adapter.PluginDefineAnnotationClassAdapter;
@@ -21,8 +22,6 @@ import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.StreamUtil;
 import com.sun.javafx.application.PlatformImpl;
 
-import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -54,7 +53,7 @@ public class JavaFxPlugin implements PluginSupport{
 			@Override
 			public void classProcess(Class<?> targetClass, Beandefinition beandefinition) {
 				FxControllerFactory controllerFactory = new DefaultFxControllerFactory(targetClass);
-				Object bean = controllerFactory.createController();
+				LoadResult bean = controllerFactory.createController();
 				beandefinition.setBean(targetClass.getName(), bean);
 			}
 		});
@@ -70,23 +69,26 @@ public class JavaFxPlugin implements PluginSupport{
 			@Override
 			public void run() {
 				try {
-					Object bean = ApplicationContext.getBean(mainViewClass);
-					if( bean instanceof SkjanyouFXMLLoader ) {
-						SkjanyouFXMLLoader loader = (SkjanyouFXMLLoader) bean;
-						
-						if( loader.getSkjanyouController().getRoot() != null ) {
-							Parent root = loader.getSkjanyouController().getRoot();
+					LoadResult bean = ApplicationContext.getBean(mainViewClass);
+					if( bean != null ) {
+						if( bean.getParent() != null ) {
+							Parent root = bean.getParent();
+							Object controller = bean.getController();
+							ControllerLifeCycle life = ( controller instanceof ControllerLifeCycle) ? (ControllerLifeCycle) controller : new NoneControllerLifeCycle();
+							
 							Stage stage = new Stage();
 							Scene scene = new Scene(root);
+							life.onInit(stage);
 							
 							stage.setScene(scene);
-							System.out.println(title);
 							stage.setTitle(title);
 							stage.getIcons().add(new Image(StreamUtil.getInputStreamIgnoreLocation(icon)));
 							stage.show();
 						}else {
-							throw new RuntimeException("启动失败");
+							throw new RuntimeException("启动失败,未加载成功");
 						}
+					}else {
+						throw new RuntimeException("启动失败,找不到主类");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

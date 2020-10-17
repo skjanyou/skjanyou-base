@@ -1,5 +1,7 @@
 package com.skjanyou.javafx.inter;
 
+import com.skjanyou.javafx.bean.LoadResult;
+
 /**
   * 控制类工厂
  * @author skjanyou
@@ -7,5 +9,5 @@ package com.skjanyou.javafx.inter;
   * 作用 :
  */
 public interface FxControllerFactory {
-	public<R> R createController();
+	public LoadResult createController();
 }

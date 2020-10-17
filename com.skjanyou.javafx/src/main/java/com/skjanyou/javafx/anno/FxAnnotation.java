@@ -113,5 +113,17 @@ public final class FxAnnotation {
 		String[] value() default {};
 	}
 	
-	
+	@Documented
+	@Inherited
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface LifeCycle{
+		public static enum LifeCycleType {
+			ONLOAD,
+			ONINIT,
+			ONSHOW,
+			ONDESTROY
+		}
+		LifeCycleType[] value() default {};
+	}
 }

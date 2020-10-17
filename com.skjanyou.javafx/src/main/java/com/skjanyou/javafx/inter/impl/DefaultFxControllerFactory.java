@@ -18,6 +18,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	private FxController fxControllerAnno;
 	private Object proxyController;
 	private Parent parent;
+	private LoadResult loadResult;
 	
 	public DefaultFxControllerFactory( Class<?> controllerClass ) {
 		this.controllerClass = controllerClass;
@@ -38,11 +39,10 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 		return this.fxmlLoader = this.fxmlLoader == null ? new DefaultFxFXMLLoader( this.controllerClass ) : this.fxmlLoader;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public<R> R createController() {
-		if( this.proxyController == null ) {
-			LoadResult loadResult = initControllerBean();
+	public LoadResult createController() {
+		if( this.loadResult == null ) {
+			this.loadResult = initControllerBean();
 			this.parent = loadResult.getParent();
 			this.proxyController = loadResult.getController();
 			EventHandler<Event> handler = getFxEventDispatcher().getEventHandler();
@@ -53,7 +53,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			initEventHandler( this.proxyController,this.parent );
 			initResponsiveBean( this.proxyController,this.parent );
 		} 
-		return (R) this.proxyController;
+		return this.loadResult;
 	}
 
 	protected LoadResult initControllerBean() {
