@@ -121,11 +121,14 @@ public class ControllerHelper {
 
 		if( target instanceof Parent ) {
 			parent = (Parent) target;
-		} if( target instanceof Text) {
+		} else if( target instanceof Text) {
 			// Button之类的组件上面的文字,需要获取Parent作为事件目标,并用来做匹配
 			Text tt = (Text) target;
 			parent = tt.getParent();
 			event = event.copyFor(event.getSource(), parent);
+		}else if( target instanceof Node ){
+			Node node = (Node) target;
+			parent = node.getParent();
 		}
 
 
