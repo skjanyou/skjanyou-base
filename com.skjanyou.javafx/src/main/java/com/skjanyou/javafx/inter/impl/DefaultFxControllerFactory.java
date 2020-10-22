@@ -1,7 +1,14 @@
 package com.skjanyou.javafx.inter.impl;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.reflect.Field;
+
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
+import com.skjanyou.javafx.anno.FxAnnotation.ResponsiveBean;
 import com.skjanyou.javafx.bean.LoadResult;
+import com.skjanyou.javafx.core.BeanProperty;
+import com.skjanyou.javafx.core.BeanPropertyHelper;
 import com.skjanyou.javafx.inter.FxControllerFactory;
 import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
@@ -71,7 +78,32 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	}
 	
 	protected void initResponsiveBean(Object controller,Parent parent) {
-		
+		Field[] fields = this.controllerClass.getDeclaredFields();
+		for (Field field : fields) {
+			ResponsiveBean respBean = field.getAnnotation(ResponsiveBean.class);
+			if( respBean != null ) {
+				String[] binds = respBean.value();
+				Class<?> clazz = field.getType();
+				BeanProperty beanProperty = new BeanPropertyHelper(clazz).builder();
+				try {
+					field.setAccessible(true);
+					field.set(controller, beanProperty.getBean());
+					beanProperty.getPropertyChangeSupport().addPropertyChangeListener(new PropertyChangeListener() {
+						
+						@Override
+						public void propertyChange(PropertyChangeEvent evt) {
+							System.out.println(evt);
+							
+						}
+					});
+					
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 

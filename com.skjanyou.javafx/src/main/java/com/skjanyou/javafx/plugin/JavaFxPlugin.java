@@ -8,7 +8,6 @@ import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.core.ApplicationContext;
-import com.skjanyou.javafx.core.SkjanyouFXMLLoader;
 import com.skjanyou.javafx.inter.ControllerLifeCycle;
 import com.skjanyou.javafx.inter.FxControllerFactory;
 import com.skjanyou.javafx.inter.impl.DefaultFxControllerFactory;

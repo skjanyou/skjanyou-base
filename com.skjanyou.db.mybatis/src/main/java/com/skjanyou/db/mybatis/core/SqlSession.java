@@ -21,6 +21,7 @@ import com.skjanyou.db.util.DaoUtil;
 import com.skjanyou.db.util.DataSourceManager;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
+import com.skjanyou.util.BeanWrapper;
 
 public class SqlSession {
 	private static Logger logger = LogUtil.getLogger(SqlSession.class);	
