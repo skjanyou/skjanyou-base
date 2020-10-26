@@ -1,8 +1,7 @@
 package com.skjanyou.javafx.inter;
 
-import java.beans.PropertyChangeListener;
+import javafx.beans.property.Property;
 
 public interface BeanPropertySupport {
-	public BeanPropertySupport addPropertyChangeListener( PropertyChangeListener propertyChangeListener );
-	public BeanPropertySupport removePropertyChangeListener( PropertyChangeListener propertyChangeListener );
+	public<R> Property<R> getPropertyByKey( String key );
 }

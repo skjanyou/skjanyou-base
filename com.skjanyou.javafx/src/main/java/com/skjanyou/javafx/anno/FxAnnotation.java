@@ -95,8 +95,8 @@ public final class FxAnnotation {
 	  *    不填充参数时,会按照{变量名$属性名}去搜索并绑定组件 </br>
 	 *	填充参数时,会按照填充的参数进行绑定
 	 *     不填充参数时等同填充参数时的下列形式
-	 *     name = student$name,
-	 *     age=student$age
+	 *     name = #student$name.text,
+	 *     age= #student$age.text
 	 *  </pre>
 	 *      
 	 */

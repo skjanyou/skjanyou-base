@@ -62,4 +62,13 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>skjanyou-maven-plugin</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>

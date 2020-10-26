@@ -32,12 +32,6 @@ public class ResponsiveBeanTest {
 	}
 	public static void main(String[] args) {
 		BeanProperty beanProperty = new BeanPropertyHelper(Student.class).builder();
-		beanProperty.getPropertyChangeSupport().addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				System.out.println(evt);
-			}
-		});
 		
 		
 		

@@ -1,52 +1,141 @@
 package com.skjanyou.javafx.core;
 
-import java.beans.PropertyChangeSupport;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.skjanyou.javafx.inter.BeanPropertyBuilder;
+import com.skjanyou.plugin.util.InstanceUtil;
+import com.skjanyou.util.BeanUtil;
+import com.skjanyou.util.BeanWrapper;
+import com.skjanyou.util.FieldUtil;
 
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import net.sf.cglib.beans.BeanGenerator;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements MethodInterceptor {
-	private BeanProperty beanProperty = null;
+	private static final String PROPERTY_SUFFIX = "$property";
+
 	public DefaultBeanPropertyBuilder(Class<?> clazz) {
 		super(clazz);
 	}
 
 	@Override
 	public BeanProperty builder() {
+		BeanGenerator gen = new BeanGenerator();
+		gen.setSuperclass(this.clazz);
+		List<Field> fieldList = FieldUtil.getAllBeanField(this.clazz);
+		Map<String,Class<?>> fieldPropertyMap = new HashMap<>();
+		for (Field field : fieldList) {
+			String propertyName = field.getName() + PROPERTY_SUFFIX;
+			Class<? extends Property<?>> propertyClass = null;
+			Class<?> fieldType = FieldUtil.getFieldType(field);
+
+			if( fieldType == String.class ) {
+				propertyClass = SimpleStringProperty.class;
+			}else if( fieldType == Double.class ) {
+				propertyClass = SimpleFloatProperty.class;
+			}else if( fieldType == Float.class) {
+				propertyClass = SimpleFloatProperty.class;
+			}else if( fieldType == Integer.class) {
+				propertyClass = SimpleIntegerProperty.class;
+			}else if( fieldType == Boolean.class ){
+				propertyClass = SimpleBooleanProperty.class;
+			}else if( fieldType == Array.class){
+				propertyClass = (Class<? extends Property<?>>) SimpleListProperty.class;
+			}else {
+				continue;
+			}
+			fieldPropertyMap.put(field.getName(),propertyClass);
+			gen.addProperty(propertyName, propertyClass);
+		}
+
+		Class<?> genClass = (Class<?>) gen.createClass();
+
 		BeanProperty beanProperty = new BeanProperty();
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(this.clazz);
-        enhancer.setCallback(this);
-        Object bean = enhancer.create();
-        beanProperty.setBean(bean);
-        PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(bean);
-        beanProperty.setPropertyChangeSupport(propertyChangeSupport);
-        
-        this.beanProperty = beanProperty;
+		Enhancer enhancer = new Enhancer();
+		enhancer.setSuperclass(genClass);
+		enhancer.setCallback(this);
+		Object bean = enhancer.create();
+
+		BeanWrapper beanWrapper = new BeanWrapper(bean);
+
+		Iterator<Entry<String,Class<?>>> it= fieldPropertyMap.entrySet().iterator();
+		while( it.hasNext() ) {
+			Entry<String,Class<?>> entry = it.next();
+			String fieldName = entry.getKey();
+			Class<?> value = entry.getValue();
+
+			Property<?> property = (Property<?>) InstanceUtil.newInstance(value);
+			property.addListener(new ChangeListener<Object>() {
+
+				@Override
+				public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+					try {
+						System.out.println(newValue);
+						beanWrapper.set(fieldName, newValue);
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					} catch (NoSuchMethodException e) {
+						e.printStackTrace();
+					}
+				}
+
+			});
+
+			try {
+				beanWrapper.setByField(fieldName + PROPERTY_SUFFIX, property);
+			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+
+		beanProperty.setBean(bean);
+
 		return beanProperty;
 	}
 
 	@Override
 	public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
 		Object result = null;
+
+		BeanWrapper beanWrapper = new BeanWrapper(obj);
 		String methodName = method.getName();
 		String prefix = methodName.substring(0,3).toLowerCase();
 		String field = methodName.substring(3).toLowerCase();
-		if( prefix.equals("set") ) {
-			String getMethodName = methodName.replace("set", "get");
-			Method getMethod = clazz.getMethod(getMethodName);
-			Object oldValue = getMethod.invoke(obj);
-			result = proxy.invokeSuper(obj, args);
-			Object newValue = args[0];
-			this.beanProperty.getPropertyChangeSupport().firePropertyChange(field, oldValue, newValue);
+		if( prefix.equals("set") && !field.endsWith(PROPERTY_SUFFIX) ) {
+			Property<Object> property = (Property<Object>) beanWrapper.getByField(field + PROPERTY_SUFFIX);
+			property.setValue(args[0]);			
+		}else if( BIND_METHOD_NAME.equals(methodName) ){
+			// 数据绑定
+			Property<?> property = (Property<?>) beanWrapper.get(field + PROPERTY_SUFFIX);
+			property.bind((ObservableValue) args[0]);
+		}else if( UNBIND_METHOD_NAME.equals(methodName) ){
+			// 数据解绑定
+			Property<?> property = (Property<?>) beanWrapper.get(field + PROPERTY_SUFFIX);
+			property.unbind();
 		}else {
 			proxy.invokeSuper(obj, args);
 		}
-		
+
 		return result;
 	}
 

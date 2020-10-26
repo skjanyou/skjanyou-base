@@ -3,6 +3,7 @@ package com.skjanyou.javafx.inter.impl;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
+import java.util.Set;
 
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.anno.FxAnnotation.ResponsiveBean;
@@ -13,9 +14,16 @@ import com.skjanyou.javafx.inter.FxControllerFactory;
 import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
+import com.sun.javafx.fxml.BeanAdapter;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.Property;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 
 public class DefaultFxControllerFactory implements FxControllerFactory,FxControllerFactoryProperty {
@@ -84,19 +92,30 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			if( respBean != null ) {
 				String[] binds = respBean.value();
 				Class<?> clazz = field.getType();
+				
+
 				BeanProperty beanProperty = new BeanPropertyHelper(clazz).builder();
 				try {
 					field.setAccessible(true);
 					field.set(controller, beanProperty.getBean());
-					beanProperty.getPropertyChangeSupport().addPropertyChangeListener(new PropertyChangeListener() {
-						
-						@Override
-						public void propertyChange(PropertyChangeEvent evt) {
-							System.out.println(evt);
+					for (String selector : binds) {
+						Set<Node> set = parent.lookupAll(selector);
+						for( Node node : set ) {
+							System.out.println(node);
+							BeanAdapter beanAdapter = new BeanAdapter(node);
 							
+							ObservableValue value = beanAdapter.getPropertyModel("text");
+							Property p = (Property) value;
+							System.out.println(p);
+							p.addListener(new InvalidationListener() {
+								
+								@Override
+								public void invalidated(Observable observable) {
+									System.out.println("11");
+								}
+							});
 						}
-					});
-					
+					}
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {

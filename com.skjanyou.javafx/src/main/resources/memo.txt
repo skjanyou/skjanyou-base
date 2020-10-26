@@ -1,0 +1,5 @@
+
+1.ControllerHelper作为辅助类,里面要囊括开发需要的Stage、Scene、Controller、Root、Fxml、各种组件的实例以及各种方便查询组件,操作组件的方法
+2.SkjanyouFXMLLoader作为加载类,负责将Controller类的注解与FXML文件的各项数据做比对,并且实例化代理对象进行方法拦截（内部使用SkjanyouController,可能改成叫ControllerMethodInterceptor比较好懂）
+3.ControllerMethodInterceptor作为方法拦截类,需要使用动态代理生成代理类,给代理类绑定css文件、FXML文件、标题、图标、皮肤、样式等
+4.DoubleEventDispatcher需要改个名字（EventProxyDispatcher可能更好）,并且需要直接在ControllerMethodInterceptor中作为事件监听添加到Root、Scene、Stage上面。
