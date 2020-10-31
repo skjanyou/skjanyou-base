@@ -20,13 +20,7 @@ public class BeanWrapper {
 		if( beanObject instanceof Map ) {
 			this.wrapper = new MapBeanWrapper(beanObject);
 		}else {
-			String name = beanObject.getClass().getName();
-					
-			if( beanObject.getClass().getName().indexOf(CGLIB) != -1 ) {
-				this.wrapper = new CglibBeanWrapper(beanObject);
-			}else {
-				this.wrapper = new BeanWrapper0(beanObject);
-			}
+			this.wrapper = new BeanWrapper0(beanObject);
 		}
 	}
 
@@ -64,6 +58,8 @@ public class BeanWrapper {
 	private class BeanWrapper0 extends BeanWrapper {
 		protected Object targetBean;
 		protected Class<?> targetClass;
+		protected boolean isCglib;
+		protected final String CGLIB_PREFIX = "$cglib_prop_"; 
 		private List<String> fields;
 		private List<Field> fieldList;
 		private Map<String,Method> getter;
@@ -75,6 +71,10 @@ public class BeanWrapper {
 			}
 			this.targetBean = beanObject;
 			this.targetClass = getBeanClass();
+			if( this.targetClass.getName().contains(CGLIB) ) {
+				this.isCglib = true;
+			}
+			
 			this.getter = new HashMap<>();
 			this.setter = new HashMap<>();
 			this.fields = new ArrayList<>();
@@ -97,13 +97,11 @@ public class BeanWrapper {
 					if (method.getParameterCount() == 1) {
 						name = name.substring(3).toLowerCase();
 						setter.put(name, method);
-						fields.add(name);
 					}
 				}else if( name.startsWith("is") && name.length() > 2 ){
 					if( method.getParameterCount() == 1 ){
 						name = name.substring(2).toLowerCase();
 						setter.put(name, method);
-						fields.add(name);
 					}
 				}		
 			}
@@ -127,20 +125,17 @@ public class BeanWrapper {
 		}
 		
 		private void resolveField() {
-			Iterator<String> it = fields.iterator();
-			while( it.hasNext() ) {
-				String fieldName = it.next();
-				try {
-					Field field = this.targetClass.getDeclaredField(fieldName);
-					if( field != null ) {
-						this.fieldList.add(field);
-					}else {
-						it.remove();
-					}
-				} catch (NoSuchFieldException | SecurityException e) {
-					it.remove();
-					continue;
-				}
+			List<Field> fieldList = new ArrayList<>();
+			Class<?> resolveClass = this.targetClass;
+			List<Field> subField = null;
+			do {
+				subField = getClassFieldsByClass(resolveClass);
+				fieldList.addAll(subField);
+			} while( ( null != this.targetClass.getSuperclass() ) && ( resolveClass != this.targetClass.getSuperclass() ) && (resolveClass = this.targetClass.getSuperclass()) != Object.class );
+			
+			for (Field field : subField) {
+				this.fieldList.add(field);
+				this.fields.add(field.getName());
 			}
 		}
 
@@ -153,23 +148,46 @@ public class BeanWrapper {
 		}
 
 		private Method[] getClassMethods(){
-			Method[] methods = targetClass.getDeclaredMethods();
+			List<Method> methodList = new ArrayList<>();
+			Class<?> resolveClass = this.targetClass;
+			List<Method> subMethod = null;
+			do {
+				subMethod = getClassMethodsByClass(resolveClass);
+				methodList.addAll(subMethod);
+			} while( ( null != this.targetClass.getSuperclass() ) && ( resolveClass != this.targetClass.getSuperclass() ) && (resolveClass = this.targetClass.getSuperclass()) != Object.class );
+			
+			return methodList.toArray(new Method[] {});
+		}
+		
+		private List<Method> getClassMethodsByClass( Class<?> clazz ){
+			Method[] methods = clazz.getDeclaredMethods();
+			List<Method> methodList = new ArrayList<>();
 			for (Method method : methods) {
-				method.setAccessible(true);
+				methodList.add(method);
 			}
-			return methods;
+			return methodList;
+		}
+		
+		private List<Field> getClassFieldsByClass( Class<?> clazz ) {
+			List<Field> fieldList = new ArrayList<>();
+			Field[] fields = clazz.getDeclaredFields();
+			for (Field field : fields) {
+				fieldList.add(field);
+			}
+			return fieldList;
 		}
 		
 		public Object get( String fieldName ) throws InvocationTargetException,NoSuchMethodException{
 			String lowerCase = fieldName.toLowerCase();
-			Method m = getter.get(lowerCase);
-			if( m == null ){
+			Method method = getter.get(lowerCase);
+			if( method == null ){
 				throw new NoSuchMethodException("找不到" + fieldName + "对应的get方法");
 			}
 			
 			Object result = null;
 			try {
-				result = m.invoke(this.targetBean);
+				method.setAccessible(true);
+				result = method.invoke(this.targetBean);
 			} catch (IllegalAccessException | IllegalArgumentException e) {
 				throw new InvocationTargetException(e);
 			}
@@ -179,13 +197,14 @@ public class BeanWrapper {
 
 		public BeanWrapper set( String fieldName,Object value ) throws InvocationTargetException,NoSuchMethodException{
 			String lowerCase = fieldName.toLowerCase();
-			Method m = setter.get(lowerCase);
-			if( m == null ){
+			Method method = setter.get(lowerCase);
+			if( method == null ){
 				throw new NoSuchMethodException("找不到" + fieldName + "对应的set方法");
 			}
 			
 			try {
-				m.invoke(this.targetBean,value);
+				method.setAccessible(true);
+				method.invoke(this.targetBean,value);
 			} catch (IllegalAccessException | IllegalArgumentException e) {
 				throw new InvocationTargetException(e);
 			}
@@ -196,6 +215,10 @@ public class BeanWrapper {
 		@Override
 		public Object getByField(String fieldName) throws NoSuchFieldException,IllegalArgumentException, IllegalAccessException {
 			String lowerCase = fieldName.toLowerCase();
+			if( this.isCglib ){
+				lowerCase = this.CGLIB_PREFIX + lowerCase;
+			}
+			
 			int index = fields.indexOf(lowerCase);
 			if( index == -1 ) {
 				throw new NoSuchFieldException(lowerCase);
@@ -207,6 +230,7 @@ public class BeanWrapper {
 			}
 			Object result = null;
 			try {
+				field.setAccessible(true);
 				result = field.get(this.targetBean);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
@@ -218,6 +242,9 @@ public class BeanWrapper {
 		@Override
 		public BeanWrapper setByField(String fieldName, Object value) throws NoSuchFieldException,IllegalArgumentException, IllegalAccessException {
 			String lowerCase = fieldName.toLowerCase();
+			if( this.isCglib ){
+				lowerCase = this.CGLIB_PREFIX + lowerCase;
+			}			
 			int index = fields.indexOf(lowerCase);
 			if( index == -1 ) {
 				throw new NoSuchFieldException(lowerCase);
@@ -227,6 +254,7 @@ public class BeanWrapper {
 			if( field == null ) {
 				throw new NoSuchFieldException(lowerCase);
 			}
+			field.setAccessible(true);
 			field.set(this.targetBean, value);
 			
 			return this;
@@ -237,92 +265,6 @@ public class BeanWrapper {
 		}
 	}
 
-	private class CglibBeanWrapper extends BeanWrapper0 {
-		private Class<?> cglibClass;
-		private List<String> cglibField;
-		private List<Field> cglibFieldList;
-		private final static String CGLIB_PREFIX = "$cglib_prop_";
-		
-		public CglibBeanWrapper(Object beanObject) {
-			super(beanObject);
-			this.cglibClass = beanObject.getClass();
-			this.cglibField = new ArrayList<>();
-			this.cglibFieldList = new ArrayList<>();
-			this.resolveCglibAttr();
-		}
-		
-		/**
-		 *	代理类,先获取原类,再后面添加代理类的属性获取
-		 */
-		@Override
-		protected Class<?> getBeanClass() {
-			Class<?> resultClass = super.getBeanClass();
-			while( resultClass.getSuperclass() != null ) {
-				resultClass = resultClass.getSuperclass();
-				if( resultClass.getName().indexOf(CGLIB) == -1 ) {
-					break;
-				}
-			}
-			
-			return resultClass;
-		}
-		
-		protected void resolveCglibAttr() {
-			Field[] fields = this.cglibClass.getSuperclass().getDeclaredFields();
-			for (Field field : fields) {
-				String fieldName = field.getName();
-				this.cglibField.add(fieldName);
-				this.cglibFieldList.add(field);
-			}
-		}
-		
-		@Override
-		public BeanWrapper setByField(String fieldName, Object value) throws NoSuchFieldException,IllegalArgumentException, IllegalAccessException {
-			try {
-				super.setByField(fieldName, value);
-			} catch( NoSuchFieldException | IllegalArgumentException | IllegalAccessException e ) {
-				String lowerCase = CGLIB_PREFIX + fieldName.toLowerCase();
-				int index = this.cglibField.indexOf(lowerCase);
-				if( index == -1 ) {
-					throw new IllegalAccessException(lowerCase);
-				}
-				
-				Field field = this.cglibFieldList.get(index);
-				if( field == null ) {
-					throw new IllegalAccessException(lowerCase);
-				}
-				field.setAccessible(true);
-				field.set(this.targetBean, value);
-			}
-			
-			
-			return this;
-		}
-		
-		@Override
-		public Object getByField(String fieldName) throws NoSuchFieldException,IllegalArgumentException, IllegalAccessException {
-			Object result = null;
-			try {
-				result = super.getByField(fieldName);
-			} catch ( NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-				String lowerCase = CGLIB_PREFIX + fieldName.toLowerCase();
-				int index = this.cglibField.indexOf(lowerCase);
-				if( index == -1 ) {
-					throw new IllegalAccessException(lowerCase);
-				}
-				
-				Field field = this.cglibFieldList.get(index);
-				if( field == null ) {
-					throw new IllegalAccessException(lowerCase);
-				}
-				field.setAccessible(true);
-				result = field.get(this.targetBean);
-			}
-			
-			return result;
-		}
-		
-	}
 	
 	private class MapBeanWrapper extends BeanWrapper {
 		private Map<String,Object> beanObject;

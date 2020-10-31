@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.objectweb.asm.Type;
+
 import com.skjanyou.javafx.inter.BeanPropertyBuilder;
 import com.skjanyou.plugin.util.InstanceUtil;
-import com.skjanyou.util.BeanUtil;
 import com.skjanyou.util.BeanWrapper;
 import com.skjanyou.util.FieldUtil;
 
@@ -25,7 +26,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import net.sf.cglib.beans.BeanGenerator;
+import net.sf.cglib.core.Signature;
 import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.InterfaceMaker;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -36,10 +39,20 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 		super(clazz);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public BeanProperty builder() {
 		BeanGenerator gen = new BeanGenerator();
+		
+		// 添加绑定、解绑方法
+		InterfaceMaker im = new InterfaceMaker();
+		im.add(new Signature(BIND_METHOD_NAME, Type.VOID_TYPE,new Type[] { Type.getType(String.class),Type.getType(Property.class) }), null);
+		im.add(new Signature(UNBIND_METHOD_NAME, Type.VOID_TYPE,new Type[] {  }), null);
+		Class<?> bindClass = im.create(); 
+		
 		gen.setSuperclass(this.clazz);
+		
+		// 添加成员变量对应的PropertyBean属性
 		List<Field> fieldList = FieldUtil.getAllBeanField(this.clazz);
 		Map<String,Class<?>> fieldPropertyMap = new HashMap<>();
 		for (Field field : fieldList) {
@@ -65,12 +78,15 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 			fieldPropertyMap.put(field.getName(),propertyClass);
 			gen.addProperty(propertyName, propertyClass);
 		}
-
+		
+ 
+		   
 		Class<?> genClass = (Class<?>) gen.createClass();
 
 		BeanProperty beanProperty = new BeanProperty();
 		Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(genClass);
+		enhancer.setInterfaces(new Class[] {bindClass});
 		enhancer.setCallback(this);
 		Object bean = enhancer.create();
 
@@ -88,7 +104,6 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 				@Override
 				public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
 					try {
-						System.out.println(newValue);
 						beanWrapper.set(fieldName, newValue);
 					} catch (InvocationTargetException e) {
 						e.printStackTrace();
@@ -125,9 +140,11 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 			Property<Object> property = (Property<Object>) beanWrapper.getByField(field + PROPERTY_SUFFIX);
 			property.setValue(args[0]);			
 		}else if( BIND_METHOD_NAME.equals(methodName) ){
+			String key = (String) args[0];
+			Property property = (Property) args[1];
 			// 数据绑定
-			Property<?> property = (Property<?>) beanWrapper.get(field + PROPERTY_SUFFIX);
-			property.bind((ObservableValue) args[0]);
+			ObservableValue<?> observableValue = (ObservableValue<?>) beanWrapper.getByField(key + PROPERTY_SUFFIX);
+			property.bind(observableValue);
 		}else if( UNBIND_METHOD_NAME.equals(methodName) ){
 			// 数据解绑定
 			Property<?> property = (Property<?>) beanWrapper.get(field + PROPERTY_SUFFIX);

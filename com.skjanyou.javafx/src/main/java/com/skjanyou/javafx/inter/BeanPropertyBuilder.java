@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 import com.skjanyou.javafx.core.BeanProperty;
 
+import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
 
 public abstract class BeanPropertyBuilder {
@@ -40,6 +41,24 @@ public abstract class BeanPropertyBuilder {
 			throw new RuntimeException("找不到方法" + UNBIND_METHOD_NAME,e);
 		} catch ( Exception e) {
 			throw new RuntimeException("解绑定数据出错",e);
+		}
+	}
+	
+	/**
+	 * 通过Key去搜索类里面的property属性进行绑定
+	 * @param propertyBean
+	 * @param property
+	 */
+	public static void bind( Object propertyBean,String propertyName, Property<?> property ) {
+		Class<?> targetClass = propertyBean.getClass();
+		try {
+			Method method = targetClass.getMethod(BIND_METHOD_NAME, String.class,Property.class);
+			method.invoke(propertyBean, new Object[] { propertyName,property });
+			
+		} catch (SecurityException e) {
+			throw new RuntimeException("找不到方法" + BIND_METHOD_NAME,e);
+		} catch ( Exception e) {
+			throw new RuntimeException("绑定数据出错",e);
 		}
 	}
 

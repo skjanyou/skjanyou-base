@@ -10,6 +10,7 @@ import com.skjanyou.javafx.anno.FxAnnotation.ResponsiveBean;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.core.BeanProperty;
 import com.skjanyou.javafx.core.BeanPropertyHelper;
+import com.skjanyou.javafx.inter.BeanPropertyBuilder;
 import com.skjanyou.javafx.inter.FxControllerFactory;
 import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
@@ -97,23 +98,22 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 				BeanProperty beanProperty = new BeanPropertyHelper(clazz).builder();
 				try {
 					field.setAccessible(true);
-					field.set(controller, beanProperty.getBean());
-					for (String selector : binds) {
+					Object propertyBean = beanProperty.getBean();
+					field.set(controller, propertyBean);
+					for (String express : binds) {
+						// card_id=#testText.text
+						String key = express.split("=")[0];
+						String selector = express.split("=")[1].split("\\.")[0];
+						String property = express.split("=")[1].split("\\.")[1];
 						Set<Node> set = parent.lookupAll(selector);
 						for( Node node : set ) {
 							System.out.println(node);
 							BeanAdapter beanAdapter = new BeanAdapter(node);
 							
-							ObservableValue value = beanAdapter.getPropertyModel("text");
+							ObservableValue value = beanAdapter.getPropertyModel(property);
 							Property p = (Property) value;
 							System.out.println(p);
-							p.addListener(new InvalidationListener() {
-								
-								@Override
-								public void invalidated(Observable observable) {
-									System.out.println("11");
-								}
-							});
+							BeanPropertyBuilder.bind(propertyBean,key,p);
 						}
 					}
 				} catch (IllegalArgumentException e) {
