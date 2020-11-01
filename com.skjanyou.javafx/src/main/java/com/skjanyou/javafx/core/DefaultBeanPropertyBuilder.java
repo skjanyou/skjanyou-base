@@ -47,7 +47,7 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 		// 添加绑定、解绑方法
 		InterfaceMaker im = new InterfaceMaker();
 		im.add(new Signature(BIND_METHOD_NAME, Type.VOID_TYPE,new Type[] { Type.getType(String.class),Type.getType(Property.class) }), null);
-		im.add(new Signature(UNBIND_METHOD_NAME, Type.VOID_TYPE,new Type[] {  }), null);
+		im.add(new Signature(UNBIND_METHOD_NAME, Type.VOID_TYPE,new Type[] { Type.getType(String.class) }), null);
 		Class<?> bindClass = im.create(); 
 		
 		gen.setSuperclass(this.clazz);
@@ -128,6 +128,7 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 		return beanProperty;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
 		Object result = null;
@@ -138,7 +139,8 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 		String field = methodName.substring(3).toLowerCase();
 		if( prefix.equals("set") && !field.endsWith(PROPERTY_SUFFIX) ) {
 			Property<Object> property = (Property<Object>) beanWrapper.getByField(field + PROPERTY_SUFFIX);
-			property.setValue(args[0]);			
+			System.out.println(property);
+			property.setValue(args[0]);		
 		}else if( BIND_METHOD_NAME.equals(methodName) ){
 			String key = (String) args[0];
 			Property property = (Property) args[1];
@@ -146,8 +148,9 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 			ObservableValue<?> observableValue = (ObservableValue<?>) beanWrapper.getByField(key + PROPERTY_SUFFIX);
 			property.bind(observableValue);
 		}else if( UNBIND_METHOD_NAME.equals(methodName) ){
+			String key = (String) args[0];
 			// 数据解绑定
-			Property<?> property = (Property<?>) beanWrapper.get(field + PROPERTY_SUFFIX);
+			Property<?> property = (Property<?>) beanWrapper.getByField(key + PROPERTY_SUFFIX);
 			property.unbind();
 		}else {
 			proxy.invokeSuper(obj, args);

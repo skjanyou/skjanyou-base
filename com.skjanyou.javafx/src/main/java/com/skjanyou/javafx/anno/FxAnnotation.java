@@ -7,6 +7,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.skjanyou.javafx.inter.JavaFxDecorator;
+import com.skjanyou.javafx.inter.impl.JavaFxBlackDecorator;
+
 public final class FxAnnotation {
 	
 	/**
@@ -82,8 +85,11 @@ public final class FxAnnotation {
 	@Inherited
 	@Target(ElementType.TYPE)
 	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface Decorator {
-		
+	public static @interface FxDecorator {
+		/** fxml文件 **/
+		String fxml() default "jfx/BlackDecorator.fxml";
+		/** 配置类 **/
+		Class<? extends JavaFxDecorator> config() default JavaFxBlackDecorator.class;
 	}
 	
 	/**

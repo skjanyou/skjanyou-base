@@ -15,6 +15,7 @@ public class MethodUtil {
 		try {
 			result = invokeAndReturn(method,obj,args);
 		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 		return result;
 	}

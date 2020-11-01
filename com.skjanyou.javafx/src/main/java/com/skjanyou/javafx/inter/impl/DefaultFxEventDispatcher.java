@@ -41,8 +41,6 @@ public class DefaultFxEventDispatcher implements FxEventDispatcher,EventHandler<
 	protected Map<String,List<Method>> attrSelectorMethodMap;		// 通过属性选择器绑定事件的方法
 	protected Map<String,List<Method>> complexSelectorsMethodMap;	// 通过混合选择器绑定事件的方法
 
-	// 响应式Bean相关
-	private List<Field> responsiveBeanFields;
 
 	/** 初始化方法容器 **/
 	protected void initMethodCollection() {
@@ -106,9 +104,6 @@ public class DefaultFxEventDispatcher implements FxEventDispatcher,EventHandler<
 	@Override
 	public void handle(Event event) {
 		String eventTypeName = event.getEventType().getName();
-		// 事件源
-		Object source = event.getSource();
-
 		// 事件目标
 		Object target = event.getTarget();
 		Parent parent = null;

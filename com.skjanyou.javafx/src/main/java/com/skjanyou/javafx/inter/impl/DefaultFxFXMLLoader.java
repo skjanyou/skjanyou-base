@@ -12,6 +12,7 @@ import com.sun.javafx.application.PlatformImpl;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -29,7 +30,6 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 		this.setControllerFactory(this);
 	}
 	
-	@SuppressWarnings("restriction")
 	@Override
 	public LoadResult loader() {
 		LoadResult loadResult = new LoadResult();
@@ -40,8 +40,10 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 				try {
 					Parent parent = DefaultFxFXMLLoader.super.load();
 					Object controller = DefaultFxFXMLLoader.super.getController();
+					Stage stage = new Stage();
 					loadResult.setParent(parent);
 					loadResult.setController(controller);
+					loadResult.setStage(stage);
 				} catch (IOException e) {
 					throw new RuntimeException("加载FXML文件出现异常",e);
 				} finally {
