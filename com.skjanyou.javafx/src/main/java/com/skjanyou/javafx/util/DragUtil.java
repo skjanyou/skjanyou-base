@@ -16,7 +16,6 @@ public class DragUtil {
     } 
     private static DIRECTION direction = DIRECTION.NONE;
     private static Cursor curorType = Cursor.DEFAULT;
-    private static boolean isPressdown;
     
 	//窗体拉伸属性
     private final static int RESIZE_WIDTH = 5;// 判定是否为调整窗口状态的范围与边界距离
@@ -25,20 +24,37 @@ public class DragUtil {
     
     public static void addDrawFunc(Stage stage,VBox root) {
         
-        root.setOnMousePressed(new EventHandler<MouseEvent>() {
+    	// 拖拽窗口改变大小
+        stage.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				isPressdown = true;
+			    // 保存窗口改变后的x、y坐标和宽度、高度，用于预判是否会小于最小宽度、最小高度
+	            double x = event.getSceneX();
+	            double y = event.getSceneY();
+                double nextX = stage.getX();
+                double nextY = stage.getY();
+                double nextWidth = stage.getWidth();
+                double nextHeight = stage.getHeight();
+                
+                if (direction == DIRECTION.RIGHT || direction == DIRECTION.RIGHT_BOTTOM) {// 所有右边调整窗口状态
+                    nextWidth = x;
+                }
+                if (direction == DIRECTION.BOTTOM || direction == DIRECTION.RIGHT_BOTTOM || direction == DIRECTION.LEFT_BOTTOM) {// 所有下边调整窗口状态
+                    nextHeight = y;
+                }
+                if (nextWidth <= MIN_WIDTH) {// 如果窗口改变后的宽度小于最小宽度，则宽度调整到最小宽度
+                    nextWidth = MIN_WIDTH;
+                }
+                if (nextHeight <= MIN_HEIGHT) {// 如果窗口改变后的高度小于最小高度，则高度调整到最小高度
+                    nextHeight = MIN_HEIGHT;
+                }
+                // 最后统一改变窗口的x、y坐标和宽度、高度，可以防止刷新频繁出现的屏闪情况
+                stage.setX(nextX);
+                stage.setY(nextY);
+                stage.setWidth(nextWidth);
+                stage.setHeight(nextHeight);	                
 			}
-		});
-        
-        root.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				isPressdown = false;
-			}
-		});
-        
+        });
         
         stage.addEventFilter(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
 			@Override
@@ -82,33 +98,6 @@ public class DragUtil {
 	            }
 	            // 最后改变鼠标光标
 	            root.setCursor(cursorType);
-	            // 拖拽窗口改变大小
-	            if( isPressdown ) {
-	                // 保存窗口改变后的x、y坐标和宽度、高度，用于预判是否会小于最小宽度、最小高度
-	                double nextX = stage.getX();
-	                double nextY = stage.getY();
-	                System.out.println("nextX:" + nextX + ",nextY:" + nextY);
-	                double nextWidth = stage.getWidth();
-	                double nextHeight = stage.getHeight();
-	                
-	                if (direction == DIRECTION.RIGHT || direction == DIRECTION.RIGHT_BOTTOM) {// 所有右边调整窗口状态
-	                    nextWidth = x;
-	                }
-	                if (direction == DIRECTION.BOTTOM || direction == DIRECTION.RIGHT_BOTTOM || direction == DIRECTION.LEFT_BOTTOM) {// 所有下边调整窗口状态
-	                    nextHeight = y;
-	                }
-	                if (nextWidth <= MIN_WIDTH) {// 如果窗口改变后的宽度小于最小宽度，则宽度调整到最小宽度
-	                    nextWidth = MIN_WIDTH;
-	                }
-	                if (nextHeight <= MIN_HEIGHT) {// 如果窗口改变后的高度小于最小高度，则高度调整到最小高度
-	                    nextHeight = MIN_HEIGHT;
-	                }
-	                // 最后统一改变窗口的x、y坐标和宽度、高度，可以防止刷新频繁出现的屏闪情况
-	                stage.setX(nextX);
-	                stage.setY(nextY);
-	                stage.setWidth(nextWidth);
-	                stage.setHeight(nextHeight);	                
-	            }
 			}
 		});
     }
