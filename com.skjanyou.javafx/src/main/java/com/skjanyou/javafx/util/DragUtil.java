@@ -42,11 +42,22 @@ public class DragUtil {
                 if (direction == DIRECTION.BOTTOM || direction == DIRECTION.RIGHT_BOTTOM || direction == DIRECTION.LEFT_BOTTOM) {// 所有下边调整窗口状态
                     nextHeight = y;
                 }
+                if(direction == DIRECTION.LEFT || direction == DIRECTION.LEFT_BOTTOM ) {
+                	nextWidth -= x;
+                	nextX += x;
+                }
+                if(direction == DIRECTION.TOP || direction == DIRECTION.TOP_LEFT || direction == DIRECTION.TOP_RIGHT) {
+                	nextHeight -= y;
+                	nextY += y;
+                }
+                
                 if (nextWidth <= MIN_WIDTH) {// 如果窗口改变后的宽度小于最小宽度，则宽度调整到最小宽度
                     nextWidth = MIN_WIDTH;
+                    nextX = stage.getX();
                 }
                 if (nextHeight <= MIN_HEIGHT) {// 如果窗口改变后的高度小于最小高度，则高度调整到最小高度
                     nextHeight = MIN_HEIGHT;
+                    nextY = stage.getY();
                 }
                 // 最后统一改变窗口的x、y坐标和宽度、高度，可以防止刷新频繁出现的屏闪情况
                 stage.setX(nextX);
@@ -67,7 +78,6 @@ public class DragUtil {
 	            // 先将所有调整窗口状态重置
 	            direction = DIRECTION.NONE;
 	            if (y >= height - RESIZE_WIDTH) {
-	            	System.out.println("y+");
 	                if (x <= RESIZE_WIDTH) {// 左下角调整窗口状态
 	                	direction = DIRECTION.LEFT_BOTTOM;
 	                	curorType = Cursor.SW_RESIZE;
