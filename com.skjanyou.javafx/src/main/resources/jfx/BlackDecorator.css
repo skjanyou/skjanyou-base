@@ -10,3 +10,20 @@
 #close_box:hover {
 	-fx-background-color: red;	
 } 
+
+
+
+/** 
+ * 通用样式类                 
+ * 
+ * 
+ **/
+.hidden {
+	visibility: false;
+} 
+
+.show {
+	
+}
+
+ 

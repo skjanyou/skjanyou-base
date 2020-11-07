@@ -42,13 +42,19 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	private Label title;
 	@FXML
 	private ImageView iconImage;
+	@FXML
+	private ImageView maximize;
+	@FXML
+	private ImageView restore;
+	
+	
 	private DragUtil dragUtil = new DragUtil();
     double appMinWidth = 0;
     double appMinHeight = 0;
 	@Override
 	public void initDecorator(Stage stage) {
 		this.stage = stage;
-		this.bindTitle();
+		this.bindHeader();
 		this.bindDrager();
 	}
 
@@ -59,11 +65,10 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 		Pane pane = (Pane) content;
 		appMinWidth = pane.getMinWidth();
 		appMinHeight = pane.getMinHeight() + banner.getMinHeight();
-
 		return this;
 	}
 
-	protected void bindTitle() {
+	protected void bindHeader() {
 		this.title.textProperty().bindBidirectional(stage.titleProperty());
 		stage.getIcons().addListener(new InvalidationListener() {
 
@@ -73,6 +78,30 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 			}
 		});
 		setIconImage();
+		
+		stage.maximizedProperty().addListener(new InvalidationListener() {
+			@Override
+			public void invalidated(Observable observable) {
+				boolean maximized = stage.isMaximized();
+				if(maximized) {
+					// 最大化状态
+					maximize.getStyleClass().add("hidden");
+					maximize.setFitHeight(1);
+					maximize.setFitWidth(1);
+					restore.getStyleClass().remove("hidden");
+					restore.setFitWidth(15);
+					restore.setFitHeight(15);
+				}else {
+					// 最大化状态
+					maximize.getStyleClass().remove("hidden");
+					maximize.setFitHeight(15);
+					maximize.setFitWidth(15);
+					restore.getStyleClass().add("hidden");
+					restore.setFitWidth(1);
+					restore.setFitHeight(1);
+				}
+			}
+		});
 	}
 
 	private void setIconImage () {
