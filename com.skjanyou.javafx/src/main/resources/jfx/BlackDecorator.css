@@ -7,6 +7,6 @@
 }
 
 /** 这里单独给ImageView元素添加Hover完成不了改变背景颜色,需要再添加一个父容器元素来处理 */
-#close:hover {
+#close_box:hover {
 	-fx-background-color: red;	
 } 

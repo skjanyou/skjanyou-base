@@ -3,7 +3,7 @@ package com.skjanyou.javafx.util;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 /**
@@ -14,16 +14,21 @@ public class DragUtil {
     enum  DIRECTION {
     	NONE,TOP,RIGHT,BOTTOM,LEFT,TOP_RIGHT,RIGHT_BOTTOM,LEFT_BOTTOM,TOP_LEFT
     } 
-    private static DIRECTION direction = DIRECTION.NONE;
-    private static Cursor curorType = Cursor.DEFAULT;
+    private  DIRECTION direction = DIRECTION.NONE;
+    //窗体拉伸属性
+    private final int RESIZE_WIDTH = 8;// 判定是否为调整窗口状态的范围与边界距离
+    private double MIN_WIDTH = 300;// 窗口最小宽度
+    private double MIN_HEIGHT = 250;// 窗口最小高度
+    public DragUtil() {}
     
-	//窗体拉伸属性
-    private final static int RESIZE_WIDTH = 5;// 判定是否为调整窗口状态的范围与边界距离
-    private final static double MIN_WIDTH = 300;// 窗口最小宽度
-    private final static double MIN_HEIGHT = 250;// 窗口最小高度
-    
-    public static void addDrawFunc(Stage stage,VBox root) {
-        
+    public  void addDrawFunc(Stage stage,Pane root,double appMinWidth,double appMinHeight) {
+    	if( MIN_WIDTH <= appMinWidth) {
+    		MIN_WIDTH = appMinWidth;
+    	}
+    	if( MIN_HEIGHT <= appMinHeight ) {
+    		MIN_HEIGHT = appMinHeight;
+    	}
+    	
     	// 拖拽窗口改变大小
         stage.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 			@Override
@@ -46,10 +51,11 @@ public class DragUtil {
                 	nextWidth -= x;
                 	nextX += x;
                 }
-                if(direction == DIRECTION.TOP || direction == DIRECTION.TOP_LEFT || direction == DIRECTION.TOP_RIGHT) {
-                	nextHeight -= y;
-                	nextY += y;
-                }
+                // 顶部拉伸与拖拽事件有冲突，不开放顶部拉伸功能
+//                if(direction == DIRECTION.TOP || direction == DIRECTION.TOP_LEFT || direction == DIRECTION.TOP_RIGHT) {
+//                	nextHeight -= y;
+//                	nextY += y;
+//                }
                 
                 if (nextWidth <= MIN_WIDTH) {// 如果窗口改变后的宽度小于最小宽度，则宽度调整到最小宽度
                     nextWidth = MIN_WIDTH;
@@ -80,7 +86,7 @@ public class DragUtil {
 	            if (y >= height - RESIZE_WIDTH) {
 	                if (x <= RESIZE_WIDTH) {// 左下角调整窗口状态
 	                	direction = DIRECTION.LEFT_BOTTOM;
-	                	curorType = Cursor.SW_RESIZE;
+	                	cursorType = Cursor.SW_RESIZE;
 	                } else if (x >= width - RESIZE_WIDTH) {// 右下角调整窗口状态
 	                	direction = DIRECTION.RIGHT_BOTTOM;
 	                    cursorType = Cursor.SE_RESIZE;
@@ -88,18 +94,20 @@ public class DragUtil {
 	                	direction = DIRECTION.BOTTOM;
 	                    cursorType = Cursor.S_RESIZE;
 	                }
-	            } else if( y <= RESIZE_WIDTH ){
-	                if (x <= RESIZE_WIDTH) {// 左上角调整窗口状态
-	                	direction = DIRECTION.TOP_LEFT;
-	                	curorType = Cursor.NW_RESIZE;
-	                } else if (x >= width - RESIZE_WIDTH) {// 右上角调整窗口状态
-	                	direction = DIRECTION.TOP_RIGHT;
-	                    cursorType = Cursor.NE_RESIZE;
-	                } else {// 下边界调整窗口状态
-	                	direction = DIRECTION.TOP;
-	                    cursorType = Cursor.N_RESIZE;
-	                }
-	            } else if (x >= width - RESIZE_WIDTH) {// 右边界调整窗口状态
+	            } 
+	            // 顶部不允许调整大小
+//	            else if( y <= RESIZE_WIDTH ){
+//	                if (x <= RESIZE_WIDTH) {// 左上角调整窗口状态
+//	                	direction = DIRECTION.TOP_LEFT;
+//	                } else if (x >= width - RESIZE_WIDTH) {// 右上角调整窗口状态
+//	                	direction = DIRECTION.TOP_RIGHT;
+//	                    cursorType = Cursor.NE_RESIZE;
+//	                } else {// 下边界调整窗口状态
+//	                	direction = DIRECTION.TOP;
+//	                    cursorType = Cursor.N_RESIZE;
+//	                }
+//	            } 
+	            else if (x >= width - RESIZE_WIDTH) {// 右边界调整窗口状态
 	            	direction = DIRECTION.RIGHT;
 	            	cursorType = Cursor.E_RESIZE;
 	            } else if (x <= RESIZE_WIDTH) {

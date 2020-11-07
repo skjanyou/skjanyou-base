@@ -1,6 +1,5 @@
 package com.skjanyou.javafx.inter.impl;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +106,7 @@ public class DefaultFxEventDispatcher implements FxEventDispatcher,EventHandler<
 		// 事件目标
 		Object target = event.getTarget();
 		Parent parent = null;
-
+		
 		if( target instanceof Parent ) {
 			parent = (Parent) target;
 		} else if( target instanceof Text) {

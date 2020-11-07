@@ -64,24 +64,22 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </HBox.margin>
                 </ImageView>
-                <ImageView fx:id="close" fitHeight="15.0" fitWidth="15.0" onMouseReleased="#close" pickOnBounds="true" preserveRatio="true">
-                   <image>
-                       <Image url="@icon/close.png" />
-                   </image>
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </HBox.margin>
-                </ImageView>
+            <VBox fx:id="close_box" alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
+               <children>
+                      <ImageView fx:id="close" fitHeight="15.0" fitWidth="15.0" onMouseReleased="#close" pickOnBounds="true" preserveRatio="true">
+                         <image>
+                             <Image url="@icon/close.png" />
+                         </image>
+                          <cursor>
+                              <Cursor fx:constant="HAND" />
+                          </cursor>
+                      </ImageView>
+               </children>
+            </VBox>
             </children>
             <VBox.margin>
                 <Insets />
             </VBox.margin>
-            <padding>
-                <Insets right="5.0" top="2.0" />
-            </padding>
         </HBox>
     </children>
    <opaqueInsets>

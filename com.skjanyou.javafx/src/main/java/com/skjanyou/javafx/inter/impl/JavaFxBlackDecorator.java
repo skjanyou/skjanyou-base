@@ -18,10 +18,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ *   暗黑主题
+ * @author skjanyou
+ * 	时间 : 2020-11-7
+ * 	作用 :
+ */
 public class JavaFxBlackDecorator implements JavaFxDecorator {
 	private Stage stage;
 	private Point point = new Point();
@@ -35,25 +42,9 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	private Label title;
 	@FXML
 	private ImageView iconImage;
-
-
-	//窗体拉伸属性
-
-	private static boolean isRight;// 是否处于右边界调整窗口状态
-
-	private static boolean isBottomRight;// 是否处于右下角调整窗口状态
-
-	private static boolean isBottom;// 是否处于下边界调整窗口状态
-
-	private final static int RESIZE_WIDTH = 5;// 判定是否为调整窗口状态的范围与边界距离
-
-	private final static double MIN_WIDTH = 300;// 窗口最小宽度
-
-	private final static double MIN_HEIGHT = 250;// 窗口最小高度
-
-	private double xOffset = 0;
-
-	private double yOffset = 0;
+	private DragUtil dragUtil = new DragUtil();
+    double appMinWidth = 0;
+    double appMinHeight = 0;
 	@Override
 	public void initDecorator(Stage stage) {
 		this.stage = stage;
@@ -65,6 +56,10 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	public JavaFxBlackDecorator addContent(Parent content) {
 		this.stageRoot.getChildren().add(content);
 		VBox.setVgrow(content, Priority.ALWAYS);
+		Pane pane = (Pane) content;
+		appMinWidth = pane.getMinWidth();
+		appMinHeight = pane.getMinHeight() + banner.getMinHeight();
+
 		return this;
 	}
 
@@ -126,7 +121,7 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 
 
 
-		DragUtil.addDrawFunc(stage, stageRoot);
+		dragUtil.addDrawFunc(stage, stageRoot,this.appMinWidth,this.appMinHeight);
 
 	}
 
