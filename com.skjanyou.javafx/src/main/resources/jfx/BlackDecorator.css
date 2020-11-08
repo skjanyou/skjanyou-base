@@ -23,7 +23,9 @@
 } 
 
 .show {
-	
+	visibility: true;
 }
 
- 
+.button {
+	
+}  
