@@ -74,17 +74,12 @@ public class JavaFxPlugin implements PluginSupport{
 					LoadResult bean = ApplicationContext.getBean(mainViewClass);
 					if( bean != null ) {
 						if( bean.getParent() != null ) {
-							Parent root = bean.getParent();
 							Object controller = bean.getController();
 							Stage stage = bean.getStage();
 							ControllerLifeCycle life = ( controller instanceof ControllerLifeCycle) ? (ControllerLifeCycle) controller : new NoneControllerLifeCycle();
 							// TODO 这个地方要优化,没有加@FxDecorator注解的界面也会被去掉装饰
-							Scene scene = new Scene(root);
-				            scene.setFill(Color.TRANSPARENT);
-				            stage.initStyle(StageStyle.TRANSPARENT);
-							
+							Scene scene = bean.getScene();
 							life.onInit(stage);
-							
 							stage.setScene(scene);
 							stage.setTitle(title);
 							stage.getIcons().add(new Image(StreamUtil.getInputStreamIgnoreLocation(icon)));

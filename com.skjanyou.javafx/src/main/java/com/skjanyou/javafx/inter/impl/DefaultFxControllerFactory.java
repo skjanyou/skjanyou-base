@@ -25,8 +25,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 @SuppressWarnings("restriction")
 public class DefaultFxControllerFactory implements FxControllerFactory,FxControllerFactoryProperty {
@@ -48,6 +51,8 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	private LoadResult loadResult;
 	/** 用于展示用的Stage **/
 	private Stage stage;
+	/** Scene **/
+	private Scene scene;
 	
 	public DefaultFxControllerFactory( Class<?> controllerClass ) {
 		this.controllerClass = controllerClass;
@@ -95,7 +100,9 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	 * @param parent
 	 */
 	private void initDecorator(Object proxyController, Parent parent,Stage stage) {
+		
 		if( this.fxDecorator == null ) {
+			this.scene = new Scene(this.parent);
 			return ;
 		}
         try {
@@ -112,7 +119,10 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
             JavaFxDecorator decorator = (JavaFxDecorator) controller;
             decorator.addContent(parent).initDecorator(stage);
             
-
+            this.scene = new Scene(root);
+            this.scene.setFill(Color.TRANSPARENT);
+            this.stage.initStyle(StageStyle.TRANSPARENT);
+            this.loadResult.setScene(this.scene);
             this.loadResult.setParent(root);
             
         } catch (IOException e) {
