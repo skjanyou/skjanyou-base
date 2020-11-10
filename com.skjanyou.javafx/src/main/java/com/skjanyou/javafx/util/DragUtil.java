@@ -52,10 +52,10 @@ public class DragUtil {
                 	nextX += x;
                 }
                 // 顶部拉伸与拖拽事件有冲突，不开放顶部拉伸功能
-//                if(direction == DIRECTION.TOP || direction == DIRECTION.TOP_LEFT || direction == DIRECTION.TOP_RIGHT) {
-//                	nextHeight -= y;
-//                	nextY += y;
-//                }
+                if(direction == DIRECTION.TOP || direction == DIRECTION.TOP_LEFT || direction == DIRECTION.TOP_RIGHT) {
+                	nextHeight -= y;
+                	nextY += y;
+                }
                 
                 if (nextWidth <= MIN_WIDTH) {// 如果窗口改变后的宽度小于最小宽度，则宽度调整到最小宽度
                     nextWidth = MIN_WIDTH;

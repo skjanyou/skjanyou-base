@@ -104,12 +104,22 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 				@Override
 				public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
 					try {
-						beanWrapper.set(fieldName, newValue);
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
+						Field field = DefaultBeanPropertyBuilder.this.clazz.getDeclaredField(fieldName);
+						field.setAccessible(true);
+						field.set(bean, newValue);
+					} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
+							| SecurityException e) {
 						e.printStackTrace();
 					}
+					
+//					try {
+//						beanWrapper.set(fieldName, newValue);
+//					} catch (InvocationTargetException e) {
+//						e.printStackTrace();
+//					} catch (NoSuchMethodException e) {
+//						e.printStackTrace();
+//					}
+					
 				}
 
 			});
