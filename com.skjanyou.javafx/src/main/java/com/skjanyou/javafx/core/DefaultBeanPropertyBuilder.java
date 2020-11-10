@@ -149,8 +149,8 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 		String field = methodName.substring(3).toLowerCase();
 		if( prefix.equals("set") && !field.endsWith(PROPERTY_SUFFIX) ) {
 			Property<Object> property = (Property<Object>) beanWrapper.getByField(field + PROPERTY_SUFFIX);
-			System.out.println(property);
 			property.setValue(args[0]);		
+			result = proxy.invokeSuper(obj, args);
 		}else if( BIND_METHOD_NAME.equals(methodName) ){
 			String key = (String) args[0];
 			Property property = (Property) args[1];
@@ -163,7 +163,7 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 			Property<?> property = (Property<?>) beanWrapper.getByField(key + PROPERTY_SUFFIX);
 			property.unbind();
 		}else {
-			proxy.invokeSuper(obj, args);
+			result = proxy.invokeSuper(obj, args);
 		}
 
 		return result;
