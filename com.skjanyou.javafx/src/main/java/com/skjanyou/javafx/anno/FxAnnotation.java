@@ -25,23 +25,11 @@ public final class FxAnnotation {
 		/**
 		 * @return 是否可以冒泡
 		 */
-		boolean bubble() default false;
+		boolean bubble() default true;
 		/**
-		 * 	通过Id选择器进行选择
+		 *	选择器 
 		 */
-		String id() default "";
-		/**
-		 * 	通过类选择器进行选择
-		 */
-		String clazz() default "";
-		/**
-		 * 	通过属性选择器进行选择
-		 */
-		String attr() default "";
-		/**
-		 *	混合型选择器 
-		 */
-		String[] complexSelectors() default {};
+		String[] selectors();
 		/**
 		 * 	监听的事件
 		 */
