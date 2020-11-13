@@ -11,7 +11,7 @@
 
 <VBox fx:id="stageRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@BlackDecorator.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skjanyou.javafx.inter.impl.JavaFxBlackDecorator">
     <children>
-        <HBox fx:id="banner" alignment="CENTER_RIGHT" minHeight="45" style="-fx-background-color: black;">
+        <HBox fx:id="banner" alignment="CENTER_RIGHT" minHeight="45">
             <children>
             	<ImageView fx:id="iconImage" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -21,7 +21,7 @@
                   		<Insets left="15.0" />
                		</HBox.margin>
                	</ImageView>
-            	<Label fx:id="title" text="这个地方是标题" textFill="#ffffffcc">
+            	<Label fx:id="title" text="" textFill="#ffffffcc">
 	               <HBox.margin>
 	                  <Insets left="10.0" />
 	               </HBox.margin>

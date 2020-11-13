@@ -1,9 +1,9 @@
 #stageRoot{
-    -fx-background-color: #ffffff;
     -fx-background-radius: 2px;
     -fx-border-color:#000;
     -fx-border-width:1px;
     -fx-border-radius:1px;
+    -fx-background-color: black;
 }
 
 /** 这里单独给ImageView元素添加Hover完成不了改变背景颜色,需要再添加一个父容器元素来处理 */
@@ -11,7 +11,9 @@
 	-fx-background-color: red;	
 } 
 
-
+#banner {
+	-fx-background-color: black;
+}
 
 /** 
  * 通用样式类                 

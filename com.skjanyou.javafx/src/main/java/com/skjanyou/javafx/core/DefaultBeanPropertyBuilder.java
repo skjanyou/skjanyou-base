@@ -2,7 +2,6 @@ package com.skjanyou.javafx.core;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -111,15 +110,6 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 							| SecurityException e) {
 						e.printStackTrace();
 					}
-					
-//					try {
-//						beanWrapper.set(fieldName, newValue);
-//					} catch (InvocationTargetException e) {
-//						e.printStackTrace();
-//					} catch (NoSuchMethodException e) {
-//						e.printStackTrace();
-//					}
-					
 				}
 
 			});
