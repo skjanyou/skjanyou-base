@@ -1,3 +1,8 @@
+* {
+	-fx-background-color: #333333;
+	-fx-text-fill: white;
+}
+
 #stageRoot{
     -fx-background-radius: 2px;
     -fx-border-color:#000;
@@ -6,13 +11,33 @@
     -fx-background-color: black;
 }
 
+
+#banner,#blank,#close_box,#resize_box {
+	-fx-background-color: black;
+}
+
 /** 这里单独给ImageView元素添加Hover完成不了改变背景颜色,需要再添加一个父容器元素来处理 */
 #close_box:hover {
 	-fx-background-color: red;	
 } 
 
-#banner {
-	-fx-background-color: black;
+#close_box:hover {
+	-fx-background-color: red;	
+} 
+
+#resize_box:hover {
+	-fx-background-color: #333333;
+}
+
+
+.text-field {
+	-fx-background-color: #808080;
+	-fx-highlight-fill: #ff461f;
+}
+
+.label,.text {
+	-fx-background-color: none;
+	-fx-text-fill: #f0f0f4;
 }
 
 /** 
