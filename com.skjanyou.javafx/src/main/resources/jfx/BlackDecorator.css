@@ -3,6 +3,10 @@
 	-fx-text-fill: white;
 }
 
+*:hover {
+	-fx-border-width:0px;
+}
+
 #stageRoot{
     -fx-background-radius: 2px;
     -fx-border-color:#000;
@@ -12,7 +16,7 @@
 }
 
 
-#banner,#blank,#close_box,#resize_box {
+#banner,#blank,#close_box,#resize_box,#min_box {
 	-fx-background-color: black;
 }
 
@@ -21,11 +25,8 @@
 	-fx-background-color: red;	
 } 
 
-#close_box:hover {
-	-fx-background-color: red;	
-} 
 
-#resize_box:hover {
+#resize_box:hover,#min_box:hover {
 	-fx-background-color: #333333;
 }
 

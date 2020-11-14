@@ -42,20 +42,22 @@
                   <Insets bottom="10.0" right="10.0" top="10.0" />
                </HBox.margin>
                 </ImageView>
-                <ImageView fitHeight="15.0" fitWidth="15.0" onMouseReleased="#min" pickOnBounds="true" preserveRatio="true">
-                   <image>
-                       <Image url="@icon/minimize.png" />
-                   </image>
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </HBox.margin>
-                </ImageView>
-            <VBox fx:id="resize_box" alignment="CENTER" layoutX="332.0" layoutY="10.0" prefHeight="45.0" prefWidth="45.0">
+            <VBox fx:id="min_box" onMouseReleased="#min" alignment="CENTER" prefHeight="45.0" prefWidth="50.0">
                <children>
-                  <ImageView fx:id="maximize" fitHeight="15.0" fitWidth="15.0" onMouseReleased="#max" pickOnBounds="true" preserveRatio="true">
+                      <ImageView fx:id="min" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                         <image>
+                             <Image url="@icon/minimize.png" />
+                         </image>
+                      </ImageView>
+               </children>
+               <cursor>
+                   <Cursor fx:constant="HAND" />
+               </cursor>
+            </VBox>                
+                
+            <VBox fx:id="resize_box" onMouseReleased="#max"  alignment="CENTER" layoutX="332.0" layoutY="10.0" prefHeight="45.0" prefWidth="50.0">
+               <children>
+                  <ImageView fx:id="maximize" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -63,7 +65,7 @@
                         <Image url="@icon/maximize.png" />
                      </image>
                   </ImageView>
-                  <ImageView fx:id="restore" fitHeight="1.0" fitWidth="1.0" onMouseReleased="#max" pickOnBounds="true" preserveRatio="true" styleClass="hidden">
+                  <ImageView fx:id="restore" fitHeight="1.0" fitWidth="1.0" pickOnBounds="true" preserveRatio="true" styleClass="hidden">
                      <image>
                         <Image url="@icon/restore.png" />
                      </image>
@@ -73,7 +75,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </VBox>
-            <VBox fx:id="close_box" onMouseReleased="#close" alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
+            <VBox fx:id="close_box" onMouseReleased="#close" alignment="CENTER" prefHeight="45.0" prefWidth="50.0">
                <children>
                       <ImageView fx:id="close" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                          <image>
