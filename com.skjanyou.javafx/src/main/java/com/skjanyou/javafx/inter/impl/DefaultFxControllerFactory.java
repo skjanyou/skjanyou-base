@@ -117,7 +117,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
             }
             
             JavaFxDecorator decorator = (JavaFxDecorator) controller;
-            decorator.addContent(parent).initDecorator(stage);
+            decorator.addContent(parent).initDecorator(stage,this.fxDecorator);
             
             this.scene = new Scene(root);
             this.scene.setFill(Color.TRANSPARENT);

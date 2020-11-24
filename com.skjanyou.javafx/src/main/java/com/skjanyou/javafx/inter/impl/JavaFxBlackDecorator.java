@@ -1,5 +1,7 @@
 package com.skjanyou.javafx.inter.impl;
 
+import com.skjanyou.javafx.anno.FxAnnotation.FxDecorator;
+import com.skjanyou.javafx.constant.DecoratorType;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
 import com.skjanyou.javafx.util.DragUtil;
 
@@ -32,6 +34,7 @@ import javafx.stage.Stage;
 public class JavaFxBlackDecorator implements JavaFxDecorator {
 	private Stage stage;
 	private Point point = new Point();
+	private FxDecorator fxDecorator;
 	@FXML
 	private ColorPicker colorPicker;
 	@FXML
@@ -47,13 +50,23 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	@FXML
 	private ImageView restore;
 	
+	@FXML
+	private ImageView color_image;
+	@FXML
+	private VBox min_box;
+	@FXML
+	private VBox resize_box;
+	@FXML
+	private VBox close_box;
+	
 	
 	private DragUtil dragUtil = new DragUtil();
     double appMinWidth = 0;
     double appMinHeight = 0;
 	@Override
-	public void initDecorator(Stage stage) {
+	public void initDecorator(Stage stage,FxDecorator fxDecorator) {
 		this.stage = stage;
+		this.fxDecorator = fxDecorator;
 		this.bindHeader();
 		this.bindDrager();
 	}
@@ -69,6 +82,30 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	}
 
 	protected void bindHeader() {
+		DecoratorType type = this.fxDecorator.type();
+		switch (type) {
+		case CLOSE:
+			resize_box.setVisible(false);
+			color_image.setVisible(false);
+			min_box.setVisible(false);
+			break;
+		case MAX_CLOSE:
+			color_image.setVisible(false);
+			min_box.setVisible(false);
+			break;
+		case MIN_MAX_CLOSE:
+			color_image.setVisible(false);
+			break;
+		case NONE:
+			resize_box.setVisible(false);
+			color_image.setVisible(false);
+			min_box.setVisible(false);
+			close_box.setVisible(false);
+			break;
+		default:
+			break;
+		}
+		
 		this.title.textProperty().bindBidirectional(stage.titleProperty());
 		stage.getIcons().addListener(new InvalidationListener() {
 

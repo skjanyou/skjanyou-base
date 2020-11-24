@@ -31,7 +31,7 @@
 	            </Label>
             	<Pane fx:id="blank" HBox.hgrow="ALWAYS" />
                 <ColorPicker fx:id="colorPicker" onAction="#changeColor" visible="false" />
-                <ImageView fitHeight="15.0" fitWidth="15.0" onMouseReleased="#color" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="color_image" fitHeight="15.0" fitWidth="15.0" onMouseReleased="#color" pickOnBounds="true" preserveRatio="true">
                    <image>
                        <Image url="@icon/color.png" />
                    </image>

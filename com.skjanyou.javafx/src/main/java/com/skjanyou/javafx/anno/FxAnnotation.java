@@ -7,6 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.skjanyou.javafx.constant.ControllerType;
+import com.skjanyou.javafx.constant.DecoratorType;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
 import com.skjanyou.javafx.inter.impl.JavaFxBlackDecorator;
 
@@ -61,6 +63,8 @@ public final class FxAnnotation {
 		String css() default "";
 		/** 样式 **/
 		String[] styles() default {};
+		/** 控制器类型 **/
+		ControllerType type() default ControllerType.WINDOW;
 	}
 	
 	/**
@@ -78,6 +82,8 @@ public final class FxAnnotation {
 		String fxml() default "jfx/BlackDecorator.fxml";
 		/** 配置类 **/
 		Class<? extends JavaFxDecorator> config() default JavaFxBlackDecorator.class;
+		/** 装饰器类型 **/
+		DecoratorType type() default DecoratorType.ALL;
 	}
 	
 	/**

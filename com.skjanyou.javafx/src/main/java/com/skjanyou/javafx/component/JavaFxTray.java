@@ -2,17 +2,30 @@ package com.skjanyou.javafx.component;
 
 import java.awt.AWTException;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.skjanyou.javafx.bean.LoadResult;
+import com.skjanyou.javafx.component.tray.BlackTrayController;
+import com.skjanyou.javafx.inter.FxControllerFactory;
+import com.skjanyou.javafx.inter.impl.DefaultFxControllerFactory;
 import com.skjanyou.util.StreamUtil;
+import com.sun.javafx.application.PlatformImpl;
+
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 public class JavaFxTray {
 	private static final boolean isSupport = SystemTray.isSupported();
@@ -20,8 +33,12 @@ public class JavaFxTray {
 	private int width;
 	private int height;
 	private Image image;
+	private LoadResult result;
 	
-	private JavaFxTray() {}
+	private JavaFxTray() {
+		FxControllerFactory controllerFactory = new DefaultFxControllerFactory(BlackTrayController.class);
+		result = controllerFactory.createController();
+	}
 	
 	public static boolean isSupport() {
 		return isSupport;
@@ -34,6 +51,8 @@ public class JavaFxTray {
 	public JavaFxTray setSize( int w, int h ) {
 		this.width = w;
 		this.height = h;
+		result.getStage().setWidth(width);
+		result.getStage().setHeight(height);
 		return this;
 	}
 	
@@ -47,6 +66,37 @@ public class JavaFxTray {
 	}
 	
 	public JavaFxTray mount() {
+		PlatformImpl.startup( () -> {
+			result.getStage().setScene(result.getScene());
+			result.getStage().focusedProperty().addListener(new InvalidationListener() {
+				@Override
+				public void invalidated(Observable observable) {
+					if(!result.getStage().isFocused()) {
+						result.getStage().hide();
+					}
+				}
+			});
+			result.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+				@Override
+				public void handle(WindowEvent event) {
+					event.consume();
+				}
+			});
+			
+			// 隐藏任务栏图标
+			Stage primaryStage = new Stage();
+	        // 设置风格为 UTILITY
+	        primaryStage.initStyle(StageStyle.UTILITY);
+	        // 设置父级透明度为0
+	        primaryStage.setOpacity(0);
+
+	        // 将 primaryStage 设置为归属对象，即父级窗口
+	        result.getStage().initOwner(primaryStage);
+
+	        // 先把 primaryStage 显示，再显示其他内容（顺序必须这样，因为父级必须显示，如果直接显示 mainStage, 则任务栏图标隐藏无效）
+	        primaryStage.show();
+		});
+		
 		SystemTray st = SystemTray.getSystemTray();
 		TrayIcon ti = new TrayIcon(image);
 		try {
@@ -55,37 +105,44 @@ public class JavaFxTray {
 			e1.printStackTrace();
 		}
 		
-		ti.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+		ti.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if( e.getClickCount() != 2 && e.getButton() != MouseEvent.BUTTON3) {
+					return ;
+				}
 				System.out.println(e);
+				Point point = e.getPoint();
+				PlatformImpl.startup( () -> {
+					// 先做最简单的场景
+					Rectangle2D screenRectangle = Screen.getPrimary().getBounds();
+					double sceenWidth = screenRectangle.getWidth();
+					double sceenHeight = screenRectangle.getHeight();
+					double pX = point.getX();
+					double pY = point.getY();
+					double resultX = 0 ,resultY = 0;
+					if( pX + JavaFxTray.this.width > sceenWidth ) {
+						resultX = pX - JavaFxTray.this.width;
+					}else {
+						resultX = pX;
+					}
+					
+					resultY = pY - JavaFxTray.this.height;
+					
+					result.getStage().show();
+					result.getStage().setX(resultX);
+					result.getStage().setY(resultY);
+					result.getStage().setAlwaysOnTop(true);
+					result.getStage().requestFocus();
+				});
 			}
 		});
 		return this;
 	}
 	
+	
 	public static void main(String[] args) {
-		JavaFxTray.getTray().setSize(400, 400).setIcon("D:/1.jpg").mount();
+		JavaFxTray tray = JavaFxTray.getTray().setSize(300, 400).setIcon("classpath:jfx/icon/liulian.png").mount();
 	}
+	
 }

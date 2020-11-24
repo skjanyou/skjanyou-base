@@ -70,7 +70,8 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 			}else if( fieldType == Boolean.class ){
 				propertyClass = SimpleBooleanProperty.class;
 			}else if( fieldType == Array.class){
-				propertyClass = (Class<? extends Property<?>>) SimpleListProperty.class;
+				// 这个不能这样绑定
+//				propertyClass = (Class<? extends Property<?>>) SimpleListProperty.class;
 			}else {
 				continue;
 			}
