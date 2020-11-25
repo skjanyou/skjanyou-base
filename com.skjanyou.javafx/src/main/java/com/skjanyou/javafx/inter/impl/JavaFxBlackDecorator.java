@@ -97,10 +97,7 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 			color_image.setVisible(false);
 			break;
 		case NONE:
-			resize_box.setVisible(false);
-			color_image.setVisible(false);
-			min_box.setVisible(false);
-			close_box.setVisible(false);
+			banner.setVisible(false);
 			break;
 		default:
 			break;
@@ -151,43 +148,47 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	}
 
 	protected void bindDrager() {
-		banner.setOnMousePressed(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				point.setX(stage.getX() - event.getScreenX());
-				point.setY(stage.getY() - event.getScreenY());
-			}
-		});
-
-		banner.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (stage.getY() < 0) {
-					stage.setY(0);
+		// 添加窗口移动事件
+		if( fxDecorator.moveable() ) {
+			banner.setOnMousePressed(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					point.setX(stage.getX() - event.getScreenX());
+					point.setY(stage.getY() - event.getScreenY());
 				}
-			}
-		});
-
-		banner.setOnMouseDragged(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (stage.isFullScreen()) {
-					return;
+			});
+			
+			banner.setOnMouseReleased(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (stage.getY() < 0) {
+						stage.setY(0);
+					}
 				}
+			});
+			
+			banner.setOnMouseDragged(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (stage.isFullScreen()) {
+						return;
+					}
+					
+					double x = (event.getScreenX() + point.getX());
+					double y = (event.getScreenY() + point.getY());
+					
+					Platform.runLater(() -> {
+						stage.setX(x);
+						stage.setY(y);
+					});
+				}
+			});
+		}
 
-				double x = (event.getScreenX() + point.getX());
-				double y = (event.getScreenY() + point.getY());
-
-				Platform.runLater(() -> {
-					stage.setX(x);
-					stage.setY(y);
-				});
-			}
-		});
-
-
-
-		dragUtil.addDrawFunc(stage, stageRoot,this.appMinWidth,this.appMinHeight);
+		// 添加拖拽事件
+		if( fxDecorator.resizeable() ) {
+			dragUtil.addDrawFunc(stage, stageRoot,this.appMinWidth,this.appMinHeight);
+		}
 
 	}
 

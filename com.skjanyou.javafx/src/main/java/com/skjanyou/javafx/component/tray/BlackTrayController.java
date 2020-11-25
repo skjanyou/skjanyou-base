@@ -11,10 +11,11 @@ import javafx.stage.Stage;
 		id="Main",
 		fxml="jfx/component/BlackTray.fxml")
 @FxDecorator(
-	type = DecoratorType.NONE
+	type = DecoratorType.NONE,
+	moveable = false,
+	resizeable = false
 )
 public class BlackTrayController {
 	private Stage stage;
 	private Scene scene;
-	
 }

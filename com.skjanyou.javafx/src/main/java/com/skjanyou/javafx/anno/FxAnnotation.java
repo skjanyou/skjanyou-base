@@ -84,6 +84,10 @@ public final class FxAnnotation {
 		Class<? extends JavaFxDecorator> config() default JavaFxBlackDecorator.class;
 		/** 装饰器类型 **/
 		DecoratorType type() default DecoratorType.ALL;
+		/** 是否可以调整大小 **/
+		boolean resizeable() default true;
+		/** 是否可以移动 **/
+		boolean moveable() default true;
 	}
 	
 	/**
