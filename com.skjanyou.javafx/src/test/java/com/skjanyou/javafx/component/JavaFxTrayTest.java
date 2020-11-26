@@ -16,10 +16,21 @@ public class JavaFxTrayTest {
 		});
 		item.setIcon("classpath:jfx/icon/liulian.png");
 		item.setTitle("Exit");
+
+		TrayMenuItem item2 = new TrayMenuItem();
+		item.setActionListener(new MenuItemActionListener() {
+			@Override
+			public void handler() {
+				System.out.println("click");
+			}
+		});
+		item2.setIcon("classpath:jfx/icon/liulian.png");
+		item2.setTitle("Exit");
+		
 		JavaFxTray tray = JavaFxTray.getTray()
-				.setSize(150, 200)
+				.setSize(200)
 				.setIcon("classpath:jfx/icon/liulian.png")
-				.setTrayMenuItemList(item)
+				.setTrayMenuItemList(item,item2)
 				.mount();
 	}
 }

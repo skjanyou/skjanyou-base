@@ -38,7 +38,6 @@ public class JavaFxTray {
 	private static final boolean isSupport = SystemTray.isSupported();
 	private static JavaFxTray instance ;
 	private int width;
-	private int height;
 	private Image image;
 	private LoadResult result;
 	private static boolean isMount = false;
@@ -69,7 +68,7 @@ public class JavaFxTray {
 		for (TrayMenuItem trayMenuItem : item) {
 			HBox hbox = new HBox();
 			hbox.getStyleClass().add("tray-row");
-			hbox.setPadding(new Insets(0, 0, 0, 10));
+			hbox.setPadding(new Insets(0, 10, 0, 10));
 			hbox.setMaxHeight(rowHeight);
 			// 图标
 			ImageView imageView = new ImageView();
@@ -93,6 +92,7 @@ public class JavaFxTray {
 			label.getStyleClass().add("tray-title");
 			label.prefWidthProperty().bind(hbox.widthProperty().subtract(45));
 			label.setPrefHeight(rowHeight);
+			label.setPadding(new Insets(0, 0, 0, 10));
 			
 			// 回调
 			hbox.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
@@ -101,7 +101,9 @@ public class JavaFxTray {
 					PlatformImpl.startup( () -> {
 						result.getStage().hide();
 					});
-					trayMenuItem.getActionListener().handler();
+					if( trayMenuItem.getActionListener() != null ) { 
+						trayMenuItem.getActionListener().handler();
+					};
 				}
 			});
 
@@ -113,13 +115,10 @@ public class JavaFxTray {
 		return this;
 	}
 	
-	public JavaFxTray setSize( int w, int h ) {
-		this.width = w;
-		this.height = h;
+	public JavaFxTray setSize( int width ) {
+		this.width = width;
 		result.getStage().setWidth(width);
-		result.getStage().setHeight(height);
 		blackTrayController.root.setPrefWidth(width);
-		blackTrayController.root.setPrefHeight(height);
 		return this;
 	}
 	
@@ -165,6 +164,8 @@ public class JavaFxTray {
 
 	        // 先把 primaryStage 显示，再显示其他内容（顺序必须这样，因为父级必须显示，如果直接显示 mainStage, 则任务栏图标隐藏无效）
 	        primaryStage.show();
+	        
+	        primaryStage.toBack();
 		});
 		
 		SystemTray st = SystemTray.getSystemTray();
@@ -196,9 +197,9 @@ public class JavaFxTray {
 						resultX = pX;
 					}
 					
-					resultY = pY - JavaFxTray.this.height;
 					
 					result.getStage().show();
+					resultY = pY - result.getStage().getHeight();
 					result.getStage().setX(resultX);
 					result.getStage().setY(resultY);
 					result.getStage().setAlwaysOnTop(true);
