@@ -98,6 +98,9 @@ public class JavaFxTray {
 			hbox.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
 				@Override
 				public void handle(javafx.scene.input.MouseEvent event) {
+					PlatformImpl.startup( () -> {
+						result.getStage().hide();
+					});
 					trayMenuItem.getActionListener().handler();
 				}
 			});
