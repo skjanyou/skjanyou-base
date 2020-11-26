@@ -7,7 +7,9 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -15,12 +17,16 @@ import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.inter.FxControllerFactory;
 import com.skjanyou.javafx.inter.impl.DefaultFxControllerFactory;
 import com.skjanyou.util.StreamUtil;
+import com.skjanyou.util.StringUtil;
 import com.sun.javafx.application.PlatformImpl;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -36,10 +42,13 @@ public class JavaFxTray {
 	private Image image;
 	private LoadResult result;
 	private static boolean isMount = false;
+	private BlackTrayController blackTrayController;
+	private static int rowHeight = 45;
 	
 	private JavaFxTray() {
 		FxControllerFactory controllerFactory = new DefaultFxControllerFactory(BlackTrayController.class);
 		result = controllerFactory.createController();
+		blackTrayController = (BlackTrayController) result.getController();
 	}
 	
 	public static boolean isSupport() {
@@ -59,20 +68,43 @@ public class JavaFxTray {
 	public JavaFxTray setTrayMenuItemList( TrayMenuItem... item ) {
 		for (TrayMenuItem trayMenuItem : item) {
 			HBox hbox = new HBox();
+			hbox.getStyleClass().add("tray-row");
+			hbox.setPadding(new Insets(0, 0, 0, 10));
+			hbox.setMaxHeight(rowHeight);
 			// 图标
+			ImageView imageView = new ImageView();
+			imageView.getStyleClass().add("tray-image-view");
+			imageView.setFitWidth(45.0);
+			imageView.setFitHeight(rowHeight);
+			String icon = trayMenuItem.getIcon();
+			if( !StringUtil.isBlank(icon) ) {
+				InputStream input = null;
+				try {
+					input = StreamUtil.getInputStreamIgnoreLocation(icon);
+					javafx.scene.image.Image image = new javafx.scene.image.Image(input);
+					imageView.setImage(image);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
 			
 			// 文字
+			Label label = new Label(trayMenuItem.getTitle());
+			label.getStyleClass().add("tray-title");
+			label.prefWidthProperty().bind(hbox.widthProperty().subtract(45));
+			label.setPrefHeight(rowHeight);
 			
 			// 回调
-			
 			hbox.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
-
 				@Override
 				public void handle(javafx.scene.input.MouseEvent event) {
 					trayMenuItem.getActionListener().handler();
 				}
-
 			});
+
+			hbox.getChildren().addAll(imageView,label);
+			
+			blackTrayController.root.getChildren().add(hbox);
 		}
 		
 		return this;
@@ -83,6 +115,8 @@ public class JavaFxTray {
 		this.height = h;
 		result.getStage().setWidth(width);
 		result.getStage().setHeight(height);
+		blackTrayController.root.setPrefWidth(width);
+		blackTrayController.root.setPrefHeight(height);
 		return this;
 	}
 	

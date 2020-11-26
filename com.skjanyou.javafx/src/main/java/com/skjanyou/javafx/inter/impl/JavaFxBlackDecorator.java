@@ -98,6 +98,7 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 			break;
 		case NONE:
 			banner.setVisible(false);
+			stageRoot.getChildren().removeAll(banner);
 			break;
 		default:
 			break;
