@@ -43,6 +43,7 @@ public class JavaFxTray {
 	private static boolean isMount = false;
 	private BlackTrayController blackTrayController;
 	private static int rowHeight = 45;
+	private static TrayIcon ti;
 	
 	private JavaFxTray() {
 		FxControllerFactory controllerFactory = new DefaultFxControllerFactory(BlackTrayController.class);
@@ -102,7 +103,7 @@ public class JavaFxTray {
 						result.getStage().hide();
 					});
 					if( trayMenuItem.getActionListener() != null ) { 
-						trayMenuItem.getActionListener().handler();
+						trayMenuItem.getActionListener().handler( JavaFxTray.this );
 					};
 				}
 			});
@@ -168,13 +169,7 @@ public class JavaFxTray {
 	        primaryStage.toBack();
 		});
 		
-		SystemTray st = SystemTray.getSystemTray();
-		TrayIcon ti = new TrayIcon(image);
-		try {
-			st.add(ti);
-		} catch (AWTException e1) {
-			e1.printStackTrace();
-		}
+		ti = new TrayIcon(image);
 		
 		ti.addMouseListener(new MouseAdapter() {
 			@Override
@@ -209,6 +204,20 @@ public class JavaFxTray {
 		});
 		isMount = true;
 		return this;
+	}
+	
+	public void show() {
+		try {
+			if( SystemTray.getSystemTray().getTrayIcons().length == 0 ) {
+				SystemTray.getSystemTray().add(ti);
+			}
+		} catch (AWTException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public void hide() {
+		SystemTray.getSystemTray().remove(ti);
 	}
 	
 }

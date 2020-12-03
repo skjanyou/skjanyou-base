@@ -10,18 +10,20 @@ public class JavaFxTrayTest {
 		TrayMenuItem item = new TrayMenuItem();
 		item.setActionListener(new MenuItemActionListener() {
 			@Override
-			public void handler() {
-				System.out.println("click");
+			public void handler( JavaFxTray tray ) {
+				System.out.println("click hide");
+				tray.hide();
 			}
 		});
 		item.setIcon("classpath:jfx/icon/liulian.png");
 		item.setTitle("Exit");
 
 		TrayMenuItem item2 = new TrayMenuItem();
-		item.setActionListener(new MenuItemActionListener() {
+		item2.setActionListener(new MenuItemActionListener() {
 			@Override
-			public void handler() {
-				System.out.println("click");
+			public void handler( JavaFxTray tray ) {
+				System.out.println("click show");
+				tray.show();
 			}
 		});
 		item2.setIcon("classpath:jfx/icon/liulian.png");
@@ -32,5 +34,6 @@ public class JavaFxTrayTest {
 				.setIcon("classpath:jfx/icon/liulian.png")
 				.setTrayMenuItemList(item,item2)
 				.mount();
+		tray.show();
 	}
 }

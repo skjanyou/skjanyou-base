@@ -2,7 +2,7 @@ package com.skjanyou.javafx.component.tray;
 
 public class TrayMenuItem {
 	public static class MenuItemActionListener {
-		public void handler() {
+		public void handler( JavaFxTray tray ) {
 			
 		}
 	}
