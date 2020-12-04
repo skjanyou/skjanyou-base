@@ -33,28 +33,42 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 	@Override
 	public LoadResult loader() {
 		LoadResult loadResult = new LoadResult();
-		CountDownLatch latch = new CountDownLatch(1);
-		PlatformImpl.startup(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Parent parent = DefaultFxFXMLLoader.super.load();
-					Object controller = DefaultFxFXMLLoader.super.getController();
-					Stage stage = new Stage();
-					loadResult.setParent(parent);
-					loadResult.setController(controller);
-					loadResult.setStage(stage);
-				} catch (IOException e) {
-					throw new RuntimeException("加载FXML文件出现异常",e);
-				} finally {
-					latch.countDown();
-				}
+		if( PlatformImpl.isFxApplicationThread() ) {
+			try {
+				Parent parent = DefaultFxFXMLLoader.super.load();
+				Object controller = DefaultFxFXMLLoader.super.getController();
+				Stage stage = new Stage();
+				loadResult.setParent(parent);
+				loadResult.setController(controller);
+				loadResult.setStage(stage);
+				
+			} catch (IOException e) {
+				throw new RuntimeException("加载FXML文件出现异常",e);
 			}
-		});
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		}else {
+			CountDownLatch latch = new CountDownLatch(1);
+			PlatformImpl.startup(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Parent parent = DefaultFxFXMLLoader.super.load();
+						Object controller = DefaultFxFXMLLoader.super.getController();
+						Stage stage = new Stage();
+						loadResult.setParent(parent);
+						loadResult.setController(controller);
+						loadResult.setStage(stage);
+					} catch (IOException e) {
+						throw new RuntimeException("加载FXML文件出现异常",e);
+					} finally {
+						latch.countDown();
+					}
+				}
+			});
+			try {
+				latch.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return loadResult;
 	}
