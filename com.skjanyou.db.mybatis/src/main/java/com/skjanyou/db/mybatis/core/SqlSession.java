@@ -41,9 +41,14 @@ public class SqlSession {
 		// 1.从缓存中查询是否已经有进行编译
 		MybatisSqlExecuteCache sqlCache = sqlExecuteCache.get(sql);
 		if( sqlCache != null ){
-			prepareSql = sqlCache.getPrepareSql();
-			sets = sqlCache.getSets();
-		}else{ // 否则计算
+			return sqlCache;
+		}
+		// 2.否则计算
+		synchronized ( sqlExecuteCache ) {
+			sqlCache = sqlExecuteCache.get(sql);
+			if( sqlCache != null ) {
+				return sqlCache;
+			}
 			// 1.1获取填充符的位置
 			Map<String,Integer> fieldMap = StringUtil.getWird( sql );
 			// 1.2将填充符转化为？
@@ -54,10 +59,8 @@ public class SqlSession {
 				prepareSql = prepareSql.replaceFirst(field, "?");
 			}
 			sqlCache = new MybatisSqlExecuteCache(sql, prepareSql, sets);
-			synchronized ( sqlExecuteCache ) {
-				sqlExecuteCache.put(sql, sqlCache);
-			}
-		}	
+			sqlExecuteCache.put(sql, sqlCache);
+		}
 		return sqlCache;
 	}
 	

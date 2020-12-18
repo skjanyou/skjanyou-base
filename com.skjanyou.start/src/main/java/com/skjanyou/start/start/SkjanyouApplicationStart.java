@@ -157,7 +157,9 @@ public abstract class SkjanyouApplicationStart {
 		});
 	}
 	
-	protected void onExit(){}
+	protected void onExit(){
+		System.exit(1);
+	}
 	
 	/** 搜索jar文件 **/
 	protected void findJarFile( ConfigManager manager,SkjanyouClassLoader classLoader ){

@@ -270,6 +270,7 @@ public class BeanWrapper {
 		private Map<String,Object> beanObject;
 		private Map<String,Object> ignoreBeanObject;
 		private List<String> fields;
+		private Object object;
 		@SuppressWarnings("unchecked")
 		public MapBeanWrapper ( Object beanObject ) {
 			this.beanObject = (Map<String, Object>) beanObject;
@@ -298,6 +299,7 @@ public class BeanWrapper {
 		public BeanWrapper set(String fieldName, Object value) throws InvocationTargetException, NoSuchMethodException {
 			String lowcase = fieldName.toLowerCase();
 			this.ignoreBeanObject.put(lowcase, value);
+			this.beanObject.put(fieldName, value);
 			return this;
 		}
 
