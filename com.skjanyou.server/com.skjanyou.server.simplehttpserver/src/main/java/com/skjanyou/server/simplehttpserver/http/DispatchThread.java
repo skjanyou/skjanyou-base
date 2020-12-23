@@ -3,12 +3,15 @@ package com.skjanyou.server.simplehttpserver.http;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.skjanyou.log.core.Logger;
+import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.server.api.bean.ServerConfig;
 
 /**
@@ -22,6 +25,7 @@ public class DispatchThread extends Thread implements Runnable {
 	private HttpServer httpServer;
 	private ServerSocket serverSocket;
 	private boolean isRunning;
+	private Logger logger = LogUtil.getLogger(DispatchThread.class);
 	public DispatchThread( HttpServer httpServer ){
 		this.httpServer = httpServer;
 		pool = new ThreadPoolExecutor(1, 2, 1000, TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>(),Executors.defaultThreadFactory(),new ThreadPoolExecutor.AbortPolicy());
@@ -41,8 +45,11 @@ public class DispatchThread extends Thread implements Runnable {
 				Socket socket = serverSocket.accept();
 				Runnable runnable = new AcceptThread(httpServer,socket);
 				pool.execute(runnable);
+			} catch( SocketTimeoutException ste ) {
+				// java socket中,调用accept会使用SoTimeout的数值作为超时时间,超过这个时间还没有链接进来的话
+				// 就会抛出SocketTimeoutException异常,所以这里不用管这个异常,开始下一次循环即可
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e);
 			}
 		}
 	}
