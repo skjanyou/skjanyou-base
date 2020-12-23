@@ -14,9 +14,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.skjanyou.util.proxy.annotation.Proxy;
-import com.skjanyou.util.proxy.process.ProxyProcess;
-
 
 public class BeanUtil {
 
@@ -116,10 +113,6 @@ public class BeanUtil {
 		}
 		
 		return result;
-	}
-	
-	public static<T> T createProxyBean(Class<T> clazz,Class<? extends Proxy> proxy){
-		return ProxyProcess.create(clazz, proxy);
 	}
 	
 }

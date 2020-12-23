@@ -31,5 +31,9 @@
 			<artifactId>com.skjanyou.annotation.api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+		</dependency>			
 	</dependencies>
 </project>
