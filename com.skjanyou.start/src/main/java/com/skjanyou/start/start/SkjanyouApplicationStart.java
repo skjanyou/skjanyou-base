@@ -95,6 +95,7 @@ public abstract class SkjanyouApplicationStart {
 			logger.error("启动类",configClass.getName(),"没有配置@Configure注解,应用程序无法启动!");
 			return;
 		}
+		start.pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
 		// 2.配置参数,扫描路径,配置类等
 		ConfigManager manager = start.configureProvider.getConfigure(start.configClass);
 		// 3.创建ClassLoader
