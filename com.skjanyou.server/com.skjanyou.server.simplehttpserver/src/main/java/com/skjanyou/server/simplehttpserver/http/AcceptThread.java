@@ -5,11 +5,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
-import com.skjanyou.server.api.inter.ServerHandler;
 import com.skjanyou.server.core.HttpRequest;
 import com.skjanyou.server.core.HttpResponse;
 import com.skjanyou.server.core.ResponseBuilder;
@@ -42,6 +42,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 		InputStreamReader isr = null;
 		BufferedReader br = null;
 		OutputStream os = null;
+		String remoteIp = this.socket.getInetAddress().getHostAddress();
 		try {
 			is = socket.getInputStream();
 			os = socket.getOutputStream();
@@ -75,7 +76,7 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             		request.requestBody().convertToRequestbody(new String(buffChar));
             	}
             }
-            
+            request.headers().put("remoteIp", remoteIp);
             List<Filter> filterList = httpServer.getFilters();
             
             boolean allPass = true;
@@ -94,6 +95,8 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             byte[] responseBytes = ResponseBuilder.getResponseBytes(response);
             os.write(responseBytes);
             os.flush();
+		} catch( SocketTimeoutException se ) {
+			// 这种异常不做处理
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
