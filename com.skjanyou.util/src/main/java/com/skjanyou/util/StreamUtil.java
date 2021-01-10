@@ -104,24 +104,26 @@ public class StreamUtil {
 		return result;
 	}
 	
-	public static void saveToFile( InputStream input,File destFile,boolean closeStream ) {
+	public static boolean saveToFile( InputStream input,File destFile,boolean closeStream ) {
 		if( input == null ) { throw new NullPointerException("输入流不能为空"); }
 		if( destFile == null ) { throw new NullPointerException("输出文件不能为空"); }
-		
+		boolean result = false;
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(destFile);
-			
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			int len = -1; byte[] buff = new byte[ 4 * 1024 ];
+			while( ( len = input.read(buff)) != -1 ) {
+				fos.write(buff, 0, len);
+			}
+			fos.flush();
+			result = true;
+		} catch (Exception e) {
 		} finally {
 			CommUtil.close(fos);
 			if( closeStream ) {
 				CommUtil.close(input);
 			}
 		}
-		
-		
+		return result;
 	}
 }
