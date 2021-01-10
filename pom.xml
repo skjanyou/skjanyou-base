@@ -32,7 +32,8 @@
     	<module>com.skjanyou.batch</module> 
     	<module>com.skjanyou.javafx</module>
 		<module>skjanyou-maven-plugin</module>
-	</modules>
+    <module>com.skjanyou.log.log4j</module>
+  </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
