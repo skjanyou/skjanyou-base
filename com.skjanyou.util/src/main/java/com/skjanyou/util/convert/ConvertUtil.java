@@ -9,6 +9,7 @@ import com.skjanyou.util.convert.DefaultConvert.StringConvertToClass;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToDouble;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToFloat;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToInteger;
+import com.skjanyou.util.convert.DefaultConvert.StringConvertToList;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToString;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToMap;
 
@@ -22,6 +23,7 @@ public class ConvertUtil {
 		ConvertUtil.regist(new StringConvertToDouble());
 		ConvertUtil.regist(new StringConvertToClass());
 		ConvertUtil.regist(new StringConvertToMap());
+		ConvertUtil.regist(new StringConvertToList());
 		ConvertUtil.regist(new AnotherObjectConvertToString());
 	}
 	
@@ -33,7 +35,7 @@ public class ConvertUtil {
 	public static Object convert( Object distObject, Class<?> targetClass ){
 		for (ConvertProvider convertProvider : convertList) {
 			if( convertProvider.isMatch(distObject.getClass(), targetClass) ){
-				return convertProvider.converTo(distObject);
+				return convertProvider.converTo(distObject,distObject.getClass(),targetClass);
 			}
 		}
 		// 没有合适的转换器,直接返回默认原对象

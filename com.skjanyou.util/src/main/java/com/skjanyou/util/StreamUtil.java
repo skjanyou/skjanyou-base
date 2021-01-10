@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -103,4 +104,24 @@ public class StreamUtil {
 		return result;
 	}
 	
+	public static void saveToFile( InputStream input,File destFile,boolean closeStream ) {
+		if( input == null ) { throw new NullPointerException("输入流不能为空"); }
+		if( destFile == null ) { throw new NullPointerException("输出文件不能为空"); }
+		
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(destFile);
+			
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			CommUtil.close(fos);
+			if( closeStream ) {
+				CommUtil.close(input);
+			}
+		}
+		
+		
+	}
 }
