@@ -1,5 +1,8 @@
 package com.skjanyou.util.convert;
 
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -17,7 +20,7 @@ public final class DefaultConvert {
 		}
 
 		@Override
-		public String converTo(String dist) {
+		public String converTo(String dist,Class<String> distClass,Class<String> targetClass) {
 			return dist;
 		}
 
@@ -35,7 +38,7 @@ public final class DefaultConvert {
 		}
 
 		@Override
-		public Integer converTo(String dist) {
+		public Integer converTo(String dist,Class<String> distClass,Class<Integer> targetClass) {
 			return Integer.parseInt(dist);
 		}
 
@@ -53,7 +56,7 @@ public final class DefaultConvert {
 		}
 		
 		@Override
-		public Boolean converTo(String dist) {
+		public Boolean converTo(String dist,Class<String> distClass,Class<Boolean> targetClass) {
 			return Boolean.parseBoolean(dist);
 		}
 
@@ -70,7 +73,7 @@ public final class DefaultConvert {
 			return String.class == distClass && ( Float.class == targetClass || float.class == targetClass );
 		}
 		@Override
-		public Float converTo(String dist) {
+		public Float converTo(String dist,Class<String> distClass,Class<Float> targetClass) {
 			return Float.parseFloat(dist);
 		}
 		@Override
@@ -86,7 +89,7 @@ public final class DefaultConvert {
 			return String.class == distClass && ( Double.class == targetClass || double.class == targetClass );
 		}
 		@Override
-		public Double converTo(String dist) {
+		public Double converTo(String dist,Class<String> distClass,Class<Double> targetClass) {
 			return Double.parseDouble(dist);
 		}
 		@Override
@@ -103,7 +106,7 @@ public final class DefaultConvert {
 		}
 
 		@Override
-		public String converTo(Object dist) {
+		public String converTo(Object dist,Class<Object> distClass,Class<String> targetClass) {
 			if( dist == null ){ return ""; }
 			String result = null;
 			try{
@@ -131,7 +134,7 @@ public final class DefaultConvert {
 		}
 
 		@Override
-		public Class<?> converTo(String dist) {
+		public Class<?> converTo(String dist,Class<String> distClass,Class<Class<?>> targetClass) {
 			Class<?> resultClass = null;
 			ClassLoader loader = Thread.currentThread().getContextClassLoader();
 			try {
@@ -155,15 +158,16 @@ public final class DefaultConvert {
 		
 	}
 	
+	/** String -> Map **/
 	public static class StringConvertToMap implements ConvertProvider<String,Map<?,?>> {
 
 		@Override
 		public boolean isMatch(Class<?> distClass, Class<?> targetClass) {
-			return String.class == distClass && Map.class == targetClass;
+			return String.class == distClass && Map.class.isAssignableFrom(targetClass);
 		}
 
 		@Override
-		public Map<?, ?> converTo(String dist) {
+		public Map<?, ?> converTo(String dist,Class<String> distClass,Class<Map<?,?>> targetClass) {
 			return JSON.parseObject(dist).toJavaObject(Map.class);
 		}
 
@@ -172,5 +176,32 @@ public final class DefaultConvert {
 			return 100;
 		}
 		
+	}
+	
+	
+	/** String -> List **/
+	public static class StringConvertToList implements ConvertProvider<String,List<?>> {
+
+		@Override
+		public boolean isMatch(Class<?> distClass, Class<?> targetClass) {
+			return String.class == distClass && List.class.isAssignableFrom(targetClass);
+		}
+
+		@Override
+		public List<?> converTo(String dist,Class<String> distClass,Class<List<?>> targetClass) {
+			return JSON.parseArray(dist).toJavaList(targetClass);
+		}
+
+		@Override
+		public int order() {
+			return 100;
+		}
+		
+	}
+	
+	public static void main(String[] args) {
+		
+		System.out.println(Map.class.isAssignableFrom(HashMap.class));
+		System.out.println(List.class.isAssignableFrom(List.class));
 	}
 }

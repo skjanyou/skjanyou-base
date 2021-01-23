@@ -169,14 +169,37 @@ public class DefaultPluginProcess implements PluginProcess {
 				key = property.value();
 				value = properties.getProperty(key);
 				field.setAccessible(true);
-				if( value != null && !StringUtil.isBlank(value.toString()) ){
-					value = ConvertUtil.convert(value, field.getType());
+				// 1.判断一下成员变量类型
+				if( field.getType().isAssignableFrom(List.class) ) {
+					// 多条数据,value的数据应当为[A,B]这种格式
+					List list = new ArrayList<>();
+					String arrString = value.toString();
+					arrString = arrString.substring(1, arrString.length()-1);
+					String[] arr = arrString.split(",");
+					for (String cla : arr) {
+						if( cla != null && !StringUtil.isBlank(cla.toString()) ){
+							list.add(cla);
+						}
+					}
 					try {
+						value = list;
 						field.set(pluginSupport, value);
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						e.printStackTrace();
+					}							
+				
+				}else {
+					// 单个数据
+					if( value != null && !StringUtil.isBlank(value.toString()) ){
+						value = ConvertUtil.convert(value, field.getType());
+						try {
+							field.set(pluginSupport, value);
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							e.printStackTrace();
+						}
 					}
 				}
+				
 			}
 			propertyBean = field.getAnnotation(PropertyBean.class);
 			if( propertyBean != null ){
