@@ -16,6 +16,7 @@ import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
+import com.skjanyou.plugin.util.InstanceUtil;
 import com.sun.javafx.fxml.BeanAdapter;
 
 import javafx.beans.property.Property;
@@ -30,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 
 @SuppressWarnings("restriction")
 public class DefaultFxControllerFactory implements FxControllerFactory,FxControllerFactoryProperty {
@@ -110,6 +112,15 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
             Class<?> configClass = this.fxDecorator.config();
         	FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(Thread.currentThread().getContextClassLoader().getResource(fxml));
+            fxmlLoader.setControllerFactory(new Callback<Class<?>, Object>() {
+				@Override
+				public Object call(Class<?> param) {
+					if( !param.isAssignableFrom(configClass) ) {
+						throw new IllegalArgumentException(String.format("FXML文件{%s}配置的controller必须为{%s}的子类", fxml,param.toString()));
+					}
+					return InstanceUtil.newInstance(configClass);
+				}
+			});
             Pane root = fxmlLoader.load();
             Object controller = fxmlLoader.getController();
             if( controller.getClass() != configClass ) {
