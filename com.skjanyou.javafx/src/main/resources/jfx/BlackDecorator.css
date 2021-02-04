@@ -3,9 +3,12 @@
 	-fx-text-fill: white;
 }
 
-*:hover {
+/** 这个样式会导致页面宽度变来变去 */
+/**
+ *:hover {
 	-fx-border-width:0px;
 }
+*/
 
 #stageRoot{
     -fx-background-radius: 2px;
