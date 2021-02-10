@@ -11,10 +11,18 @@ import com.skjanyou.plugin.bean.Plugin;
 import com.skjanyou.plugin.bean.PluginConfig;
 
 public class PluginManager {
-	private static List<Plugin> pluginList = new ArrayList<>();
-	private static List<String> pluginIdList = new ArrayList<>();
-	private static List<PluginSupport> pluginSupportList = new ArrayList<>();
-	private static Map<String,List<Class<?>>> pluginInnerClass = new HashMap<>();
+	private static List<Plugin> pluginList = null;
+	private static List<String> pluginIdList = null;
+	private static List<PluginSupport> pluginSupportList = null;
+	private static Map<PluginSupport,Plugin> pluginMapping = null;
+	
+	static {
+		pluginList = new ArrayList<>();
+		pluginIdList = new ArrayList<>();
+		pluginSupportList = new ArrayList<>();
+		pluginMapping = new HashMap<>();
+	}
+	
 	public static synchronized void registPlugin( Plugin plugin ){
 		if( plugin == null ){
 			throw new RuntimeException("插件不能为空!");
@@ -33,22 +41,35 @@ public class PluginManager {
 		});
 	} 
 	
-	public static void initPlugin( PluginSupport support,List<Class<?>> classList,PluginConfig properties ){
+	public static void initPlugin( PluginSupport support,Plugin plugin,List<Class<?>> classList,PluginConfig properties ) throws Exception{
 		support.init(classList,properties);
 		pluginSupportList.add(support);
+		pluginMapping.put(support, plugin);
 	}
 	
 	/** 加载所有的插件 **/
 	public static void loadAllPlugins(){
 		for (PluginSupport support : pluginSupportList) {
-			support.startup();
+			try {
+				support.startup();
+			} catch (Exception e) {
+				Plugin plugin = pluginMapping.get(support);
+				// 失败终止
+				if(plugin.getFailOnInitError()) {
+					throw new RuntimeException(String.format("插件[%s]启动失败,原因:[%s]", plugin.getDisplayName(),e.getMessage()));
+				}
+			}
 		}
 	}
 	
 	/** 调用插件注销方法 **/
 	public static void shutdownAllPlugins(){
 		for (PluginSupport support : pluginSupportList) {
-			support.shutdown();
+			try {
+				support.shutdown();
+			} catch (Exception e) {
+				
+			}
 		}
 	}
 

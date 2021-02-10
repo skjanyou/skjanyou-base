@@ -28,17 +28,17 @@ public class DBPlugin implements PluginSupport{
 	private static DataSourceManager dataSourceManager;
 	
 	@Override
-	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) {
+	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) throws Exception {
     	info = new DatabaseInfo(className,url,user,password,poolSize,timeout);
     	dataSourceManager = new DataSourceManager(info);
 	}
 
 	@Override
-	public void startup() {
+	public void startup() throws Exception {
 	}
 
 	@Override
-	public void shutdown() {
+	public void shutdown() throws Exception {
 		
 	}
 	

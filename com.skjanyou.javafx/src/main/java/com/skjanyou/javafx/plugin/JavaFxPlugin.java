@@ -6,7 +6,6 @@ import java.util.List;
 import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
-import com.skjanyou.javafx.anno.FxAnnotation.FxDecorator;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.core.ApplicationContext;
 import com.skjanyou.javafx.inter.ControllerLifeCycle;
@@ -22,12 +21,9 @@ import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.StreamUtil;
 import com.sun.javafx.application.PlatformImpl;
 
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 @SuppressWarnings("restriction")
 public class JavaFxPlugin implements PluginSupport{
@@ -39,7 +35,7 @@ public class JavaFxPlugin implements PluginSupport{
 	private String icon;
 
 	@Override
-	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) {
+	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) throws Exception  {
 		PluginDefineAnnotationClassManager.regist(new PluginDefineAnnotationClassAdapter() {
 
 			@Override
@@ -63,7 +59,7 @@ public class JavaFxPlugin implements PluginSupport{
 	}
 
 	@Override
-	public void startup() {
+	public void startup() throws Exception  {
 		if( CommUtil.isNullOrEmpty(mainViewClass) ) {
 			return ;
 		}
@@ -100,7 +96,7 @@ public class JavaFxPlugin implements PluginSupport{
 	}
 
 	@Override
-	public void shutdown() {
+	public void shutdown() throws Exception {
 
 	}
 

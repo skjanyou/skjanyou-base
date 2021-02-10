@@ -36,7 +36,7 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 	private Server server;
 	
 	@Override
-	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) {
+	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties)  throws Exception {
 		if( !Boolean.valueOf(use) ){
 			return ;
 		}
@@ -51,7 +51,7 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 	}
 
 	@Override
-	public void startup() {
+	public void startup()  throws Exception {
 		if( !Boolean.valueOf(use) ){
 			logger.error("因为系统配置[simplehttpserver.use=" + use + "],所以simplehttpserver未启动,若需要启动需要移除该项配置或者将设置为true。");
 			return ;
@@ -96,7 +96,7 @@ public class SimpleHttpServerPlugin implements PluginSupport{
 	}
 
 	@Override
-	public void shutdown() {
+	public void shutdown()  throws Exception {
 		if( server != null ){
 			server.shutdown();
 		}

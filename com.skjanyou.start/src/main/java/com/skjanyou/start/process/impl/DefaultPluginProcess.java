@@ -120,7 +120,7 @@ public class DefaultPluginProcess implements PluginProcess {
 				// 填充值
 				fillPluginBeanWithProperties(activatorClass,pluginSupport,properties);
 				try{
-					PluginManager.initPlugin(pluginSupport, classList, properties);
+					PluginManager.initPlugin(pluginSupport,plugin, classList, properties);
 				} catch( Exception e ) {
 					logger.error(String.format("插件[%s]启动失败,原因:[%s]", plugin.getDisplayName(),e.getMessage()),e);
 					PluginManager.getPluginList().remove(plugin);
@@ -132,6 +132,7 @@ public class DefaultPluginProcess implements PluginProcess {
 				
 				logger.info("加载插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}完成");
 			}else{
+				PluginManager.getPluginList().remove(plugin);
 				logger.info("插件:{id:",plugin.getId(),",displayName:",plugin.getDisplayName(),"}因未启用,不会进行加载。");
 			}
 		}
@@ -259,10 +260,6 @@ public class DefaultPluginProcess implements PluginProcess {
 			
 			
 		}
-		
-		
-		
-		
 		
 		
 		
