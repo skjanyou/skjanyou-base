@@ -3,7 +3,7 @@ package com.skjanyou.mvc;
 import java.lang.reflect.Field;
 
 import com.skjanyou.mvc.controller.UserController;
-import com.skjanyou.mvc.handler.MvcHandler;
+import com.skjanyou.mvc.handler.AutowireMvcHandler;
 import com.skjanyou.server.api.inter.ServerHandler;
 
 /**
@@ -13,7 +13,7 @@ public class AppTest 	 {
 
 
     public void testMvcHandler() throws Exception{
-    	ServerHandler handler = new MvcHandler("com.skjanyou.mvc");
+    	ServerHandler handler = new AutowireMvcHandler("com.skjanyou.mvc");
     	handler.init();
     }
     
