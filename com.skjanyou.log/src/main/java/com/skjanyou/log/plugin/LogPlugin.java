@@ -14,20 +14,20 @@ public class LogPlugin implements PluginSupport {
 	private Class<LoggerFactory> logFactoryClass;
 	
 	@Override
-	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) {
+	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) throws Exception  {
 		// 自动配置日志工厂类
 		LoggerFactory logFactory = InstanceUtil.newInstance(logFactoryClass);
 		LogUtil.setLoggerFactory(logFactory);
 	}
 
 	@Override
-	public void startup() {
+	public void startup() throws Exception  {
 		
 	}
 
 
 	@Override
-	public void shutdown() {
+	public void shutdown() throws Exception  {
 	}
 
 }

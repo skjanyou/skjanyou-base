@@ -17,7 +17,7 @@ import com.skjanyou.util.CommUtil;
 public class MybatisPlugin implements PluginSupport {
 	
 	@Override
-	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) {
+	public void init(List<Class<?>> plugnInnerClass,PluginConfig properties) throws Exception {
 		PluginDefineAnnotationClassManager.regist(new PluginDefineAnnotationClassAdapter() {
 			@Override
 			public Class<? extends Annotation> defineClass() {
@@ -44,12 +44,12 @@ public class MybatisPlugin implements PluginSupport {
 	}
 
 	@Override
-	public void startup() {
+	public void startup() throws Exception  {
 
 	}
 
 	@Override
-	public void shutdown() {
+	public void shutdown() throws Exception  {
 
 	}
 

@@ -19,22 +19,26 @@ public class DBPlugin implements PluginSupport{
 	private String user;
 	@Property("db.password")
 	private String password;
+	@Property("db.poolSize")
+	private int poolSize;
+	@Property("db.timeout")
+	private int timeout;
 	
 	private DatabaseInfo info;
 	private static DataSourceManager dataSourceManager;
 	
 	@Override
-	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) {
-    	info = new DatabaseInfo(className,url,user,password,20,2000);
+	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) throws Exception {
+    	info = new DatabaseInfo(className,url,user,password,poolSize,timeout);
     	dataSourceManager = new DataSourceManager(info);
 	}
 
 	@Override
-	public void startup() {
+	public void startup() throws Exception {
 	}
 
 	@Override
-	public void shutdown() {
+	public void shutdown() throws Exception {
 		
 	}
 	
