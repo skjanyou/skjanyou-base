@@ -123,7 +123,13 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			dataSourceManager.releaseConnection(ds);
+			try {
+				if( ds.getConnection().getAutoCommit() ) {
+					dataSourceManager.releaseConnection(ds);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return result;
@@ -193,7 +199,13 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			dataSourceManager.releaseConnection(ds);
+			try {
+				if( ds.getConnection().getAutoCommit() ) {
+					dataSourceManager.releaseConnection(ds);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return result;
@@ -253,7 +265,13 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			dataSourceManager.releaseConnection(ds);
+			try {
+				if( ds.getConnection().getAutoCommit() ) {
+					dataSourceManager.releaseConnection(ds);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 				
 		return resultCount;		
@@ -314,7 +332,13 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			dataSourceManager.releaseConnection(ds);
+			try {
+				if( ds.getConnection().getAutoCommit() ) {
+					dataSourceManager.releaseConnection(ds);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 				
 		return resultCount;
@@ -374,7 +398,13 @@ public class SqlSession {
 					e.printStackTrace();
 				}
 			}
-			dataSourceManager.releaseConnection(ds);
+			try {
+				if( ds.getConnection().getAutoCommit() ) {
+					dataSourceManager.releaseConnection(ds);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 				
 		return resultCount;
