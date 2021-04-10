@@ -166,6 +166,12 @@ mvn -clean package -DskipTests
 
 ### 8.发布应用的一些建议
 Web应用应用建议的发布应用方式有两种：
+
 1.可以使用maven-shade-plugin插件将所有的依赖打包到一个Jar中，通过java -jar xx.jar启动
+
 2.使用jsw插件，打包成系统服务（同时支持全平台），通过wrapper start启动
 
+桌面应用建议的发布应用方式有：
+1.可以使用maven-shade-plugin插件将所有的依赖打包到一个Jar中，通过java -jar xx.jar启动
+
+2.使用maven-shade-plugin插件结合launch4j-plugin插件打对应平台的可执行文件（如果是exe格式，可以用压缩软件打开，建议加混淆）
