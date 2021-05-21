@@ -2,6 +2,7 @@ package com.skjanyou.db.mybatis.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -15,6 +16,7 @@ import java.util.Set;
 
 import com.skjanyou.db.mybatis.anno.Mapper;
 import com.skjanyou.db.mybatis.bean.MybatisSqlExecuteCache;
+import com.skjanyou.db.mybatis.util.SqlUtil;
 import com.skjanyou.db.mybatis.util.StringUtil;
 import com.skjanyou.db.pool.DataSource;
 import com.skjanyou.db.util.DaoUtil;
@@ -101,6 +103,9 @@ public class SqlSession {
 					Object value = rs.getObject(metaName);
 					String setter = "set" + StringUtil.converFirstUpperCase(metaName);
 					Method setterMethod = resultClass.getDeclaredMethod( setter ,value.getClass() );
+					if( value instanceof Clob ) {
+						value = SqlUtil.clobConvertToString( (Clob)value );
+					}					
 					setterMethod.invoke(result, value);
 				}
 			}
@@ -176,6 +181,9 @@ public class SqlSession {
 				BeanWrapper resultBeanWrapper = new BeanWrapper(resultBean);
 				for( String metaName : metaList ){
 					Object value = rs.getObject(metaName);
+					if( value instanceof Clob ) {
+						value = SqlUtil.clobConvertToString( (Clob)value );
+					}
 					resultBeanWrapper.set(metaName,value);
 				}
 				result.add(resultBean);

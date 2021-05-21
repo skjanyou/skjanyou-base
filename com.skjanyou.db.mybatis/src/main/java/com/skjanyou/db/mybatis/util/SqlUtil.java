@@ -1,7 +1,12 @@
 package com.skjanyou.db.mybatis.util;
 
+import java.io.BufferedReader;
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.sql.Clob;
+
+import com.skjanyou.util.CommUtil;
 
 public class SqlUtil {
  
@@ -65,5 +70,34 @@ public class SqlUtil {
             sqlBuilder.append(curField.getName()).append(",");
         }
         return sqlBuilder.toString();
-    }    
+    }  
+    
+    public static String clobConvertToString( Clob clob ) {
+    	if( clob == null ) {
+    		return null;
+    	}
+    	
+    	String result = null;
+    	Reader is = null;
+    	BufferedReader br = null;
+    	try {
+    		is = clob.getCharacterStream();
+    		br = new BufferedReader(is);
+    		String line = null;
+    		StringBuffer sb = new StringBuffer();
+    		while( ( line = br.readLine() ) != null ) {
+    			sb.append(line);
+    		}
+    		
+    		result = sb.toString();
+    		
+    	} catch ( Exception e ) {
+    		e.printStackTrace();
+    	} finally {
+    		CommUtil.close(br);
+    		CommUtil.close(is);
+    	}
+    	
+    	return result;
+    }
 }
