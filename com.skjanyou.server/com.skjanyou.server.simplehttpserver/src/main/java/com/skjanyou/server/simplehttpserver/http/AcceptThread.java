@@ -1,18 +1,19 @@
 package com.skjanyou.server.simplehttpserver.http;
 
-import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.List;
+import java.util.UUID;
 
-import com.skjanyou.server.api.constant.ServerConst;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.core.HttpRequest;
 import com.skjanyou.server.core.HttpResponse;
 import com.skjanyou.server.core.ResponseBuilder;
+import com.skjanyou.server.simplehttpserver.core.ServerContext;
+import com.skjanyou.server.simplehttpserver.util.RequestBuilder;
 import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.StringUtil;
 
@@ -37,46 +38,47 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
 			throw new NullPointerException("Socket套接字为空!");
 		}
 		HttpResponse response = new HttpResponse();
-		HttpRequest request = new HttpRequest();
+		HttpRequest request = null;
 		InputStream is = null;
-		InputStreamReader isr = null;
-		BufferedReader br = null;
 		OutputStream os = null;
-		String remoteIp = this.socket.getInetAddress().getHostAddress();
+		ServerContext.get().putContext("socket", socket);
+		ServerContext.get().putContext("close", true);
 		try {
+			String ip = socket.getInetAddress().getHostAddress();
 			is = socket.getInputStream();
 			os = socket.getOutputStream();
-			isr = new InputStreamReader(is);
-			br = new BufferedReader(isr);
 			// 防止readLine阻塞
 			socket.setSoTimeout(3000);
-            StringBuilder sb = new StringBuilder();
-            // 1.获取第一行,获取请求类型和uri,构建RequestFeatures
-            String firstLine = br.readLine();	
-            if( firstLine == null ){
-                os.write(new byte[0]);
-                os.flush();
-                return ;
-            }
-            request.requestLine().convertToRequestLine(firstLine);
-            // 2.从第二行开始,全部为请求头
-            String headerMsg = "";
-            while(( headerMsg = br.readLine() ) != null && headerMsg.length() > 0){
-                sb.append(headerMsg).append(ServerConst.CRLF);
-            }
-            String requestInfo = sb.toString().trim();        
-            request.headers().converToHeaders(requestInfo);
-            // 3.Post请求要通过Content-Length获取请求体内容
-            if( "POST".equalsIgnoreCase(request.requestLine().method()) ){
-            	String controlLengthString = request.headers().get("content-length");
-            	if( !StringUtil.isBlank(controlLengthString) ){
-            		int controlLength = Integer.parseInt(controlLengthString);
-            		char[] buffChar = new char[controlLength];
-            		br.read(buffChar, 0, controlLength);
-            		request.requestBody().convertToRequestbody(new String(buffChar));
+			socket.setKeepAlive(true);
+			// 关闭Nagle算法
+			// socket.setTcpNoDelay(true);
+			// 构建请求对象
+			request = RequestBuilder.solve(is);
+			// 保存包装流
+			ServerContext.get().putContext("reader", is);
+			ServerContext.get().putContext("writer", os);
+            // 获取请求头中Cookie字段,来获取SessionId
+            String cookie = request.headers().get("cookie");
+            String sessionId = null;
+            if( !StringUtil.isBlank(cookie) ) {
+            	if( cookie.contains("skjanyou_token_id") ) {
+            		String[] cookieArr = cookie.split(";");
+            		for (String string : cookieArr) {
+            			if( string.contains("skjanyou_token_id") ) {
+            				sessionId = string.trim().split("skjanyou_token_id=")[1];
+            				break;
+            			}
+            		}
+            	} else {
+            		sessionId = UUID.randomUUID().toString();
             	}
+            }else {
+            	sessionId = UUID.randomUUID().toString();
             }
-            request.headers().put("remoteIp", remoteIp);
+            response.getHttpHeaders().put("Set-Cookie", "skjanyou_token_id=" + sessionId);
+            // 添加IP地址
+            request.headers().put("remote-ip", ip);
+            
             List<Filter> filterList = httpServer.getFilters();
             
             boolean allPass = true;
@@ -95,19 +97,31 @@ public class AcceptThread extends Thread implements Runnable,Comparable<AcceptTh
             byte[] responseBytes = ResponseBuilder.getResponseBytes(response);
             os.write(responseBytes);
             os.flush();
-		} catch( SocketTimeoutException se ) {
-			// 这种异常不做处理
+		} catch( SocketTimeoutException ste ) {
+			// 超时问题,不做处理
 		} catch (Exception e) {
 			e.printStackTrace();
+			if( os != null ) {
+				try {
+					os.write(e.getMessage().getBytes());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				try {
+					os.flush();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
 		} finally {
-			CommUtil.close(os);
-			
-			CommUtil.close(br);
-			CommUtil.close(isr);
-			CommUtil.close(is);			
+			if( (boolean) ServerContext.get().getContext("close") ) {
+				CommUtil.close(os);
+				
+				CommUtil.close(is);			
+				
+				CommUtil.close(socket);
+			}
 		}
-		
-
 		
 	}
 	

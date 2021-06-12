@@ -1,11 +1,10 @@
 package com.skjanyou.util.convert;
 
-import java.lang.reflect.Array;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.skjanyou.util.ClassUtil;
 
 public final class DefaultConvert {
@@ -199,9 +198,42 @@ public final class DefaultConvert {
 		
 	}
 	
-	public static void main(String[] args) {
-		
-		System.out.println(Map.class.isAssignableFrom(HashMap.class));
-		System.out.println(List.class.isAssignableFrom(List.class));
+	public static class JSONObjectConvertToBeanObject implements ConvertProvider<JSONObject,Object>{
+
+		@Override
+		public boolean isMatch(Class<?> srcClass, Class<?> targetClass) {
+			return srcClass.isAssignableFrom(JSONObject.class) &&  !targetClass.isInterface();
+		}
+
+		@Override
+		public Object converTo(JSONObject src, Class<JSONObject> srcClass, Class<Object> targetClass) {
+			return src.toJavaObject(targetClass);
+		}
+
+		@Override
+		public int order() {
+			return 100;
+		}
+
+	}
+	
+	public static class MapConvertToBeanObject implements ConvertProvider<Map<String,Object>,Object>{
+
+		@Override
+		public boolean isMatch(Class<?> srcClass, Class<?> targetClass) {
+			return srcClass.isAssignableFrom(Map.class) &&  !targetClass.isInterface();
+		}
+
+		@Override
+		public Object converTo(Map<String,Object> src, Class<Map<String,Object>> srcClass, Class<Object> targetClass) {
+			JSONObject jsonObject = new JSONObject(src);
+			return jsonObject.toJavaObject(targetClass);
+		}
+
+		@Override
+		public int order() {
+			return 100;
+		}
+
 	}
 }

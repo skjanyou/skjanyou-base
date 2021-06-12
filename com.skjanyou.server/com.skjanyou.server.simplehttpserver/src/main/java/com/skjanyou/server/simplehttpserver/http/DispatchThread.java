@@ -7,6 +7,7 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +29,15 @@ public class DispatchThread extends Thread implements Runnable {
 	private Logger logger = LogUtil.getLogger(DispatchThread.class);
 	public DispatchThread( HttpServer httpServer ){
 		this.httpServer = httpServer;
-		pool = new ThreadPoolExecutor(1, 2, 1000, TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>(),Executors.defaultThreadFactory(),new ThreadPoolExecutor.AbortPolicy());
+		pool = new ThreadPoolExecutor(15, 20, 1000, TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>(),new ThreadFactory() {
+			int i = 0;
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r);
+				t.setName("Http访问线程" + i++);
+				return t;
+			}
+		},new ThreadPoolExecutor.AbortPolicy());
 		this.isRunning = true;
 	}
 	@Override
