@@ -64,5 +64,16 @@ public interface Mvc {
 	public @interface HttpPostReuqestBody {
 		public String value() default "";
 		public boolean required() default true;
-	}	
+	}
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)	
+	public @interface Transactional {
+		public Level level();
+		public static enum Level {
+			NONE,ALL
+		}
+	}
 }

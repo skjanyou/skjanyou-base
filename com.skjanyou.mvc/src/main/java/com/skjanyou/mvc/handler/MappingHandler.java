@@ -15,6 +15,7 @@ import com.skjanyou.mvc.anno.Mvc.Controller;
 import com.skjanyou.mvc.anno.Mvc.Dao;
 import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
+import com.skjanyou.mvc.anno.Mvc.Transactional;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.mvc.core.MvcApplicateContext;
 import com.skjanyou.mvc.core.MvcContext;
@@ -60,41 +61,47 @@ public abstract class MappingHandler extends HttpServerHandler{
 			// 包含Service
 			Service service = clazz.getDeclaredAnnotation(Service.class);
 			if( service != null ){
-				// 使用cglib代理
-				Enhancer enhancer = new Enhancer();
-				enhancer.setSuperclass(clazz);
-				MethodInterceptor callback = new MethodInterceptor() {
-					@Override
-					public Object intercept(Object obj, Method paramMethod, Object[] args,
-							MethodProxy proxy) throws Throwable {
-						String name = paramMethod.getName();
-						if( name.equals("getClass") || name.equals("equals") || name.equals("hashCode") ) {
-							return proxy.invokeSuper(obj, args);
+				Object object = null;
+				Transactional tsl = clazz.getDeclaredAnnotation(Transactional.class);
+				if( tsl == null ) {
+					
+					// 使用cglib代理
+					Enhancer enhancer = new Enhancer();
+					enhancer.setSuperclass(clazz);
+					MethodInterceptor callback = new MethodInterceptor() {
+						@Override
+						public Object intercept(Object obj, Method paramMethod, Object[] args,
+								MethodProxy proxy) throws Throwable {
+							String name = paramMethod.getName();
+							if( name.equals("getClass") || name.equals("equals") || name.equals("hashCode") ) {
+								return proxy.invokeSuper(obj, args);
+							}
+							Object result = null;
+							DataSource dataSource = DBPlugin.getDefaultDataSourceManager().getDataSource();
+							try {
+								MvcContext context = new MvcContext();
+								context.putContext("CUR_DS", dataSource);
+								MvcContext.set(context);
+								dataSource.beginTransaction();
+								// 开启事务
+								result = proxy.invokeSuper(obj, args);
+								// 提交事务
+								dataSource.commit();
+							} catch( Exception e ) {
+								e.printStackTrace();
+								// 回滚事务
+								dataSource.rollback();
+								throw e;
+							}
+							
+							return result;
 						}
-						Object result = null;
-						DataSource dataSource = DBPlugin.getDefaultDataSourceManager().getDataSource();
-						try {
-							MvcContext context = new MvcContext();
-							context.putContext("CUR_DS", dataSource);
-							MvcContext.set(context);
-							dataSource.beginTransaction();
-							// 开启事务
-							result = proxy.invokeSuper(obj, args);
-							// 提交事务
-							dataSource.commit();
-						} catch( Exception e ) {
-							e.printStackTrace();
-							// 回滚事务
-							dataSource.rollback();
-							throw e;
-						}
-						
-						return result;
-					}
-				};
-				enhancer.setCallback(callback);
-				Object object = enhancer.create();
-				
+					};
+					enhancer.setCallback(callback);
+					object = enhancer.create();
+				}else if( tsl.level() == Transactional.Level.NONE ){
+					object = clazz.newInstance();
+				}
 				String serviceName = service.value();
 				MvcApplicateContext.putBean(serviceName, object);				
 			}

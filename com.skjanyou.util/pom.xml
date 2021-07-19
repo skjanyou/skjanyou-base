@@ -20,27 +20,5 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.8.3</version>
-		</dependency>
-		<!-- xstream 处理xml格式 -->
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.4.10</version>
-			<!-- for android -->
-			<exclusions>
-				<exclusion>
-					<groupId>xmlpull</groupId>
-					<artifactId>xmlpull</artifactId>
-				</exclusion>
-			</exclusions>			
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-		</dependency>
 	</dependencies>
 </project>
