@@ -1,14 +1,10 @@
 package com.skjanyou.server.niohttpserver.core;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
-
 import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.util.Iterator;
 
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.inter.AbstractServer;
@@ -16,22 +12,20 @@ import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Server;
 
 public class NioHttpServer extends AbstractServer {
-	private ServerBootstrap bootstrap;
-	private EventLoopGroup boss;
-	private EventLoopGroup work;
-	private ChannelFuture future;
-	
+	private Selector selector;
 
-	public NioHttpServer() {
-		bootstrap  = new ServerBootstrap();
-		boss = new NioEventLoopGroup();
-		work = new NioEventLoopGroup();
-		
-		
-		bootstrap.group(boss,work)
-		.handler(new LoggingHandler(LogLevel.DEBUG))
-		.channel(NioServerSocketChannel.class)
-		.childHandler(new NioHttpServerInitializer());
+	public NioHttpServer() throws Exception {
+		selector = Selector.open();
+
+		// 打开服务端socket通道
+		ServerSocketChannel ssc = ServerSocketChannel.open();
+		// 设置非阻塞
+		ssc.configureBlocking(false);
+		// 绑定本地端口
+		ssc.bind(new InetSocketAddress(config.getPort()));
+		// 把通道注册到Selector
+		ssc.register(selector, SelectionKey.OP_ACCEPT);
+
 
 	}
 
@@ -51,13 +45,33 @@ public class NioHttpServer extends AbstractServer {
 
 	@Override
 	public Server startup() {
+
 		try {
-			future = bootstrap.bind(new InetSocketAddress(this.config.getPort())).sync();
-			System.out.println(" server start up on port : " + this.config.getPort());
-			future.channel().closeFuture().sync();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}		
+			while (true) {
+				
+				if (selector.select() > 0) {
+					
+					// 获取已经就绪的通道的SelectionKey的集合
+					Iterator<SelectionKey> i = selector.selectedKeys().iterator();
+					
+					while (i.hasNext()) {
+						
+						// 获取当前遍历到的SelectionKey
+						SelectionKey sk = i.next();
+						// 移除key
+						i.remove();
+						
+						try {
+						} catch (Exception e) {
+							sk.cancel();
+							sk = null;
+						}
+					}
+				}
+			}
+		} catch(Exception e) {
+			
+		}
 		return this;
 	}
 

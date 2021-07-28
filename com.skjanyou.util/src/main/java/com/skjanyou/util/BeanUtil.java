@@ -14,9 +14,24 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.skjanyou.util.convert.ConvertUtil;
+
 
 public class BeanUtil {
 
+	public static<T> T map2Bean(Map<String,Object> map,Class<T> clazz) {
+		T result = null;
+		try {
+			result = clazz.newInstance();
+			map2Bean(map,result);
+			
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * 从map中的数据导入到obj中
 	 * @param map
@@ -35,7 +50,7 @@ public class BeanUtil {
 					Class<?> src = value.getClass();
 					Class<?> dec = field.getType();
 					if(src != dec){
-						value = ConvertUtil.convertTo(value, dec);
+						value = ConvertUtil.convert(value, dec);
 					}
 					try{
 						field.set(t, value);

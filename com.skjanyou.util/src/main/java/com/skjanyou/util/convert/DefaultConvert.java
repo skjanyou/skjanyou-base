@@ -3,9 +3,9 @@ package com.skjanyou.util.convert;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.skjanyou.util.BeanUtil;
 import com.skjanyou.util.ClassUtil;
+import com.skjanyou.util.JsonUtil;
 
 public final class DefaultConvert {
 	
@@ -109,7 +109,7 @@ public final class DefaultConvert {
 			if( dist == null ){ return ""; }
 			String result = null;
 			try{
-				result = JSON.toJSONString(dist);
+				result = JsonUtil.toJSONString(dist);
 			} catch( Exception e ){
 				result = dist.toString();
 			}
@@ -167,7 +167,7 @@ public final class DefaultConvert {
 
 		@Override
 		public Map<?, ?> converTo(String dist,Class<String> distClass,Class<Map<?,?>> targetClass) {
-			return JSON.parseObject(dist).toJavaObject(Map.class);
+			return JsonUtil.toJavaObject(dist, Map.class);
 		}
 
 		@Override
@@ -188,7 +188,7 @@ public final class DefaultConvert {
 
 		@Override
 		public List<?> converTo(String dist,Class<String> distClass,Class<List<?>> targetClass) {
-			return JSON.parseArray(dist).toJavaList(targetClass);
+			return JsonUtil.toJavaObject(dist, targetClass);
 		}
 
 		@Override
@@ -198,24 +198,24 @@ public final class DefaultConvert {
 		
 	}
 	
-	public static class JSONObjectConvertToBeanObject implements ConvertProvider<JSONObject,Object>{
-
-		@Override
-		public boolean isMatch(Class<?> srcClass, Class<?> targetClass) {
-			return srcClass.isAssignableFrom(JSONObject.class) &&  !targetClass.isInterface();
-		}
-
-		@Override
-		public Object converTo(JSONObject src, Class<JSONObject> srcClass, Class<Object> targetClass) {
-			return src.toJavaObject(targetClass);
-		}
-
-		@Override
-		public int order() {
-			return 100;
-		}
-
-	}
+//	public static class JSONObjectConvertToBeanObject implements ConvertProvider<JSONObject,Object>{
+//
+//		@Override
+//		public boolean isMatch(Class<?> srcClass, Class<?> targetClass) {
+//			return srcClass.isAssignableFrom(JSONObject.class) &&  !targetClass.isInterface();
+//		}
+//
+//		@Override
+//		public Object converTo(JSONObject src, Class<JSONObject> srcClass, Class<Object> targetClass) {
+//			return src.toJavaObject(targetClass);
+//		}
+//
+//		@Override
+//		public int order() {
+//			return 100;
+//		}
+//
+//	}
 	
 	public static class MapConvertToBeanObject implements ConvertProvider<Map<String,Object>,Object>{
 
@@ -226,8 +226,7 @@ public final class DefaultConvert {
 
 		@Override
 		public Object converTo(Map<String,Object> src, Class<Map<String,Object>> srcClass, Class<Object> targetClass) {
-			JSONObject jsonObject = new JSONObject(src);
-			return jsonObject.toJavaObject(targetClass);
+			return BeanUtil.map2Bean(src,targetClass);
 		}
 
 		@Override

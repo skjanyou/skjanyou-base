@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.skjanyou.util.convert.DefaultConvert.AnotherObjectConvertToString;
-import com.skjanyou.util.convert.DefaultConvert.JSONObjectConvertToBeanObject;
 import com.skjanyou.util.convert.DefaultConvert.MapConvertToBeanObject;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToBoolean;
 import com.skjanyou.util.convert.DefaultConvert.StringConvertToClass;
@@ -26,7 +25,7 @@ public class ConvertUtil {
 		ConvertUtil.regist(new StringConvertToClass());
 		ConvertUtil.regist(new StringConvertToMap());
 		ConvertUtil.regist(new StringConvertToList());
-		ConvertUtil.regist(new JSONObjectConvertToBeanObject());
+//		ConvertUtil.regist(new JSONObjectConvertToBeanObject());
 		ConvertUtil.regist(new MapConvertToBeanObject());
 
 		ConvertUtil.regist(new AnotherObjectConvertToString());
