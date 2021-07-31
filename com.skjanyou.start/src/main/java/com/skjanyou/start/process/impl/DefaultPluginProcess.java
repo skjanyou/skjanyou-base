@@ -9,10 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.annotation.api.Util.PropertyBean;
@@ -54,27 +55,29 @@ public class DefaultPluginProcess implements PluginProcess {
 				try {
 					is = url.openStream();
 //					Plugin p = XmlParseUtil.xml2Bean(is, Plugin.class);   TODO
-					SAXReader sr = new SAXReader();
-					Document document = sr.read(is);
-					Element root = document.getRootElement();
-					String id = root.attributeValue("id");	// 插件ID
+					DocumentBuilderFactory domfac = DocumentBuilderFactory.newInstance();
+					DocumentBuilder dombuilder = domfac.newDocumentBuilder();
+					Document doc = dombuilder.parse(is);
+					Element root = doc.getDocumentElement();
+					String id = root.getAttribute("id");
+					
 					// 判断插件是否为启动状态
 					String enableId = id + ".enable";
 					String enableStart = manager.getString(enableId);
 					if( enableStart != null && !Boolean.valueOf(enableStart) ) { logger.error("插件" + id + "在配置文件中设置禁用,将不会启动。如需启动,请修改配置文件,设置" + enableId +"=true。" ); continue; }
-					String displayName = root.attributeValue("displayName"); //插件名称
-					String activatorString = root.attributeValue("activator");
+					String displayName = root.getAttribute("displayName"); //插件名称
+					String activatorString = root.getAttribute("activator");
 					Class activator = null;
 					try{
 						activator = classLoader.loadClass( activatorString ); //启动类
 					} catch ( ClassNotFoundException e){
 						activator = Class.forName( activatorString );
 					}
-					int order = Integer.valueOf(root.attributeValue("order"));				//排序
-					Boolean enable = Boolean.valueOf(root.attributeValue("enable"));	//是否启动
-					Boolean failOnInitError = Boolean.valueOf(root.attributeValue("failOnInitError"));						//报错时是否终止启动
-					String defaultConfig = root.attributeValue("defaultConfig");	//默认配置文件路径
-					String classScanPath = root.attributeValue("classScanPath");
+					int order = Integer.valueOf(root.getAttribute("order"));				//排序
+					Boolean enable = Boolean.valueOf(root.getAttribute("enable"));	//是否启动
+					Boolean failOnInitError = Boolean.valueOf(root.getAttribute("failOnInitError"));						//报错时是否终止启动
+					String defaultConfig = root.getAttribute("defaultConfig");	//默认配置文件路径
+					String classScanPath = root.getAttribute("classScanPath");
 					logger.info("扫描到插件:{id:" + id + ",displayName:" + displayName + "}");
 					
 					plugin = new Plugin();
@@ -86,7 +89,7 @@ public class DefaultPluginProcess implements PluginProcess {
 					if( !StringUtil.isBlank(classScanPath) ){
 						pluginScanPath.add(classScanPath);
 					}
-				} catch (IOException | DocumentException | ClassNotFoundException e) {
+				} catch ( Exception e) {
 					if( plugin != null && plugin.getFailOnInitError() ){
 						throw new StartFailException("",e);
 					}else{

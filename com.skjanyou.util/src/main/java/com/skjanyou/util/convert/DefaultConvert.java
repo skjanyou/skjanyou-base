@@ -158,7 +158,7 @@ public final class DefaultConvert {
 	}
 	
 	/** String -> Map **/
-	public static class StringConvertToMap implements ConvertProvider<String,Map<?,?>> {
+	public static class SimpleStringConvertToMap implements ConvertProvider<String,Map<?,?>> {
 
 		@Override
 		public boolean isMatch(Class<?> distClass, Class<?> targetClass) {
@@ -172,14 +172,14 @@ public final class DefaultConvert {
 
 		@Override
 		public int order() {
-			return 100;
+			return 200;
 		}
 		
 	}
 	
 	
 	/** String -> List **/
-	public static class StringConvertToList implements ConvertProvider<String,List<?>> {
+	public static class SimpleStringConvertToList implements ConvertProvider<String,List<?>> {
 
 		@Override
 		public boolean isMatch(Class<?> distClass, Class<?> targetClass) {
@@ -193,7 +193,7 @@ public final class DefaultConvert {
 
 		@Override
 		public int order() {
-			return 100;
+			return 200;
 		}
 		
 	}
@@ -217,7 +217,7 @@ public final class DefaultConvert {
 //
 //	}
 	
-	public static class MapConvertToBeanObject implements ConvertProvider<Map<String,Object>,Object>{
+	public static class SimpleMapConvertToBeanObject implements ConvertProvider<Map<String,Object>,Object>{
 
 		@Override
 		public boolean isMatch(Class<?> srcClass, Class<?> targetClass) {
@@ -231,7 +231,7 @@ public final class DefaultConvert {
 
 		@Override
 		public int order() {
-			return 100;
+			return 200;
 		}
 
 	}
