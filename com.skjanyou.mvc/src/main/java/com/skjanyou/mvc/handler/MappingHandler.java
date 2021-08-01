@@ -21,7 +21,7 @@ import com.skjanyou.mvc.core.MvcApplicateContext;
 import com.skjanyou.mvc.core.MvcContext;
 import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.api.inter.ServerHandler;
-import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
+import com.skjanyou.server.core.HttpServerHandler;
 import com.skjanyou.util.ClassUtil;
 
 import net.sf.cglib.proxy.Enhancer;

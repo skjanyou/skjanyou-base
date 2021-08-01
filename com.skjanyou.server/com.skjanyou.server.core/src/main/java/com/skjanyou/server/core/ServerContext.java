@@ -1,4 +1,4 @@
-package com.skjanyou.server.simplehttpserver.core;
+package com.skjanyou.server.core;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

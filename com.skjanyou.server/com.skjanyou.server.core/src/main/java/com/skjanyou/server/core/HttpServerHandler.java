@@ -1,4 +1,4 @@
-package com.skjanyou.server.simplehttpserver.http;
+package com.skjanyou.server.core;
 
 import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.api.inter.Request;

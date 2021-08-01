@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.skjanyou</groupId>
 		<artifactId>com.skjanyou.server</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>com.skjanyou.server.core</artifactId>
-	<name>com.skjanyou.server.niohttpserver</name>
+	<artifactId>com.skjanyou.server.nettyhttpserver</artifactId>
+	<name>com.skjanyou.server.nettyhttpserver</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,6 +20,11 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.annotation.api</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.skjanyou</groupId>
@@ -32,8 +38,23 @@
 		</dependency>
 		<dependency>
 			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.server.core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.plugin</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.log</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.1.6.Final</version>
+		</dependency>
 	</dependencies>
 </project>

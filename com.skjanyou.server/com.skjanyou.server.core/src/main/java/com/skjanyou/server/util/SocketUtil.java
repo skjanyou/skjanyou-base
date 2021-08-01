@@ -1,4 +1,4 @@
-package com.skjanyou.server.simplehttpserver.util;
+package com.skjanyou.server.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

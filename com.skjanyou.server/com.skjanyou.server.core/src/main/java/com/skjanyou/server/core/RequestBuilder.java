@@ -1,4 +1,4 @@
-package com.skjanyou.server.simplehttpserver.util;
+package com.skjanyou.server.core;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.server.api.constant.ServerConst;
-import com.skjanyou.server.core.HttpRequest;
+import com.skjanyou.server.util.SocketUtil;
 import com.skjanyou.util.StringUtil;
 
 public class RequestBuilder {

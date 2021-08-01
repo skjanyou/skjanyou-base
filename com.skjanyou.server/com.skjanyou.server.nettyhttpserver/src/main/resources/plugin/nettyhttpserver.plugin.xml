@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin 
+	id="skjanyou.nettyhttpserver" 
+	displayName="netty-http服务器插件"
+	activator="com.skjanyou.server.nettyhttpserver.plugin.NettyHttpServerPlugin" 
+	order="0" 
+	enable="true"
+	failOnInitError="true"
+	defaultConfig="config/nettyhttpserver.default.properties" 
+	classScanPath="com.skjanyou.server.nettyhttpserver"
+	/>

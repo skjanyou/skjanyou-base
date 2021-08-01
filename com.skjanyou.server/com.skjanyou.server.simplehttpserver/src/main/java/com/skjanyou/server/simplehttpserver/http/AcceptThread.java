@@ -11,9 +11,9 @@ import java.util.UUID;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.core.HttpRequest;
 import com.skjanyou.server.core.HttpResponse;
+import com.skjanyou.server.core.RequestBuilder;
 import com.skjanyou.server.core.ResponseBuilder;
-import com.skjanyou.server.simplehttpserver.core.ServerContext;
-import com.skjanyou.server.simplehttpserver.util.RequestBuilder;
+import com.skjanyou.server.core.ServerContext;
 import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.StringUtil;
 

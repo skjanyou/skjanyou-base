@@ -53,6 +53,7 @@ public class PluginManager {
 			try {
 				support.startup();
 			} catch (Exception e) {
+				e.printStackTrace();
 				Plugin plugin = pluginMapping.get(support);
 				// 失败终止
 				if(plugin.getFailOnInitError()) {

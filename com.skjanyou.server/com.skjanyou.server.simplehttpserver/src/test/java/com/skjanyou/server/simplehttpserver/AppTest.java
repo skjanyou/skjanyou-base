@@ -15,8 +15,8 @@ import com.skjanyou.server.core.HttpRequest;
 import com.skjanyou.server.core.HttpResponse;
 import com.skjanyou.server.core.HttpResponse.HttpResponseBody;
 import com.skjanyou.server.core.HttpResponse.HttpResponseLine;
+import com.skjanyou.server.core.HttpServerHandler;
 import com.skjanyou.server.simplehttpserver.http.HttpServer;
-import com.skjanyou.server.simplehttpserver.http.HttpServerHandler;
 
 public class AppTest {
 	public static class MyServerHandler extends HttpServerHandler{
