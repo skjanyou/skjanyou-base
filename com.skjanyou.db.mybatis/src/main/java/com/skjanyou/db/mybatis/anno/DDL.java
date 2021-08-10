@@ -73,4 +73,27 @@ public interface DDL {
 	public @interface SqlParameter {
 		public String value() ;
 	}		
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Table {
+		public String value() ;
+	}	
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.PARAMETER)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface TableId {
+	}		
+	
+	@Documented
+	@Inherited
+	@Target(ElementType.PARAMETER)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface TableField {
+		public String value() ;
+	}		
 }

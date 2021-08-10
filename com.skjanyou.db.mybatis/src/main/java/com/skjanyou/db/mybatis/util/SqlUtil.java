@@ -6,6 +6,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.Clob;
 
+import com.skjanyou.db.mybatis.anno.DDL.Table;
+import com.skjanyou.db.mybatis.anno.DDL.TableField;
 import com.skjanyou.util.CommUtil;
 
 public class SqlUtil {
@@ -18,17 +20,17 @@ public class SqlUtil {
      * @return
      */
     public static String generateInsertSql( Class<?> beanClass ) {
-    	String tableName = beanClass.getSimpleName().toUpperCase(); 
+    	String tableName = getTableName(beanClass);
     	Field[] fields = beanClass.getDeclaredFields();
         String sql = "INSERT INTO " + tableName + "(" + generateFieldsLine(fields) + ") values (";
  
         StringBuffer sqlBuilder = new StringBuffer();
         for (int i = 0, size = fields.length; i < size; i++) {
             if (i == fields.length - 1) {
-                sqlBuilder.append("#").append(fields[i].getName()).append("#");
+                sqlBuilder.append("#").append(getTableField(fields[i])).append("#");
                 continue;
             }
-            sqlBuilder.append("#").append(fields[i].getName()).append("#").append(",");
+            sqlBuilder.append("#").append(getTableField(fields[i])).append("#").append(",");
         }
         return sql + sqlBuilder.toString() + ")";
     }
@@ -47,10 +49,10 @@ public class SqlUtil {
         StringBuffer sqlBuilder = new StringBuffer();
         for (int i = 0, size = fields.length; i < size; i++) {
             if (i == fields.length - 1) {
-                sqlBuilder.append(fields[i].getName()).append("=").append("#" + beanName).append(".").append(fields[i].getName()).append("#");
+                sqlBuilder.append(getTableField(fields[i])).append("=").append("#" + beanName).append(".").append(getTableField(fields[i])).append("#");
                 continue;
             }
-            sqlBuilder.append(fields[i].getName()).append("=").append("#" + beanName).append(".").append(fields[i].getName()).append("#").append(",");
+            sqlBuilder.append(getTableField(fields[i])).append("=").append("#" + beanName).append(".").append(getTableField(fields[i])).append("#").append(",");
         }
         return sql + sqlBuilder.toString() + ")";
     }
@@ -64,10 +66,10 @@ public class SqlUtil {
         		continue;
         	}
         	if (i == fields.length - 1) {
-                sqlBuilder.append(curField.getName());
+                sqlBuilder.append(getTableField(curField));
                 continue;
             }
-            sqlBuilder.append(curField.getName()).append(",");
+            sqlBuilder.append(getTableField(curField)).append(",");
         }
         return sqlBuilder.toString();
     }  
@@ -99,5 +101,38 @@ public class SqlUtil {
     	}
     	
     	return result;
+    }
+    
+    /**
+     * 	获取表名
+     * @param beanClass
+     * @return
+     */
+    private static String getTableName( Class<?> beanClass ) {
+    	String tableName = null;
+    	Table table = beanClass.getAnnotation(Table.class);
+    	if( table == null ) {
+        	tableName = beanClass.getSimpleName().toUpperCase(); 
+    	} else {
+    		tableName = table.value();
+    	}
+    	return tableName;
+    }
+    
+    /**
+     * 	获取表字段
+     * @param field
+     * @return
+     */
+    private static String getTableField( Field field ) {
+    	String tableFieldName = null;
+    	TableField tableField = field.getAnnotation(TableField.class);
+    	if( tableField == null ) {
+    		tableFieldName = field.getName();
+    	} else {
+    		tableFieldName = tableField.value();
+    	}
+    	
+    	return tableFieldName;
     }
 }
