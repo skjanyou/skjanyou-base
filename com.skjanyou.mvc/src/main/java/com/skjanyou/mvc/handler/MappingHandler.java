@@ -3,6 +3,7 @@ package com.skjanyou.mvc.handler;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,8 @@ import com.skjanyou.db.pool.DataSource;
 import com.skjanyou.mvc.anno.Mvc.Autowired;
 import com.skjanyou.mvc.anno.Mvc.Controller;
 import com.skjanyou.mvc.anno.Mvc.Dao;
+import com.skjanyou.mvc.anno.Mvc.HandlerException;
+import com.skjanyou.mvc.anno.Mvc.HandlerException.ExceptionHandler;
 import com.skjanyou.mvc.anno.Mvc.Mapping;
 import com.skjanyou.mvc.anno.Mvc.Service;
 import com.skjanyou.mvc.anno.Mvc.Transactional;
@@ -118,6 +121,15 @@ public abstract class MappingHandler extends HttpServerHandler{
 			Controller controller = clazz.getDeclaredAnnotation(Controller.class);
 			if( controller != null ){
 				Object object = clazz.newInstance();
+				// 方法上面的异常不获取
+				ExceptionHandler<?> classHandler = null;
+				List<Class<? extends Exception>> classList = null;
+				HandlerException classHandlerException = clazz.getDeclaredAnnotation(HandlerException.class);
+				if( classHandlerException != null ) {
+					classHandler = classHandlerException.handler().newInstance();
+					classList = Arrays.asList(classHandlerException.exception());
+				}
+				
 				MvcApplicateContext.putBean(clazz, object);
 				// 构建映射关系
 				String namespace = controller.value();
@@ -130,7 +142,24 @@ public abstract class MappingHandler extends HttpServerHandler{
 						String m = mapping.value();
 						String key = ("/" + namespace + "/" + m).replaceAll("/+","/");
 						md.setAccessible(true);
+						
+						// 查找方法上面的异常捕获器
+						ExceptionHandler<?> methodHandler = null;
+						List<Class<? extends Exception>> methodList = null;
+						HandlerException methodHandlerException = md.getDeclaredAnnotation(HandlerException.class);
+						if( methodHandlerException != null ) {
+							methodHandler = methodHandlerException.handler().newInstance();
+							methodList = Arrays.asList(classHandlerException.exception());
+						}
+						
 						context = new Context(object, clazz, md);
+						if( methodHandler != null ) {
+							context.setHandler(methodHandler);
+							context.setExceptionList(classList);
+						}else if( classHandler != null ){
+							context.setHandler(classHandler);
+							context.setExceptionList(methodList);
+						}
 						mappings.put(key, context);
 					}
 				}

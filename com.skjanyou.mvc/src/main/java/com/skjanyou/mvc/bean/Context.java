@@ -1,11 +1,16 @@
 package com.skjanyou.mvc.bean;
 
 import java.lang.reflect.Method;
+import java.util.List;
+
+import com.skjanyou.mvc.anno.Mvc.HandlerException.ExceptionHandler;
 
 public class Context {
 	private Object targetObj;
 	private Class<?> targetClass;
 	private Method targetMethod;
+	private ExceptionHandler<?> handler;
+	private List<Class<? extends Exception>> exceptionList;
 	
 	
 	public Context(Object targetObj, Class<?> targetClass, Method targetMethod) {
@@ -32,6 +37,16 @@ public class Context {
 	public void setTargetMethod(Method targetMethod) {
 		this.targetMethod = targetMethod;
 	}
-	
-	
+	public ExceptionHandler<?> getHandler() {
+		return handler;
+	}
+	public void setHandler(ExceptionHandler<?> handler) {
+		this.handler = handler;
+	}
+	public List<Class<? extends Exception>> getExceptionList() {
+		return exceptionList;
+	}
+	public void setExceptionList(List<Class<? extends Exception>> exceptionList) {
+		this.exceptionList = exceptionList;
+	}
 }

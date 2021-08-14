@@ -3,11 +3,13 @@ package com.skjanyou.mvc.handler;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import com.skjanyou.annotation.api.Web.ResponseBody;
 import com.skjanyou.annotation.api.enumclass.ResponseType;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
+import com.skjanyou.mvc.anno.Mvc.HandlerException.ExceptionHandler;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.exception.ServerException;
@@ -53,9 +55,12 @@ public abstract class MvcHandler extends MappingHandler {
 	}	
 	
 	// 处理请求
+	@SuppressWarnings("unchecked")
 	protected void doHandler( Context context,HttpRequest request,HttpResponse response ) throws ServerException {
 		Method method = context.getTargetMethod();
 		Object object = context.getTargetObj();
+		ExceptionHandler handler = context.getHandler();
+		List<Class<? extends Exception>> classList = context.getExceptionList();
 		// 响应行
 		HttpResponseLine responseLine = response.getHttpResponseLine();
 		// 响应体
@@ -70,18 +75,21 @@ public abstract class MvcHandler extends MappingHandler {
 			// 调用方法
 			logger.debug("invoke method{" + method + "},argus{" + paras + "}");
 			result = method.invoke(object,paras);
-			if( result != null ){
-				ResponseBody rb = method.getAnnotation(ResponseBody.class);
-				if( rb != null ){
-					contentType = rb.type().getValue();
-				}
-			}
-			
-			logger.debug("return result :[ " + result + " ]");
 		} catch (Exception e) {
 			logger.error(e);
-			throw new ServerException("方法调用失败:" + method,e);
+			if( handler == null || ( classList != null && !classList.contains(e.getClass())) ) {
+				throw new ServerException("方法调用失败:" + method,e);
+			}
+			result = handler.handler(e.getCause(), object, method, paras);
 		}
+		if( result != null ){
+			ResponseBody rb = method.getAnnotation(ResponseBody.class);
+			if( rb != null ){
+				contentType = rb.type().getValue();
+			}
+		}
+		
+		logger.debug("return result :[ " + result + " ]");
 		httpHeaders.put("Content-Type", contentType);
 		responseLine.setStatusCode(StatusCode.Ok);
 		if( result instanceof File ) {
