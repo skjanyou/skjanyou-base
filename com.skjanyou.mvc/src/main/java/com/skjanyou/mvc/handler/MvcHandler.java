@@ -34,7 +34,12 @@ public abstract class MvcHandler extends MappingHandler {
 		// 响应行
 		response.getHttpResponseLine().setStatusCode(StatusCode.Error);
 		// 响应体
-		response.getHttpResponseBody().setBodyContent("服务器内部错误");
+		String errorMsg = "服务器内部错误";
+		if( e instanceof ServerException ) {
+			ServerException exception = (ServerException) e;
+			errorMsg = exception.getMessage();
+		}
+		response.getHttpResponseBody().setBodyContent(errorMsg);
 		// 响应头
 		response.getHttpHeaders().put("Content-Type", ResponseType.HTML.getValue());
 	}

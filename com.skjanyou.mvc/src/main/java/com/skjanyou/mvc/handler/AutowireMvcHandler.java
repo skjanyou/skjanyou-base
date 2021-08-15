@@ -10,12 +10,14 @@ import java.util.Map;
 
 import com.skjanyou.mvc.anno.Mvc.HttpParameter;
 import com.skjanyou.mvc.anno.Mvc.HttpPostReuqestBody;
+import com.skjanyou.mvc.anno.Mvc.HttpRequestHeader;
+import com.skjanyou.mvc.anno.Mvc.HttpResponseHeader;
 import com.skjanyou.mvc.bean.Context;
 import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.core.HttpHeaders;
 import com.skjanyou.server.core.HttpRequest;
-import com.skjanyou.server.core.HttpResponse;
 import com.skjanyou.server.core.HttpRequest.HttpRequestLine;
+import com.skjanyou.server.core.HttpResponse;
 import com.skjanyou.util.StringUtil;
 import com.skjanyou.util.convert.ConvertUtil;
 
@@ -27,10 +29,12 @@ public class AutowireMvcHandler extends MvcHandler {
 
 	protected Object[] doGetParameter( Context context,HttpRequest request,HttpResponse response )  {
 		Method method = context.getTargetMethod();
-		// 请求头
+		// 请求行
 		HttpRequestLine requestLine = request.getHttpRequestLine();
+		// 请求头
+		HttpHeaders httpRequestHeaders = request.getHttpHeaders();
 		// 响应头
-		HttpHeaders httpHeaders = response.getHttpHeaders();
+		HttpHeaders httpResponseHeaders = response.getHttpHeaders();
 		// 查询参数
 		Map<String,Object> params = request.requestLine().queryParams();
 		// POST请求参数正文,不一定有值,后续要通过是否为POST判断
@@ -47,11 +51,6 @@ public class AutowireMvcHandler extends MvcHandler {
 			// 参数为HttpResponse
 			if( HttpResponse.class.isAssignableFrom(parameter.getType()) ){
 				linkList.add(response);
-				continue;
-			}
-			// 参数为HttpHeaders
-			if( HttpHeaders.class.isAssignableFrom(parameter.getType()) ){
-				linkList.add(httpHeaders);
 				continue;
 			}
 			
@@ -108,6 +107,39 @@ public class AutowireMvcHandler extends MvcHandler {
 				linkList.add(pObject);
 				continue;
 			}
+			
+			// 请求头信息
+			HttpRequestHeader httpRequestHeader = parameter.getAnnotation(HttpRequestHeader.class);
+			if( httpRequestHeader != null ) {
+				String headerName = httpRequestHeader.value();
+				// 如果没有传值,则直接拿所有的http头
+				if( StringUtil.isBlank(headerName) ) {
+					if( !HttpHeaders.class.isAssignableFrom(parameter.getType()) ) {
+						throw new ServerException("使用@HttpRequestHeader注解,参数类型类型必须为HttpHeaders");
+					}					
+					linkList.add(httpRequestHeaders);
+					continue;
+				}else{
+					String headerValue = httpRequestHeaders.get(headerName);
+					if( httpRequestHeader.required() && StringUtil.isBlank(headerValue) ) {
+						throw new ServerException("请求头缺少参数[" + httpRequestHeader.value() + "].");
+					}
+					linkList.add(headerValue);
+					continue;
+				}
+			}
+			
+			// 响应头信息
+			HttpResponseHeader httpResponseHeader = parameter.getAnnotation(HttpResponseHeader.class);
+			if( httpResponseHeader != null ) {
+				// 如果没有传值,则直接拿所有的http头
+				if( !HttpHeaders.class.isAssignableFrom(parameter.getType()) ) {
+					throw new ServerException("使用@HttpResponseHander注解,参数类型类型必须为HttpHeaders");
+				}
+				linkList.add(httpResponseHeaders);
+				continue;
+			}			
+			
 			linkList.add(null);
 		}
 		

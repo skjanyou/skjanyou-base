@@ -6,7 +6,7 @@ public class HttpProtocolLv1 implements Protocol {
 
 	@Override
 	public String version() {
-		return "1.1";
+		return "1.0";
 	}
 	
 	@Override
