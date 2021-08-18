@@ -65,7 +65,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	
 	@Override
 	public FxEventDispatcher getFxEventDispatcher() {
-		return this.eventDispatcher = this.eventDispatcher == null ? new DefaultFxEventDispatcher(this.proxyController,this.controllerClass) : this.eventDispatcher;
+		return this.eventDispatcher = this.eventDispatcher == null ? new BubbleFxEventDispatcher(this.proxyController,this.controllerClass) : this.eventDispatcher;
 	}
 
 
