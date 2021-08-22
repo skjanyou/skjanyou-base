@@ -87,6 +87,7 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 	}
 
 	private URL getFXMLURL() {
-		return Thread.currentThread().getContextClassLoader().getResource(fxControllerAnno.fxml());
+		String fxml = fxControllerAnno.fxml().startsWith("/") ? fxControllerAnno.fxml().substring(1) : fxControllerAnno.fxml();
+		return Thread.currentThread().getContextClassLoader().getResource(fxml);
 	}
 }

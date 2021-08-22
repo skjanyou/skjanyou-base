@@ -52,7 +52,7 @@ public final class FxAnnotation {
 		/** 窗口唯一ID **/
 		String id();
 		/** 窗口的图标 **/
-		String icon() default "";
+		String icon() default "classpath:icon/liulian.png";
 		/** 标题 **/
 		String title() default "";
 		/** fxml文件 **/
@@ -66,6 +66,19 @@ public final class FxAnnotation {
 		/** 控制器类型 **/
 		ControllerType type() default ControllerType.WINDOW;
 	}
+	
+	/**
+	 * 用来标记是否进行展示的主controller,使用这个注解,必须配合使用@FxController注解
+	 * @author skjanyou
+	 * 时间 : 2021-8-21
+	 * 作用 :
+	 */
+	@Documented
+	@Inherited
+	@Target({ElementType.TYPE})
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface MainFxController{
+	}	
 	
 	/**
 	 * 

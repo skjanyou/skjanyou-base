@@ -170,6 +170,7 @@ public class JavaFxTray {
 		});
 		
 		ti = new TrayIcon(image);
+		ti.setImageAutoSize(true); 
 		
 		ti.addMouseListener(new MouseAdapter() {
 			@Override

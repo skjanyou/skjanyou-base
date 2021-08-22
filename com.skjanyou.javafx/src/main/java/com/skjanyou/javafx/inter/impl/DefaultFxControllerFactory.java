@@ -1,5 +1,6 @@
 package com.skjanyou.javafx.inter.impl;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -16,6 +17,7 @@ import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
+import com.skjanyou.util.StreamUtil;
 import com.sun.javafx.fxml.BeanAdapter;
 
 import javafx.beans.property.Property;
@@ -26,6 +28,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -82,6 +85,12 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			this.parent = loadResult.getParent();
 			this.proxyController = loadResult.getController();
 			this.stage = loadResult.getStage();
+			try {
+				this.stage.getIcons().add(new Image(StreamUtil.getInputStreamIgnoreLocation(this.fxControllerAnno.icon())));
+				this.stage.setTitle(this.fxControllerAnno.title());
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 			EventHandler<Event> handler = getFxEventDispatcher().getEventHandler();
 			this.parent.addEventFilter(Event.ANY, handler);
 			
@@ -122,6 +131,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
             this.scene = new Scene(root);
             this.scene.setFill(Color.TRANSPARENT);
             this.stage.initStyle(StageStyle.TRANSPARENT);
+           
             this.loadResult.setScene(this.scene);
             this.loadResult.setParent(root);
             

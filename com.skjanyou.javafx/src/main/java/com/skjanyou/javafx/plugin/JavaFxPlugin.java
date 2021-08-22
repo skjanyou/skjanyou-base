@@ -2,10 +2,11 @@ package com.skjanyou.javafx.plugin;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.beancontainer.factory.Beandefinition;
-import com.skjanyou.javafx.anno.FxAnnotation.FxController;
+import com.skjanyou.javafx.anno.FxAnnotation.MainFxController;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.core.ApplicationContext;
 import com.skjanyou.javafx.inter.ControllerLifeCycle;
@@ -40,7 +41,7 @@ public class JavaFxPlugin implements PluginSupport{
 
 			@Override
 			public Class<? extends Annotation> defineClass() {
-				return FxController.class;
+				return MainFxController.class;
 			}
 
 			@Override
@@ -63,36 +64,50 @@ public class JavaFxPlugin implements PluginSupport{
 		if( CommUtil.isNullOrEmpty(mainViewClass) ) {
 			return ;
 		}
-		PlatformImpl.startup(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					LoadResult bean = ApplicationContext.getBean(mainViewClass);
-					if( bean != null ) {
-						if( bean.getParent() != null ) {
-							Object controller = bean.getController();
-							Stage stage = bean.getStage();
-							ControllerLifeCycle life = ( controller instanceof ControllerLifeCycle) ? (ControllerLifeCycle) controller : new NoneControllerLifeCycle();
-							// TODO 这个地方要优化,没有加@FxDecorator注解的界面也会被去掉装饰
-							Scene scene = bean.getScene();
-							life.onInit(stage);
-							stage.setScene(scene);
-							stage.setTitle(title);
-							stage.getIcons().add(new Image(StreamUtil.getInputStreamIgnoreLocation(icon)));
-							stage.show();
-						}else {
-							throw new RuntimeException("启动失败,未加载成功");
-						}
-					}else {
-						throw new RuntimeException("启动失败,找不到主类");
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-				}
-			}
-		});
+		CountDownLatch latch = new CountDownLatch(1);
+		JavaFxPluginRunnable jfpr = new JavaFxPluginRunnable(latch);
+		PlatformImpl.startup(jfpr);
+		latch.await();
+		if( jfpr.catchException != null ) {
+			throw jfpr.catchException;
+		}
+	}
 
+	class JavaFxPluginRunnable implements Runnable {
+		public Exception catchException;
+		private CountDownLatch latch;
+		public JavaFxPluginRunnable( CountDownLatch latch ) {
+			this.latch = latch;
+		}
+		@Override
+		public void run() {
+			try {
+				LoadResult bean = ApplicationContext.getBean(mainViewClass);
+				if( bean != null ) {
+					if( bean.getParent() != null ) {
+						Object controller = bean.getController();
+						Stage stage = bean.getStage();
+						ControllerLifeCycle life = ( controller instanceof ControllerLifeCycle) ? (ControllerLifeCycle) controller : new NoneControllerLifeCycle();
+						// TODO 这个地方要优化,没有加@FxDecorator注解的界面也会被去掉装饰
+						Scene scene = bean.getScene();
+						life.onInit(stage);
+						stage.setScene(scene);
+						stage.setTitle(title);
+						stage.getIcons().add(new Image(StreamUtil.getInputStreamIgnoreLocation(icon)));
+						stage.show();
+					}else {
+						throw new RuntimeException("启动失败,未加载成功");
+					}
+				}else {
+					throw new RuntimeException("启动失败,找不到主类");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				catchException = e;
+			} finally {
+				this.latch.countDown();
+			}
+		}
 	}
 
 	@Override
