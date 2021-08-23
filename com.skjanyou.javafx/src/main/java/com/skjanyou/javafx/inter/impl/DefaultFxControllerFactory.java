@@ -66,6 +66,19 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 		this.fxDecorator = controllerClass.getAnnotation(FxDecorator.class);
 	}
 	
+	public DefaultFxControllerFactory( Class<?> controllerClass,Stage stage ) {
+		this.controllerClass = controllerClass;
+		if( stage == null ) {
+			throw new IllegalArgumentException("Stage不能为空");
+		}
+		this.stage = stage;
+		this.fxControllerAnno = controllerClass.getAnnotation(FxController.class);
+		if( fxControllerAnno == null ) {
+			throw new RuntimeException("Controller类上面必须携带FxController注解");
+		}
+		this.fxDecorator = controllerClass.getAnnotation(FxDecorator.class);
+	}	
+	
 	@Override
 	public FxEventDispatcher getFxEventDispatcher() {
 		return this.eventDispatcher = this.eventDispatcher == null ? new BubbleFxEventDispatcher(this.proxyController,this.controllerClass) : this.eventDispatcher;
@@ -74,7 +87,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 
 	@Override
 	public FxFXMLLoader getFxFXMLLoader() {
-		return this.fxmlLoader = this.fxmlLoader == null ? new DefaultFxFXMLLoader( this.controllerClass ) : this.fxmlLoader;
+		return this.fxmlLoader = this.fxmlLoader == null ? new DefaultFxFXMLLoader( this.controllerClass,this.stage ) : this.fxmlLoader;
 	}
 	
 
@@ -130,7 +143,10 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
             
             this.scene = new Scene(root);
             this.scene.setFill(Color.TRANSPARENT);
-            this.stage.initStyle(StageStyle.TRANSPARENT);
+            try {
+            	// 多次设置样式会出现问题,这里捕获并忽略
+            	this.stage.initStyle(StageStyle.TRANSPARENT);
+            }catch(IllegalStateException e) {}
            
             this.loadResult.setScene(this.scene);
             this.loadResult.setParent(root);

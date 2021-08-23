@@ -21,8 +21,10 @@ import net.sf.cglib.proxy.MethodProxy;
 @SuppressWarnings("restriction")
 public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Callback<Class<?>, Object>,MethodInterceptor {
 	private FxController fxControllerAnno;
-	public DefaultFxFXMLLoader( Class<?> controllerClass ) {
+	private Stage stage;
+	public DefaultFxFXMLLoader( Class<?> controllerClass,Stage stage ) {
 		this.fxControllerAnno = controllerClass.getAnnotation(FxController.class);
+		this.stage = stage;
 		if( fxControllerAnno == null ) {
 			throw new RuntimeException("Controller类上面必须携带FxController注解");
 		}
@@ -37,10 +39,12 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 			try {
 				Parent parent = DefaultFxFXMLLoader.super.load();
 				Object controller = DefaultFxFXMLLoader.super.getController();
-				Stage stage = new Stage();
+				if( this.stage == null ) {
+					this.stage = new Stage();
+				}
 				loadResult.setParent(parent);
 				loadResult.setController(controller);
-				loadResult.setStage(stage);
+				loadResult.setStage(this.stage);
 				
 			} catch (IOException e) {
 				throw new RuntimeException("加载FXML文件出现异常",e);
@@ -53,10 +57,13 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 					try {
 						Parent parent = DefaultFxFXMLLoader.super.load();
 						Object controller = DefaultFxFXMLLoader.super.getController();
-						Stage stage = new Stage();
+						if( DefaultFxFXMLLoader.this.stage == null ) {
+							DefaultFxFXMLLoader.this.stage = new Stage();
+						}
+						
 						loadResult.setParent(parent);
 						loadResult.setController(controller);
-						loadResult.setStage(stage);
+						loadResult.setStage(DefaultFxFXMLLoader.this.stage);
 					} catch (IOException e) {
 						throw new RuntimeException("加载FXML文件出现异常",e);
 					} finally {
