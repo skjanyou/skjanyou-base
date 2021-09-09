@@ -1,5 +1,7 @@
 package com.skjanyou.db.util;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,5 +17,17 @@ public class DaoUtil {
 			list.add(columnName);
 		}		
 		return list;
+	}
+	
+	public static boolean isConnectionValid( Connection connection, String sql ) {
+		boolean result = true;
+		try {
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.executeQuery();
+		} catch (SQLException e) {
+			result = false;
+		}
+		
+		return result;
 	}
 }

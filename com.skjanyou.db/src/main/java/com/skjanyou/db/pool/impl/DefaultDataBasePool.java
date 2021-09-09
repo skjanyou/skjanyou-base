@@ -1,8 +1,5 @@
 package com.skjanyou.db.pool.impl;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,21 +35,13 @@ public class DefaultDataBasePool implements DatabasePool {
 
 	/** 初始化数据库连接池 */
 	public DatabasePool initDatabasePool() {
-		String url = this.info.getUrl();
-		String user = this.info.getUser();
-		String password = this.info.getPassword();
-
 		int size = this.info.getSize();
-		try {
-			DataSource ds = null;
-			for( int i = 0;i < size;i++ ){
-				Connection connection = DriverManager.getConnection(url, user, password);
-				ds = new DefaultDataSource( connection );
-				pools.addLast(ds);
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		DataSource ds = null;
+		for( int i = 0;i < size;i++ ){
+			ds = new DefaultDataSource( info );
+			pools.addLast(ds);
 		}
+
 		return this;
 	} 
 

@@ -8,7 +8,7 @@ import com.skjanyou.db.pool.impl.DefaultDataBasePool;
 public class DataSourceManager {
 	private DatabasePool pools = null;
 	public ThreadLocal<DataSource> currentDs = new ThreadLocal<>();
-	public DataSourceManager( DatabaseInfo info){ 
+	public DataSourceManager( DatabaseInfo info ){ 
 		pools = new DefaultDataBasePool(info);
 		pools.initDatabasePool();
 	}

@@ -1,17 +1,12 @@
 package com.skjanyou.db.pool.impl;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.skjanyou.db.bean.DatabaseInfo;
 import com.skjanyou.db.pool.DataSource;
 import com.skjanyou.db.pool.DatabasePool;
-import com.skjanyou.db.pool.impl.DefaultDataBasePool;
-import com.skjanyou.db.pool.impl.DefaultDataSource;
 
 public class LazyDatabasePool extends DefaultDataBasePool {
 	// 数据源可创建的最大值
@@ -33,14 +28,7 @@ public class LazyDatabasePool extends DefaultDataBasePool {
 	}
 
 	protected DataSource createDataSource() {
-		Connection connection;
-		try {
-			connection = DriverManager.getConnection(this.info.getUrl(), this.info.getUser(), this.info.getPassword());
-			return new DefaultDataSource(connection);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("数据库连接创建失败",e);
-		}
+		return new DefaultDataSource(this.info);
 	}
 	
 
