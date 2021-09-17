@@ -15,25 +15,5 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>com.skjanyou</groupId>
-			<artifactId>com.skjanyou.plugin</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.skjanyou</groupId>
-			<artifactId>com.skjanyou.util</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>	
-		<dependency>
-			<groupId>com.skjanyou</groupId>
-			<artifactId>com.skjanyou.annotation.api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>			
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>

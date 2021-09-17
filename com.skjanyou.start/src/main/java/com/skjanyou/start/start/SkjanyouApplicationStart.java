@@ -31,6 +31,7 @@ import com.skjanyou.start.provider.ClassLoaderProvider;
 import com.skjanyou.start.provider.ConfigureProvider;
 import com.skjanyou.start.util.InstanceUtil;
 import com.skjanyou.start.util.JarUtil;
+import com.skjanyou.start.util.PrintTable;
 import com.skjanyou.start.util.ServiceLoaderUtil;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.StreamUtil;
@@ -130,6 +131,27 @@ public abstract class SkjanyouApplicationStart {
 		start.pluginProcess.findPlugin(manager, classLoader, start.pluginScanPath);
 		// 7.初始化Plugin,并打印信息
 		start.pluginProcess.initPlugin(manager, classLoader);		
+		
+		List<List<String>> resultList = new ArrayList<>();
+		List<String> header = new ArrayList<>();
+		header.add("插件名");header.add("插件键值");header.add("插件默认值");header.add("插件当前值");
+		resultList.add(header);
+		
+		List<String> body = new ArrayList<>();
+		header.add("插件名");header.add("插件键值");header.add("插件默认值");header.add("插件当前值");
+		resultList.add(body);
+		
+		List<String> body2 = new ArrayList<>();
+		header.add("插件名");header.add("插件键值");header.add("插件默认值");header.add("插件当前值");
+		resultList.add(body2);
+		
+		List<String> body3 = new ArrayList<>();
+		header.add("插件名");header.add("插件键值");header.add("插件默认值");header.add("插件当前值");
+		resultList.add(body3);
+		
+		
+		new PrintTable(resultList,200,200).printTable();
+		
 	}
 	
 	protected void start(){

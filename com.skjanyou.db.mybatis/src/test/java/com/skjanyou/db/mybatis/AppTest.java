@@ -1,26 +1,21 @@
 package com.skjanyou.db.mybatis;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import com.skjanyou.db.mybatis.bean.User;
 import com.skjanyou.db.mybatis.core.SqlSession;
 import com.skjanyou.db.mybatis.test.MybatisTest;
-import com.skjanyou.db.plugin.DBPlugin;
-import com.skjanyou.db.util.DataSourceManager;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
-/**
- * Unit test for simple App.
- */
 public class AppTest extends MybatisTest {
 
-    public static Test suite(){
-        return new TestSuite( AppTest.class );
-    }
     
     // 查询用户信息
+	@Test
     public void testSelectUser(){
     	String sql = "select * from user where user_id = #user_id# and user_name = #user_name# and user_pass = #user_pass#";
     	User userBean = new User();

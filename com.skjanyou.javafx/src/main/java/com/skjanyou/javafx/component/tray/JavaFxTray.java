@@ -10,8 +10,10 @@ import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.inter.FxControllerFactory;
@@ -100,7 +102,10 @@ public class JavaFxTray {
 				@Override
 				public void handle(javafx.scene.input.MouseEvent event) {
 					PlatformImpl.startup( () -> {
-						result.getStage().hide();
+						// 这里有问题,导致面板没有关闭
+						if( result.getScene() == null ) {
+							result.getStage().hide();
+						}
 					});
 					if( trayMenuItem.getActionListener() != null ) { 
 						trayMenuItem.getActionListener().handler( JavaFxTray.this );
@@ -218,7 +223,10 @@ public class JavaFxTray {
 	}
 	
 	public void hide() {
-		SystemTray.getSystemTray().remove(ti);
+		// 这里涉及到线程占用问题,必须使用Swing的UI线程才可以进行移除操作
+		SwingUtilities.invokeLater(()->{
+			SystemTray.getSystemTray().remove(ti);
+		});
 	}
 	
 }

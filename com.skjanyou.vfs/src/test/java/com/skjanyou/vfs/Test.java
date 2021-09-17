@@ -1,9 +1,8 @@
 package com.skjanyou.vfs;
 
-import junit.framework.TestCase;
 
 
-public class Test extends TestCase {
+public class Test {
 
 	public void testJarFileSystem(){
 

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.skjanyou</groupId>
 	<artifactId>com.skjanyou.base</artifactId>
@@ -29,11 +31,11 @@
 		<module>com.skjanyou.desktop.swt</module>
 		<module>com.skjanyou.desktop.jxbrowser</module>
 		<module>com.skjanyou.db.mybatis.pagehelper</module>
-    	<module>com.skjanyou.batch</module> 
-    	<module>com.skjanyou.javafx</module>
+		<module>com.skjanyou.batch</module>
+		<module>com.skjanyou.javafx</module>
 		<module>skjanyou-maven-plugin</module>
-    <module>com.skjanyou.log.log4j</module>
-  </modules>
+		<module>com.skjanyou.log.log4j</module>
+	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,6 +46,7 @@
 		<log4j.version>2.7</log4j.version>
 		<sqlite-jdbc.version>3.23.1</sqlite-jdbc.version>
 		<fastjson.version>2.8.7</fastjson.version>
+		<junit.version>5.6.0</junit.version>
 	</properties>
 
 	<dependencyManagement>
@@ -138,13 +141,6 @@
 				<version>1.7R4</version>
 			</dependency>
 
-			<!-- 测试jar -->
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>3.8.1</version>
-				<scope>test</scope>
-			</dependency>
 
 			<!-- httpclient -->
 			<dependency>
@@ -244,7 +240,25 @@
 				<artifactId>jface</artifactId>
 				<version>3.3.0-I20070606-0010</version>
 			</dependency>
-
+			<!-- Junit -->
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-launcher</artifactId>
+				<scope>test</scope>
+				<version>1.6.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<scope>test</scope>
+				<version>${junit.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.vintage</groupId>
+				<artifactId>junit-vintage-engine</artifactId>
+				<scope>test</scope>
+				<version>${junit.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

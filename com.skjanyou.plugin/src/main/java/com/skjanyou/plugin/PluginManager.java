@@ -65,11 +65,16 @@ public class PluginManager {
 	
 	/** 调用插件注销方法 **/
 	public static void shutdownAllPlugins(){
+		Plugin plugin = null;
 		for (PluginSupport support : pluginSupportList) {
 			try {
+				plugin = pluginMapping.get(support);
+				System.out.println("开始关闭" + plugin.getDisplayName());
 				support.shutdown();
+				System.out.println(plugin.getDisplayName() + "关闭成功");
 			} catch (Exception e) {
-				
+				System.out.println(plugin.getDisplayName() + "关闭失败");
+				e.printStackTrace();
 			}
 		}
 	}
