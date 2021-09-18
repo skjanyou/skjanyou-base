@@ -210,7 +210,6 @@ public abstract class SkjanyouApplicationStart {
 	}
 	
 	protected void onExit(){
-		System.exit(1);
 	}
 	
 	/** 搜索jar文件 **/

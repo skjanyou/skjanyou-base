@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.server.api.bean.ServerConfig;
+import com.skjanyou.util.CommUtil;
 
 /**
  * 分发线程
@@ -58,7 +59,9 @@ public class DispatchThread extends Thread implements Runnable {
 				// java socket中,调用accept会使用SoTimeout的数值作为超时时间,超过这个时间还没有链接进来的话
 				// 就会抛出SocketTimeoutException异常,所以这里不用管这个异常,开始下一次循环即可
 			} catch (IOException e) {
-				logger.error(e);
+				if( this.isRunning ) {
+					logger.error(e);
+				}
 			}
 		}
 	}
@@ -67,5 +70,8 @@ public class DispatchThread extends Thread implements Runnable {
 	}
 	public void setRunning(boolean isRunning) {
 		this.isRunning = isRunning;
+		if( !this.isRunning ) {
+			CommUtil.close(this.serverSocket);
+		}
 	}
 }

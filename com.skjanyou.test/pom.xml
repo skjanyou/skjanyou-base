@@ -47,7 +47,6 @@
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.start</artifactId>
 			<version>${project.parent.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.skjanyou</groupId>

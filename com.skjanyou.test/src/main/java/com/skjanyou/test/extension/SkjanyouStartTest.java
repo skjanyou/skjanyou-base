@@ -8,13 +8,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import com.skjanyou.start.anno.Configure;
+import com.skjanyou.start.config.impl.PropertiesConfig;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@ExtendWith(SpringExtension.class)
+@ExtendWith(SkjanyouTestExtension.class)
+@Configure(name = "Default 配置",scanPath = "com.skjanyou.dbsync",configManagerFactory = PropertiesConfig.class)
 public @interface SkjanyouStartTest {
-
+	String[] property() default { "skjanyou.configfile=classpath:Junit5.properties" };
+	String[] args() default { "start" };
 }

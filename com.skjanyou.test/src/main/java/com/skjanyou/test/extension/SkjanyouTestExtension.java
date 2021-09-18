@@ -7,13 +7,19 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
-public class SkjanyouTestExtension implements BeforeAllCallback, AfterAllCallback, TestInstancePostProcessor,BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback,ParameterResolver{
+import com.skjanyou.start.start.SkjanyouApplicationStart;
 
+
+public class SkjanyouTestExtension implements BeforeAllCallback, AfterAllCallback, TestInstancePostProcessor,BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback,ParameterResolver{
+	private static final Namespace NAMESPACE = Namespace.create(SkjanyouTestExtension.class);
+	
 	@Override
 	public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
 		System.out.println("supportsParameter");
@@ -60,6 +66,26 @@ public class SkjanyouTestExtension implements BeforeAllCallback, AfterAllCallbac
 	@Override
 	public void beforeAll(ExtensionContext context) throws Exception {
 		System.out.println("beforeAll");
+		// 拿到了Test类
+		Class<?> testClass = context.getRequiredTestClass();
+		Store store = context.getRoot().getStore(NAMESPACE);
+		SkjanyouStartTest sst = testClass.getAnnotation(SkjanyouStartTest.class);
+		if( sst == null ) {
+			throw new IllegalArgumentException(String.format("类%s缺少注解@SkjanyouStartTest", testClass.getName()));
+		}
+		String[] propertys = sst.property();
+		for (String property : propertys) {
+			String[] arr = property.split("=");
+			if( arr.length < 2 ) {
+				throw new IllegalArgumentException(String.format("环境变量[%s]格式错误,应为[key=value]格式", property));
+			}
+			System.setProperty(arr[0], arr[1]);
+		}
+		String[] argus = sst.args();
+		if( argus.length == 0 ) {
+			argus = new String[] {"start"};
+		}
+		SkjanyouApplicationStart.start(SkjanyouStartTest.class, argus);
 	}
 
 }
