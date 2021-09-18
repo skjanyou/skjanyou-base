@@ -47,40 +47,16 @@ public class PluginManager {
 		pluginMapping.put(support, plugin);
 	}
 	
-	/** 加载所有的插件 **/
-	public static void loadAllPlugins(){
-		for (PluginSupport support : pluginSupportList) {
-			try {
-				support.startup();
-			} catch (Exception e) {
-				e.printStackTrace();
-				Plugin plugin = pluginMapping.get(support);
-				// 失败终止
-				if(plugin.getFailOnInitError()) {
-					throw new RuntimeException(String.format("插件[%s]启动失败,原因:[%s]", plugin.getDisplayName(),e.getMessage()));
-				}
-			}
-		}
-	}
-	
-	/** 调用插件注销方法 **/
-	public static void shutdownAllPlugins(){
-		Plugin plugin = null;
-		for (PluginSupport support : pluginSupportList) {
-			try {
-				plugin = pluginMapping.get(support);
-				System.out.println("开始关闭" + plugin.getDisplayName());
-				support.shutdown();
-				System.out.println(plugin.getDisplayName() + "关闭成功");
-			} catch (Exception e) {
-				System.out.println(plugin.getDisplayName() + "关闭失败");
-				e.printStackTrace();
-			}
-		}
+	public static Plugin getPluginByMapping( PluginSupport ps ) {
+		return pluginMapping.get(ps);
 	}
 
 	public static List<Plugin> getPluginList() {
 		return pluginList;
 	}
 	
+	
+	public static List<PluginSupport> getAllLoadPlugin(){
+		return pluginSupportList;
+	}
 }	

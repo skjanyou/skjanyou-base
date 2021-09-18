@@ -145,14 +145,42 @@ public class DefaultPluginProcess implements PluginProcess {
 	@Override
 	public void startPlugin() {
 		logger.info("----------------开始启动插件----------------");
-		PluginManager.loadAllPlugins();
+		List<PluginSupport> loadPluginList =  PluginManager.getAllLoadPlugin();
+		for (PluginSupport support : loadPluginList) {
+			Plugin plugin = PluginManager.getPluginByMapping(support);
+			try {
+				logger.info("开始启动插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}");
+				support.startup();
+				logger.info("启动插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}完成");
+			} catch (Exception e) {
+				logger.error(e);
+				logger.info("启动插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}出现异常",e);
+				// 失败终止
+				if(plugin.getFailOnInitError()) {
+					throw new RuntimeException(String.format("插件[%s]启动失败,原因:[%s]", plugin.getDisplayName(),e.getMessage()));
+				}
+			}
+		}		
 		logger.info("----------------启动插件完成----------------");
 	}
 
 	@Override
 	public void shutdownPlugin() {
 		logger.info("----------------开始关闭插件----------------");
-		PluginManager.shutdownAllPlugins();
+		List<PluginSupport> loadPluginList =  PluginManager.getAllLoadPlugin();		
+		for (PluginSupport support : loadPluginList) {
+			Plugin plugin = PluginManager.getPluginByMapping(support);
+			try {
+				logger.info("开始关闭插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}");
+				support.shutdown();
+				logger.info("关闭插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}完成");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error(e);
+				logger.info("关闭插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}出现异常",e);
+			}
+		}		
 		logger.info("----------------关闭插件完成----------------");
 	}
 	/** 从列表中获取满足扫描规则的类  **/
