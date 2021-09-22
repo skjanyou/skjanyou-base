@@ -9,6 +9,7 @@ import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.anno.FxAnnotation.FxDecorator;
 import com.skjanyou.javafx.anno.FxAnnotation.ResponsiveBean;
 import com.skjanyou.javafx.bean.LoadResult;
+import com.skjanyou.javafx.constant.ControllerType;
 import com.skjanyou.javafx.core.BeanProperty;
 import com.skjanyou.javafx.core.BeanPropertyHelper;
 import com.skjanyou.javafx.inter.BeanPropertyBuilder;
@@ -31,6 +32,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -52,32 +54,31 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	private Parent parent;
 	/** 加载的结果,包括Root对象和Controller类 **/
 	private LoadResult loadResult;
+	/** 父Stage **/
+	private Stage fatherStage;
 	/** 用于展示用的Stage **/
 	private Stage stage;
 	/** Scene **/
 	private Scene scene;
 	
 	public DefaultFxControllerFactory( Class<?> controllerClass ) {
+		this(controllerClass,null,null);
+	}
+	
+	public DefaultFxControllerFactory( Class<?> controllerClass,Stage stage ) {
+		this(controllerClass,stage,null);
+	}	
+	
+	public DefaultFxControllerFactory( Class<?> controllerClass,Stage stage ,Stage fatherStage  ) {
 		this.controllerClass = controllerClass;
+		this.stage = stage;
+		this.fatherStage = fatherStage;
 		this.fxControllerAnno = controllerClass.getAnnotation(FxController.class);
 		if( fxControllerAnno == null ) {
 			throw new RuntimeException("Controller类上面必须携带FxController注解");
 		}
 		this.fxDecorator = controllerClass.getAnnotation(FxDecorator.class);
 	}
-	
-	public DefaultFxControllerFactory( Class<?> controllerClass,Stage stage ) {
-		this.controllerClass = controllerClass;
-		if( stage == null ) {
-			throw new IllegalArgumentException("Stage不能为空");
-		}
-		this.stage = stage;
-		this.fxControllerAnno = controllerClass.getAnnotation(FxController.class);
-		if( fxControllerAnno == null ) {
-			throw new RuntimeException("Controller类上面必须携带FxController注解");
-		}
-		this.fxDecorator = controllerClass.getAnnotation(FxDecorator.class);
-	}	
 	
 	@Override
 	public FxEventDispatcher getFxEventDispatcher() {
@@ -103,6 +104,10 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 				this.stage.setTitle(this.fxControllerAnno.title());
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+			}
+			if( this.fxControllerAnno.type() == ControllerType.DIALOG && this.fatherStage != null ) {
+				this.stage.initModality(Modality.APPLICATION_MODAL);
+				this.stage.initOwner(this.fatherStage);
 			}
 			EventHandler<Event> handler = getFxEventDispatcher().getEventHandler();
 			this.parent.addEventFilter(Event.ANY, handler);
