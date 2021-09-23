@@ -130,5 +130,14 @@ public class BeanUtil {
 		return result;
 	}
 	
+	public static<T> T newInstanceIgnoreException( Class<T> clazz ) {
+		T result = null;
+		try {
+			result = clazz.newInstance();
+		} catch (Exception e) {
+			
+		}
+		return result;
+	}
 }
 

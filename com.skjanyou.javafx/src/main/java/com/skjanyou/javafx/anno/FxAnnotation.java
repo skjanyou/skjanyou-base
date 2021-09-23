@@ -106,6 +106,20 @@ public final class FxAnnotation {
 	/**
 	 * 
 	 * 	@author skjanyou
+	 * 	时间 : 2021-9-23
+	 * 	作用 : 该注解用于给Controller中的公共组件赋值,例如当前页面的Stage、Scene
+	 */
+	@Documented
+	@Inherited
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface FxContext {
+		
+	}	
+	
+	/**
+	 * 
+	 * 	@author skjanyou
 	 * 	时间 : 2020-10-7
 	 * 	<pre>
 	 * 	作用 : 响应式bean,用于与页面进行双向绑定　</br>

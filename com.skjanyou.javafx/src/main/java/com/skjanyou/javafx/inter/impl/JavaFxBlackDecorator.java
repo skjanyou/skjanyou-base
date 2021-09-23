@@ -32,35 +32,35 @@ import javafx.stage.Stage;
  * 	作用 :
  */
 public class JavaFxBlackDecorator implements JavaFxDecorator {
-	private Stage stage;
-	private Point point = new Point();
-	private FxDecorator fxDecorator;
+	protected Stage stage;
+	protected Point point = new Point();
+	protected FxDecorator fxDecorator;
 	@FXML
-	private ColorPicker colorPicker;
+	protected ColorPicker colorPicker;
 	@FXML
-	private HBox banner;
+	protected HBox banner;
 	@FXML
-	private VBox stageRoot;
+	protected VBox stageRoot;
 	@FXML
-	private Label title;
+	protected Label title;
 	@FXML
-	private ImageView iconImage;
+	protected ImageView iconImage;
 	@FXML
-	private ImageView maximize;
+	protected ImageView maximize;
 	@FXML
-	private ImageView restore;
+	protected ImageView restore;
 	
 	@FXML
-	private ImageView color_image;
+	protected ImageView color_image;
 	@FXML
-	private VBox min_box;
+	protected VBox min_box;
 	@FXML
-	private VBox resize_box;
+	protected VBox resize_box;
 	@FXML
-	private VBox close_box;
+	protected VBox close_box;
 	
 	
-	private DragUtil dragUtil = new DragUtil();
+	protected DragUtil dragUtil = new DragUtil();
     double appMinWidth = 0;
     double appMinHeight = 0;
 	@Override
@@ -139,7 +139,7 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 		});
 	}
 
-	private void setIconImage () {
+	protected void setIconImage () {
 		ObservableList<Image> list = stage.getIcons();
 		Image image = null;
 		if( list.size() > 0 ) {

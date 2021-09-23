@@ -3,8 +3,11 @@ package com.skjanyou.javafx.inter.impl;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.LinkedList;
 import java.util.Set;
 
+import com.skjanyou.javafx.anno.FxAnnotation.FxContext;
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.anno.FxAnnotation.FxDecorator;
 import com.skjanyou.javafx.anno.FxAnnotation.ResponsiveBean;
@@ -18,6 +21,7 @@ import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
+import com.skjanyou.util.BeanUtil;
 import com.skjanyou.util.StreamUtil;
 import com.sun.javafx.fxml.BeanAdapter;
 
@@ -35,6 +39,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 
 @SuppressWarnings("restriction")
 public class DefaultFxControllerFactory implements FxControllerFactory,FxControllerFactoryProperty {
@@ -54,6 +59,10 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	private Parent parent;
 	/** 加载的结果,包括Root对象和Controller类 **/
 	private LoadResult loadResult;
+	/** 历史Stage **/
+	private LinkedList<Stage> stageList;
+	/** 历史Scene **/
+	private LinkedList<Scene> sceneList;
 	/** 父Stage **/
 	private Stage fatherStage;
 	/** 用于展示用的Stage **/
@@ -78,6 +87,8 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			throw new RuntimeException("Controller类上面必须携带FxController注解");
 		}
 		this.fxDecorator = controllerClass.getAnnotation(FxDecorator.class);
+		this.stageList = new LinkedList<>();
+		this.sceneList = new LinkedList<>();
 	}
 	
 	@Override
@@ -117,6 +128,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			initDecorator( this.proxyController,this.parent,this.stage );
 			initEventHandler( this.proxyController,this.parent );
 			initResponsiveBean( this.proxyController,this.parent );
+			initContext(this.proxyController,this.parent);
 		} 
 		return this.loadResult;
 	}
@@ -137,9 +149,15 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
             Class<?> configClass = this.fxDecorator.config();
         	FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(Thread.currentThread().getContextClassLoader().getResource(fxml));
+            fxmlLoader.setControllerFactory(new Callback<Class<?>, Object>() {
+				@Override
+				public Object call(Class<?> param) {
+					return BeanUtil.newInstanceIgnoreException(configClass);
+				}
+			});
             Pane root = fxmlLoader.load();
             Object controller = fxmlLoader.getController();
-            if( controller.getClass() != configClass ) {
+            if( !controller.getClass().isAssignableFrom(configClass) ) {
             	throw new IllegalArgumentException(String.format("FXML文件{%s}配置的controller必须为{%s}", fxml,configClass.toString()));
             }
             
@@ -215,6 +233,32 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
 				}
+			}
+		}
+	}
+	
+	
+	protected void initContext(Object controller,Parent parent) {
+		Field[] fields = this.controllerClass.getDeclaredFields();
+		for (Field field : fields) {
+			FxContext fxContext = field.getAnnotation(FxContext.class);
+			if( fxContext != null ) {
+				// 
+				Type type = field.getGenericType();
+				if( type instanceof Class<?>) {
+					Class<?> clazz = (Class<?>) type;
+					field.setAccessible(true);
+					try {
+						if( clazz == Stage.class) {
+							field.set(controller, this.stage);
+						}else if( clazz == Scene.class) {
+							field.set(controller, this.scene);
+						}
+					} catch( Exception e ) {
+						throw new RuntimeException(e);
+					}
+				}
+				
 			}
 		}
 	}
