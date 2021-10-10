@@ -190,7 +190,10 @@ public class NioShortServerHandler extends ChannelInboundHandlerAdapter {
 			e.printStackTrace();
 			if( os != null ) {
 				try {
-					os.write(e.getMessage().getBytes());
+					String errMsg = e.getMessage();
+					if( !StringUtil.isBlank(errMsg) ) {
+						os.write(errMsg.getBytes());
+					}
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
