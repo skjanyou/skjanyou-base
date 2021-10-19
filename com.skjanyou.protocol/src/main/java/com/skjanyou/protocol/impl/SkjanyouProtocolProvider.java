@@ -3,13 +3,18 @@ package com.skjanyou.protocol.impl;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLStreamHandler;
 
-public class SkjanyouProtocolProvider extends URLStreamHandler {
+import com.skjanyou.protocol.core.ProtocolHandlerAndProvider;
+
+public class SkjanyouProtocolProvider extends ProtocolHandlerAndProvider {
+	@Override
+	public URLConnection openConnection(URL url) throws IOException {
+		return null;
+	}
 
 	@Override
-	protected URLConnection openConnection(URL url) throws IOException {
-		return null;
+	public String protocol() {
+		return "skjanyou";
 	}
 
 }

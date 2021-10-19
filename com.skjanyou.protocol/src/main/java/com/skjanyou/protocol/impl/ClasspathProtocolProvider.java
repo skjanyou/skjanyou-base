@@ -4,15 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLStreamHandler;
 
-import com.skjanyou.protocol.core.ProtocolProvider;
+import com.skjanyou.protocol.core.ProtocolHandlerAndProvider;
 
 
-public class ClasspathProtocolProvider extends URLStreamHandler implements ProtocolProvider {
+public class ClasspathProtocolProvider extends ProtocolHandlerAndProvider {
 
 	@Override
-	protected URLConnection openConnection(URL u) throws IOException {
+	public URLConnection openConnection(URL u) throws IOException {
         String path = u.getHost() + u.getPath();
 
         // Thread context class loader first
@@ -32,11 +31,6 @@ public class ClasspathProtocolProvider extends URLStreamHandler implements Proto
 	@Override
 	public String protocol() {
 		return "classpath";
-	}
-
-	@Override
-	public URLStreamHandler getHandler() {
-		return this;
 	}
 
 }
