@@ -18,7 +18,6 @@
 		<module>com.skjanyou.plugin</module>
 		<module>com.skjanyou.aop</module>
 		<module>com.skjanyou.protocol</module>
-		<module>com.skjanyou.micro</module>
 		<module>com.skjanyou.start</module>
 		<module>com.skjanyou.util</module>
 		<module>com.skjanyou.log</module>
@@ -33,8 +32,9 @@
 		<module>com.skjanyou.db.mybatis.pagehelper</module>
 		<module>com.skjanyou.batch</module>
 		<module>com.skjanyou.javafx</module>
-		<module>skjanyou-maven-plugin</module>
 		<module>com.skjanyou.log.log4j</module>
+		<module>com.skjanyou.practise</module>
+		<module>skjanyou-maven-plugin</module>
 	</modules>
 
 	<properties>

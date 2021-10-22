@@ -18,20 +18,19 @@ import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
+import com.skjanyou.vfs.AbstractFileObject;
 import com.skjanyou.vfs.FileObject;
 import com.skjanyou.vfs.util.StreamUtil;
 
-public class JarFileObject implements FileObject {
-	private static final long serialVersionUID = "JarFileObject".hashCode();
-
-
-    private List<FileObject> children;
+public class JarFileObject extends AbstractFileObject {
+	private static final long serialVersionUID = 2108940865259516034L;
+	private List<FileObject> children;
     private JarFile jarFile = null;
     private File file = null;
     private JarEntry jarEntry = null;
     private File cacheFile = null;
 
-    public JarFileObject( String resource) {
+    public JarFileObject( String resource ) {
         try {
             this.file = new File(resource);
             if (file.exists()) {
@@ -216,7 +215,8 @@ public class JarFileObject implements FileObject {
         return null;
     }
 
-    public URL getURL() {
+    @SuppressWarnings("deprecation")
+	public URL getURL() {
     	URL url = null;
         try {
         	url = file.toURL();
@@ -276,8 +276,4 @@ public class JarFileObject implements FileObject {
 		
 	}
 
-	@Override
-	public FileObject getFileObject(String path) {
-		return null;
-	}
 }

@@ -15,9 +15,6 @@ public final class VFS {
 	}
 	
 	public static VFS addFileSystemProvider(FileSystemProvider fsp){
-		System.out.println(fsp);
-		System.out.println(providers);
-		System.out.println(fsp.getSchema());
 		providers.put(fsp.getSchema(), fsp);
 		return vfs;
 	}

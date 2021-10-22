@@ -8,6 +8,7 @@ import java.net.URLStreamHandlerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.skjanyou.protocol.entity.Resources;
 import com.skjanyou.protocol.impl.ClasspathProtocolProvider;
 
 public class Protocol {
@@ -50,5 +51,9 @@ public class Protocol {
 			}
 			providerList.remove(protocolProvider.protocol());
 		}
+	}
+	
+	public static Resources get( String link ) {
+		return new Resources();
 	}
 }
