@@ -1,8 +1,13 @@
 package com.skjanyou.start.process.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +33,7 @@ import com.skjanyou.start.config.ConfigManager;
 import com.skjanyou.start.exception.StartFailException;
 import com.skjanyou.start.process.PluginProcess;
 import com.skjanyou.start.util.InstanceUtil;
+import com.skjanyou.start.util.PropertiesUtil;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.ResourcesUtil;
@@ -289,11 +295,64 @@ public class DefaultPluginProcess implements PluginProcess {
 			// 当前配置
 			ComplexPluginConfig currentProperties = new ComplexPluginConfig(manager, defaultProperties);
 			
-			
 		}
 		
-		
-		
+	}
+	
+	/** 默认配置文件 **/
+	public void generateDefaultConfigList( File file ){
+		if( !file.exists() ) {
+			try {
+				File parentFile = file.getParentFile();
+				if( parentFile != null) {
+					parentFile.mkdirs();
+				}
+				if( !file.createNewFile() ) {
+					throw new StartFailException("创建文件失败:" + file.getAbsolutePath());
+				}
+			} catch (IOException e) {
+				logger.error(e);
+				throw new StartFailException("创建文件失败:" + file.getAbsolutePath());
+			}
+		}
+		Properties resultProperties = new Properties();
+		OutputStream os = null;
+		try {
+			os = new FileOutputStream(file);
+		} catch (FileNotFoundException e) {
+			logger.error(e);
+			throw new StartFailException("创建文件失败:" + file.getAbsolutePath());
+		}
+		List<Plugin> pluginList = PluginManager.getPluginList();
+		pluginList.forEach(plugin->{
+			String defaultConfig = plugin.getDefaultConfig();
+			if( !StringUtil.isBlank(defaultConfig) ) {
+				try {
+					URL url = new URL("classpath://" +  defaultConfig);
+					if( url != null ) {
+						try {
+							Properties pluginProperties = PropertiesUtil.read(url);
+							pluginProperties.keySet().forEach(key->{
+								Object value = pluginProperties.get(key);
+								resultProperties.put(key, value);
+							});
+							
+						} catch (IOException e) {
+							logger.error(e);
+						}
+						
+					}
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		try {
+			resultProperties.store(os, "skjanyou读取的插件默认配置");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
+	
 }

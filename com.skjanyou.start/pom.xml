@@ -39,7 +39,12 @@
 			<groupId>com.skjanyou</groupId>
 			<artifactId>com.skjanyou.beancontainer</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>			
+		</dependency>
+		<dependency>
+			<groupId>com.skjanyou</groupId>
+			<artifactId>com.skjanyou.protocol</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>						
 	</dependencies>
 	<build>
 		<plugins>

@@ -1,5 +1,6 @@
 package com.skjanyou.start.start;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -55,7 +56,7 @@ public abstract class SkjanyouApplicationStart {
 		this.configureProvider = ServiceLoaderUtil.load(ConfigureProvider.class);
 		this.beandefinition = ServiceLoaderUtil.load(BeandefinitionFactory.class).create();
 		this.pluginProcess = ServiceLoaderUtil.load(PluginProcess.class);
-		// 注册命令
+		// 注册命令,应用启动
 		CommandManager.regist(new Cmd("start", new CommandProcess() {
 			@Override
 			public void process() {
@@ -63,17 +64,27 @@ public abstract class SkjanyouApplicationStart {
 				start();
 			}
 		}));
+		// 注册命令,应用停止
 		CommandManager.regist(new Cmd("stop", new CommandProcess() {
 			@Override
 			public void process() {
 				versionInfo();
 			}
 		}));		
+		// 注册命令,帮助
 		CommandManager.regist(new Cmd("help", new CommandProcess() {
 			@Override
 			public void process() {
 				versionInfo();
 				help();
+			}
+		}));	
+		// 注册命令,应用默认配置文件生成
+		CommandManager.regist(new Cmd("default-config", new CommandProcess() {
+			@Override
+			public void process() {
+				versionInfo();
+				defaultConfig();
 			}
 		}));			
 	}
@@ -104,6 +115,34 @@ public abstract class SkjanyouApplicationStart {
 		start.configClass = configClass;
 		start.progressLoader = progressLoader;
 		CommandManager.processCommand(args[0]);
+	}
+	
+	protected void defaultConfig() {
+		// 1.检查注解
+		Configure configure = configClass.getAnnotation(Configure.class);
+		if( configure == null ){
+			logger.error("启动类",configClass.getName(),"没有配置@Configure注解,应用程序无法启动!");
+			return;
+		}
+		start.pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
+		// 2.配置参数,扫描路径,配置类等
+		ConfigManager manager = start.configureProvider.getConfigure(start.configClass);
+		// 3.创建ClassLoader
+		ClassLoader srcClassLoader = Thread.currentThread().getContextClassLoader();
+		SkjanyouClassLoader classLoader = start.classLoaderProvider.getClassLoader();
+		classLoader.addClassLoader(srcClassLoader);
+		Thread.currentThread().setContextClassLoader(classLoader);
+		// 4.将前面步骤创建对象放置到Bean容器
+		start.beandefinition.setBean(Beandefinition.class.getName(), start.beandefinition);
+		start.beandefinition.setBean(ConfigManager.class.getName(), manager);
+		start.beandefinition.setBean(SkjanyouClassLoader.class.getName(), classLoader);
+		// 5.扫描Jar包
+		start.findJarFile(manager, classLoader);
+		// 6.初始化Plugin
+		start.pluginProcess.findPlugin(manager, classLoader, start.pluginScanPath);
+		// 7.生成配置文件
+		start.pluginProcess.generateDefaultConfigList(new File("skjanyou.default.properties"));
+		
 	}
 	
 	protected void help(){
