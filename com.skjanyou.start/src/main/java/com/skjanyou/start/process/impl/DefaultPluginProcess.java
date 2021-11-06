@@ -43,6 +43,7 @@ import com.skjanyou.util.convert.ConvertUtil;
 
 public class DefaultPluginProcess implements PluginProcess {
 	private Logger logger = LogUtil.getLogger(DefaultPluginProcess.class);
+	private ComplexPluginConfig systemAllPluginConfig;
 	
 	@Override
 	public void findPlugin(ConfigManager manager, ClassLoader classLoader,List<String> pluginScanPath) {
@@ -112,6 +113,7 @@ public class DefaultPluginProcess implements PluginProcess {
 	@Override
 	public void initPlugin(ConfigManager manager, ClassLoader classLoader) {
 		logger.info("----------------开始加载插件----------------");
+		this.systemAllPluginConfig = new ComplexPluginConfig(manager, new Properties());
 		List<Plugin> pluginList = PluginManager.getPluginList();
 		PluginSupport pluginSupport = null;
 		List<Class<?>> classList = null;
@@ -122,6 +124,7 @@ public class DefaultPluginProcess implements PluginProcess {
 			if( plugin.getEnable() ){
 				logger.info("开始加载插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}");
 				Properties defaultProps = CommUtil.isNullOrEmpty(plugin.getDefaultConfig()) ? new Properties() : ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader);
+				this.systemAllPluginConfig.addProperties(defaultProps);
 				properties = new ComplexPluginConfig( manager, defaultProps );
 				classList = CommUtil.isNullOrEmpty(plugin.getClassScanPath()) ? Collections.emptyList() : scanPluginClassList(plugin.getClassScanPath(),classLoader);
 				activatorClass = plugin.getActivator();
@@ -148,6 +151,11 @@ public class DefaultPluginProcess implements PluginProcess {
 		logger.info("----------------加载插件完成----------------");
 	}
 
+	@Override
+	public PluginConfig getSystemAllPluginConfig() {
+		return this.systemAllPluginConfig;
+	}
+	
 	@Override
 	public void startPlugin() {
 		logger.info("----------------开始启动插件----------------");

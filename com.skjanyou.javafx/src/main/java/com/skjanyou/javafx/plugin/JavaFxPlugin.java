@@ -1,23 +1,17 @@
 package com.skjanyou.javafx.plugin;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import com.skjanyou.annotation.api.Util.Property;
-import com.skjanyou.beancontainer.factory.Beandefinition;
-import com.skjanyou.javafx.anno.FxAnnotation.MainFxController;
 import com.skjanyou.javafx.bean.LoadResult;
-import com.skjanyou.javafx.core.ApplicationContext;
+import com.skjanyou.javafx.core.FxPluginDefineAnnotationClassAdapter;
 import com.skjanyou.javafx.inter.ControllerLifeCycle;
-import com.skjanyou.javafx.inter.FxControllerFactory;
-import com.skjanyou.javafx.inter.impl.DefaultFxControllerFactory;
 import com.skjanyou.javafx.inter.impl.NoneControllerLifeCycle;
 import com.skjanyou.plugin.PluginDefineAnnotationClassManager;
 import com.skjanyou.plugin.PluginSupport;
-import com.skjanyou.plugin.adapter.PluginDefineAnnotationClassAdapter;
 import com.skjanyou.plugin.bean.PluginConfig;
-import com.skjanyou.plugin.constant.DefineAnnotationClassPosition;
 import com.skjanyou.util.CommUtil;
 import com.skjanyou.util.StreamUtil;
 import com.sun.javafx.application.PlatformImpl;
@@ -34,29 +28,12 @@ public class JavaFxPlugin implements PluginSupport{
 	private String title;
 	@Property("fx.icon")
 	private String icon;
+	private FxPluginDefineAnnotationClassAdapter fxPluginDefineAnno;
 
 	@Override
 	public void init(List<Class<?>> plugnInnerClass, PluginConfig properties) throws Exception  {
-		PluginDefineAnnotationClassManager.regist(new PluginDefineAnnotationClassAdapter() {
-
-			@Override
-			public Class<? extends Annotation> defineClass() {
-				return MainFxController.class;
-			}
-
-			@Override
-			public DefineAnnotationClassPosition defineAnnotationClassPosition() {
-				return DefineAnnotationClassPosition.CLASS;
-			}
-
-			@Override
-			public void classProcess(Class<?> targetClass, Beandefinition beandefinition) {
-				FxControllerFactory controllerFactory = new DefaultFxControllerFactory(targetClass);
-				LoadResult bean = controllerFactory.createController();
-				beandefinition.setBean(targetClass.getName(), bean);
-			}
-		});
-
+		fxPluginDefineAnno = new FxPluginDefineAnnotationClassAdapter();
+		PluginDefineAnnotationClassManager.regist(fxPluginDefineAnno);
 	}
 
 	@Override
@@ -64,8 +41,11 @@ public class JavaFxPlugin implements PluginSupport{
 		if( CommUtil.isNullOrEmpty(mainViewClass) ) {
 			return ;
 		}
+		// 获取注解遍历器创建的LoadResult
+		Map<String,LoadResult> loadResultMap = fxPluginDefineAnno.getLoadResultList();
+		
 		CountDownLatch latch = new CountDownLatch(1);
-		JavaFxPluginRunnable jfpr = new JavaFxPluginRunnable(latch);
+		JavaFxPluginRunnable jfpr = new JavaFxPluginRunnable(latch,loadResultMap);
 		PlatformImpl.startup(jfpr);
 		latch.await();
 		if( jfpr.catchException != null ) {
@@ -76,13 +56,15 @@ public class JavaFxPlugin implements PluginSupport{
 	class JavaFxPluginRunnable implements Runnable {
 		public Exception catchException;
 		private CountDownLatch latch;
-		public JavaFxPluginRunnable( CountDownLatch latch ) {
+		private Map<String,LoadResult> loadResultMap;
+		public JavaFxPluginRunnable( CountDownLatch latch,Map<String,LoadResult> loadResultMap ) {
 			this.latch = latch;
+			this.loadResultMap = loadResultMap;
 		}
 		@Override
 		public void run() {
 			try {
-				LoadResult bean = ApplicationContext.getBean(mainViewClass);
+				LoadResult bean = loadResultMap.get(mainViewClass);
 				if( bean != null ) {
 					if( bean.getParent() != null ) {
 						Object controller = bean.getController();

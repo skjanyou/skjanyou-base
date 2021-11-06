@@ -3,6 +3,8 @@ package com.skjanyou.start.start;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,13 +14,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.skjanyou.annotation.api.Application.Autowired;
 import com.skjanyou.annotation.api.Application.Bean;
 import com.skjanyou.annotation.api.Application.Component;
+import com.skjanyou.annotation.api.Util.Value;
 import com.skjanyou.beancontainer.factory.Beandefinition;
 import com.skjanyou.beancontainer.factory.BeandefinitionFactory;
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.plugin.PluginDefineAnnotationClassManager;
+import com.skjanyou.plugin.bean.PluginConfig;
 import com.skjanyou.start.anno.Configure;
 import com.skjanyou.start.config.ApplicationConst;
 import com.skjanyou.start.config.ConfigManager;
@@ -26,6 +31,7 @@ import com.skjanyou.start.core.CommandManager;
 import com.skjanyou.start.core.CommandManager.Cmd;
 import com.skjanyou.start.core.CommandManager.CommandProcess;
 import com.skjanyou.start.core.SkjanyouClassLoader;
+import com.skjanyou.start.exception.StartFailException;
 import com.skjanyou.start.process.PluginProcess;
 import com.skjanyou.start.process.ProgressLoader;
 import com.skjanyou.start.provider.ClassLoaderProvider;
@@ -287,22 +293,75 @@ public abstract class SkjanyouApplicationStart {
 			if(targetClass.isEnum()){ continue; }
 			if(targetClass.isAnnotation()){ continue; }
 			
-			Bean beanAnno = targetClass.getAnnotation(Bean.class);
-			if( beanAnno != null ){
-				className = beanAnno.value();
-				if( StringUtil.isBlank(className) ){
-					// 如果没有提供bean的别名,就使用全限定名来作为查询key
-					className = targetClass.getName();
-				}
+			// 检查Component注解
+			Component componentAnno = targetClass.getAnnotation(Component.class);
+			if( componentAnno != null ){
+				// 将该类实例化并且放入容器
 				Object bean = InstanceUtil.newInstance(targetClass);
-				beandefinition.setBean(className, bean);
+				// 开始对该类进行配置
+				// 插件配置类
+				PluginConfig config = start.pluginProcess.getSystemAllPluginConfig();
+				Field[] fields = targetClass.getDeclaredFields();
+				for (Field field : fields) {
+					Value valAnno = field.getAnnotation(Value.class);
+					if( valAnno != null ) {
+						field.setAccessible(true);
+						String keyName = valAnno.value();
+						String value = config.getProperty(keyName);
+						if( value == null ) {
+							field.setAccessible(false);
+							throw new StartFailException(String.format("类%s的成员变量%s无法匹配到配置参数%s。", targetClass.getName(),field.getName(),keyName));
+						}
+						
+						try {
+							field.set(bean, value);
+						} catch (IllegalArgumentException e) {
+							throw new StartFailException(String.format("类%s的成员变量%s无法匹配到配置参数%s。", targetClass.getName(),field.getName(),keyName),e);
+						} catch (IllegalAccessException e) {
+							throw new StartFailException(String.format("类%s的成员变量%s无法匹配到配置参数%s。", targetClass.getName(),field.getName(),keyName),e);
+						}finally {
+							field.setAccessible(false);
+						}
+					}
+				}
+				
+				Method[] methods = targetClass.getDeclaredMethods();
+				for (Method method : methods) {
+					Bean beanAnno = method.getAnnotation(Bean.class);
+					if( beanAnno != null ) {
+						className = beanAnno.value();
+						if( StringUtil.isBlank(className) ){
+							// 如果没有提供bean的别名,就使用全限定名来作为查询key
+							className = targetClass.getName();
+						}
+						
+						// 执行该方法,获得Bean,检查参数是否需要传入Beandefinition
+						try {
+							int pCount = method.getParameterCount();
+							Object resultBean = null;
+							if( pCount == 0 ) {
+								resultBean = method.invoke(bean);
+							}else {
+								resultBean = method.invoke(bean, new Object[] {beandefinition});
+							}
+							
+							beandefinition.setBean(className, resultBean);
+						} catch (IllegalAccessException | IllegalArgumentException
+								| InvocationTargetException e) {
+							throw new StartFailException(String.format("类%s的方法%s只能选择无参或者传入Beandefinition。", targetClass.getName(),method.getName()),e);
+						}
+					}
+				}
+				// 存在Component注解的,不会再参与其他注解的扫描,观察一下是否需要这样处理
+				continue;
 			}
+
 			registAnnoClass = PluginDefineAnnotationClassManager.getRegistAnnotationClass(PluginDefineAnnotationClassManager.classAnnotationClass(),targetClass);
 			if( registAnnoClass != null ){
 				PluginDefineAnnotationClassManager.classProcess(registAnnoClass, targetClass, beandefinition);
 			}
-			
 		}		
+		
 	}	
 	
 	/** 填充依赖bean 
@@ -314,11 +373,11 @@ public abstract class SkjanyouApplicationStart {
 			Component component = cla.getAnnotation(Component.class);
 			if( component != null ){
 				Field[] fields = cla.getDeclaredFields();
-				Bean fieldBean = null;String beanName = null;
+				Autowired fieldAutowired = null;String beanName = null;
 				for (Field field : fields) {
-					fieldBean = field.getAnnotation(Bean.class);
-					if( fieldBean != null ){
-						beanName = fieldBean.value();
+					fieldAutowired = field.getAnnotation(Autowired.class);
+					if( fieldAutowired != null ){
+						beanName = fieldAutowired.value();
 						Object obj = null;
 						if( null == beanName || "".equals(beanName) ){
 							obj = beandefinition.getBeanByInterfaceClass(field.getType());
@@ -338,6 +397,8 @@ public abstract class SkjanyouApplicationStart {
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
 							e.printStackTrace();
+						}finally {
+							field.setAccessible(false);
 						}
 					}
 

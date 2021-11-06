@@ -246,7 +246,7 @@ public class ClassUtil {
 				try {
 					if( packageName.startsWith(".") ){ fullClassName = fullClassName.substring(1); }
 					// 添加到集合中去
-					classes.add(Class.forName(fullClassName));
+					classes.add(Class.forName(fullClassName,false,Thread.currentThread().getContextClassLoader()));
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}

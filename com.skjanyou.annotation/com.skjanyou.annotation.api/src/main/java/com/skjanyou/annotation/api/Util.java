@@ -17,7 +17,9 @@ public @interface Util {
 	@Target({ElementType.FIELD})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented	
-	public @interface Value {}
+	public @interface Value {
+		String value();
+	}
 	
 	/**
 	 * 

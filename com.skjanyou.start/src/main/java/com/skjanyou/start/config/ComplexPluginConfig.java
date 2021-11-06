@@ -15,6 +15,10 @@ public class ComplexPluginConfig implements PluginConfig {
 		this.sysConfig = sysConfig;
 		this.defaultConfig = defaultConfig;
 	}
+	
+	public void addProperties( Properties addConfig) {
+		this.defaultConfig.putAll(addConfig);
+	}
 
 	@Override
 	public String getProperty(String key) {

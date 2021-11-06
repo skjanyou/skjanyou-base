@@ -2,17 +2,14 @@ package com.skjanyou.mvc.core;
 
 import java.util.HashSet;
 
-import com.skjanyou.annotation.api.Application.Bean;
+import com.skjanyou.annotation.api.Application.Autowired;
 import com.skjanyou.annotation.api.Application.Component;
 import com.skjanyou.beancontainer.factory.Beandefinition;
 
 @Component
 public class MvcApplicateContext {
-	@Bean
+	@Autowired
 	private static Beandefinition beandefinition;
-	
-	private MvcApplicateContext(){}
-	
 	
 	public static<T> T getBean( Class<T> clazz ){
 		return getBean(clazz.getName());

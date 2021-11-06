@@ -163,7 +163,12 @@ public class BubbleFxEventDispatcher implements FxEventDispatcher,EventHandler<E
 		
 		// 触发绑定选择器的方法
 		for( Method tMethod : targetMethod ) {
-			MethodUtil.invokeAndIgnoreException(tMethod, controller, new Object[]{ newEvent });
+			int count = tMethod.getParameterCount();
+			if( count == 0 ) {
+				MethodUtil.invokeAndIgnoreException(tMethod, controller, new Object[]{ });
+			}else {
+				MethodUtil.invokeAndIgnoreException(tMethod, controller, new Object[]{ newEvent });
+			}
 		}
 		
 		result = new ArrayList<>(targetMethod);
