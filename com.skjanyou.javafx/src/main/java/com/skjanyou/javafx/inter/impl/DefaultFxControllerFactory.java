@@ -120,6 +120,14 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 				this.stage.initModality(Modality.APPLICATION_MODAL);
 				this.stage.initOwner(this.fatherStage);
 			}
+//			if( this.fxControllerAnno.exitType() == ControllerExitType.CLOSE ) {
+//				this.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+//					@Override
+//					public void handle(WindowEvent event) {
+//						event.consume();
+//					}
+//				});
+//			}
 			EventHandler<Event> handler = getFxEventDispatcher().getEventHandler();
 			this.parent.addEventFilter(Event.ANY, handler);
 			
@@ -138,10 +146,11 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	 * @param proxyController
 	 * @param parent
 	 */
-	private void initDecorator(Object proxyController, Parent parent,Stage stage) {
+	private void initDecorator( Object proxyController, Parent parent, Stage stage ) {
 		
 		if( this.fxDecorator == null ) {
-			this.scene = new Scene(this.parent);
+			// 这里不记得为什么要加这句代码,加入了会引发问题,暂时注释掉
+//			this.scene = new Scene(this.parent);
 			return ;
 		}
         try {

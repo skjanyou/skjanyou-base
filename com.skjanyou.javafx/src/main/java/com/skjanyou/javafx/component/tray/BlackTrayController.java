@@ -9,9 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-@FxController(
-		id="Main",
-		fxml="jfx/component/BlackTray.fxml")
+@FxController(id="Main",fxml="jfx/component/tray/BlackTray.fxml")
 @FxDecorator(
 	type = DecoratorType.NONE,
 	moveable = false,

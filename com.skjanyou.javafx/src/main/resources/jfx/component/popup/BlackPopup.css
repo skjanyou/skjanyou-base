@@ -1,0 +1,42 @@
+.black-popup {
+	-fx-background-color: #333333;
+	-fx-border-color: #ff461f;    
+	-fx-border-radius:0 0 3 3;
+	-fx-border-width:  0px 0px 0px 3px;
+	-fx-text-fill: white;
+}
+
+.black-popup:hover{
+	-fx-border-color: green;
+}
+
+
+.popup-title {
+	-fx-font-weight: 900;
+	-fx-text-fill: white;
+}
+
+.popup-context {
+	-fx-text-fill: white;
+}
+
+.popup-msg-box {
+	-fx-padding:  20px ;
+	-fx-pref-width: 300px;
+}
+
+.popup-tool-box {
+	-fx-pref-width: 50px;
+	-fx-padding:  15px 18px;
+}
+
+.popup-tool-close {
+	-fx-pref-width: 16px;
+	-fx-pref-height: 16px;
+	-fx-background-color: white;
+}
+
+.popup-tool-close:hover {
+	-fx-background-color: red;
+	-fx-cursor: hand;
+}

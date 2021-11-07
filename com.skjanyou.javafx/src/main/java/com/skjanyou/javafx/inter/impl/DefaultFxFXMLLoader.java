@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.bean.LoadResult;
+import com.skjanyou.javafx.inter.ControllerLifeCycle;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
 import com.sun.javafx.application.PlatformImpl;
 
@@ -42,6 +43,10 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 				if( this.stage == null ) {
 					this.stage = new Stage();
 				}
+				if( controller instanceof ControllerLifeCycle ) {
+					ControllerLifeCycle life = (ControllerLifeCycle) controller;
+					life.onInit(this.stage,parent);
+				}				
 				loadResult.setParent(parent);
 				loadResult.setController(controller);
 				loadResult.setStage(this.stage);
@@ -59,6 +64,10 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 						Object controller = DefaultFxFXMLLoader.super.getController();
 						if( DefaultFxFXMLLoader.this.stage == null ) {
 							DefaultFxFXMLLoader.this.stage = new Stage();
+						}
+						if( controller instanceof ControllerLifeCycle ) {
+							ControllerLifeCycle life = (ControllerLifeCycle) controller;
+							life.onInit(DefaultFxFXMLLoader.this.stage,parent);
 						}
 						
 						loadResult.setParent(parent);

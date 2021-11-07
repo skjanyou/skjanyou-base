@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox maxHeight="100.0" maxWidth="350.0" prefHeight="100.0" prefWidth="350.0" styleClass="black-popup" stylesheets="@BlackPopup.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skjanyou.javafx.component.popup.BlackPopup">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" styleClass="popup-msg-box">
+         <children>
+            <Label fx:id="popup_title" styleClass="popup-title" text="Label" />
+            <Label fx:id="popup_context" styleClass="popup-context" text="Label" />
+         </children>
+      </VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" styleClass="popup-tool-box">
+         <children>
+            <Region fx:id="tools_tegion" prefHeight="200.0" prefWidth="200.0" styleClass="popup-tool-close">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Region>
+         </children>
+      </VBox>
+   </children>
+</HBox>

@@ -2,6 +2,7 @@ package com.skjanyou.javafx.inter.impl;
 
 import com.skjanyou.javafx.inter.ControllerLifeCycle;
 
+import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 public class NoneControllerLifeCycle implements ControllerLifeCycle {
@@ -12,7 +13,7 @@ public class NoneControllerLifeCycle implements ControllerLifeCycle {
 	}
 
 	@Override
-	public void onInit(Stage stage) {
+	public void onInit(Stage stage,Parent root) {
 
 	}
 
