@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.BorderPane?>
 
 
-<BorderPane fx:id="Loading_Pane" stylesheets="@BlackLoading.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<BorderPane fx:id="Loading_Pane" stylesheets="@BlackLoading.css" fx:controller="com.skjanyou.javafx.component.loading.BlackLoading" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
    <center>
         <ImageView fx:id="Loading_icon" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
            <image>

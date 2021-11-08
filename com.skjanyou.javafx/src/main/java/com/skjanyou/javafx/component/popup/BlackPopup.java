@@ -70,7 +70,7 @@ public class BlackPopup implements ControllerLifeCycle {
 	
 	public void show(Window ownerNode, double anchorX, double anchorY) {
 		this.popup.setX(anchorX);
-		this.popup.setY(anchorX);
+		this.popup.setY(anchorY);
 		this.popup.show(ownerNode);
 	}
 	
