@@ -1,4 +1,14 @@
 
 #Loading_Pane {
-	-fx-background-color: transparent;
+	/** -fx-background-color: transparent; */
+	-fx-background-color:rgba(0,0,0,0.2);
+}
+
+#Loading_icon {
+	-fx-background-color: red;
+}
+
+#Loading_box {
+	-fx-padding: 0px 10px; 
+	-fx-alignment: center;
 }

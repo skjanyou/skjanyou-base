@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-
-<BorderPane fx:id="Loading_Pane" stylesheets="@BlackLoading.css" fx:controller="com.skjanyou.javafx.component.loading.BlackLoading" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<BorderPane fx:id="Loading_Pane" stylesheets="@BlackLoading.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skjanyou.javafx.component.loading.BlackLoading">
    <center>
-        <ImageView fx:id="Loading_icon" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-           <image>
-               <Image url="@icon/minimize.png" />
-           </image>
-        </ImageView>
+      <VBox fx:id="Loading_box" alignment="CENTER" prefHeight="150" prefWidth="150" >
+         <children>
+              <ImageView fx:id="Loading_icon" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                 <image>
+                     <Image url="@/jfx/icon/liulian.png" />
+                 </image>
+              </ImageView>
+            <Label prefHeight="26.0" prefWidth="150.0" text="正在加载中,请稍等...." textFill="WHITE" />
+         </children>
+      </VBox>
    </center>
 </BorderPane>
