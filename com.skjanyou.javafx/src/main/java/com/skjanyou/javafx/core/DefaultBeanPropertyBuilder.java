@@ -20,7 +20,6 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -38,7 +37,6 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 		super(clazz);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public BeanProperty builder() {
 		BeanGenerator gen = new BeanGenerator();
@@ -100,7 +98,6 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 
 			Property<?> property = (Property<?>) InstanceUtil.newInstance(value);
 			property.addListener(new ChangeListener<Object>() {
-
 				@Override
 				public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
 					try {
@@ -146,8 +143,8 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 			String key = (String) args[0];
 			Property property = (Property) args[1];
 			// 数据绑定
-			ObservableValue<?> observableValue = (ObservableValue<?>) beanWrapper.getByField(key + PROPERTY_SUFFIX);
-			property.bind(observableValue);
+			Property<?> bidireactionalProperty = (Property<?>) beanWrapper.getByField(key + PROPERTY_SUFFIX);
+			property.bindBidirectional(bidireactionalProperty);
 		}else if( UNBIND_METHOD_NAME.equals(methodName) ){
 			String key = (String) args[0];
 			// 数据解绑定

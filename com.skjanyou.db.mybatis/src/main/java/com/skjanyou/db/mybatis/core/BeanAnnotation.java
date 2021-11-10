@@ -158,6 +158,7 @@ public final class BeanAnnotation {
 			@Override
 			public void handlerException(Throwable throwable) {
 				logger.error(throwable);
+				throw new RuntimeException(throwable);
 			}
 			@Override
 			public Object process(Invocation<SelectOne> pi) {
@@ -174,7 +175,7 @@ public final class BeanAnnotation {
 				String sql = SqlUtil.generateSelectSQL(typeClass);
 				List<?> list = SqlSession.executeSelectListSql(sql, bean, typeClass,pi.getDataSourceManager());
 				if( list.size() > 1 ){
-					throw new DaoException("查询的到的数据量为" + list.size() + "大于0");
+					throw new DaoException("查询的到的数据量为" + list.size() + "大于1");
 				}else if( list.size() == 0 ){
 					return null;
 				}
@@ -193,13 +194,33 @@ public final class BeanAnnotation {
 		public Class<? extends SqlExceptionProcess> exception() default SelectFirstProcess.class;
 		
 		class SelectFirstProcess implements SqlProcess<SelectFirst>,SqlExceptionProcess {
+			private Logger logger = LogUtil.getLogger(SelectFirstProcess.class);
+			
 			@Override
 			public void handlerException(Throwable throwable) {
-				
+				logger.error(throwable);
+				throw new RuntimeException(throwable);	
 			}
 			@Override
 			public Object process(Invocation<SelectFirst> pi) {
-				return null;
+				// 获取Mapper类的泛型
+				Class<?> mapperClass = pi.getMapperClass();
+				ParameterizedType pt = (ParameterizedType )mapperClass.getGenericInterfaces()[0];
+				Type trueType = pt.getActualTypeArguments()[0];
+				Class<?> typeClass = (Class<?>)trueType;
+				// 参数检查
+				if( pi.getArgs().length != 1 || pi.getArgs()[0].getClass() != typeClass ){
+					throw new DaoException("查询参数数量必须为1,并且类型为"+typeClass.getName());
+				}
+				Object bean = pi.getArgs()[0];
+				String sql = SqlUtil.generateSelectFirstSQL(typeClass);
+				List<?> list = SqlSession.executeSelectListSql(sql, bean, typeClass,pi.getDataSourceManager());
+				if( list.size() > 1 ){
+					throw new DaoException("查询的到的数据量为" + list.size() + "大于1");
+				}else if( list.size() == 0 ){
+					return null;
+				}
+				return list.get(0);
 			}
 		}
 	}

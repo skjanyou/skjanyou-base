@@ -16,6 +16,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 @FxController(fxml = "jfx/component/popup/BlackPopup.fxml", id = "BlackPopup")
@@ -60,7 +61,18 @@ public class BlackPopup implements ControllerLifeCycle {
 	}
 	
 	public void show(double anchorX, double anchorY) {
-		this.show(new Stage(),anchorX,anchorY);
+		// 隐藏任务栏图标
+		Stage primaryStage = new Stage();
+        // 设置风格为 UTILITY
+        primaryStage.initStyle(StageStyle.UTILITY);
+        // 设置父级透明度为0
+        primaryStage.setOpacity(0);
+		
+		Stage stage = new Stage();
+		stage.initOwner(primaryStage);
+		
+		primaryStage.show();
+		this.show(primaryStage,anchorX,anchorY);
 	}
 	
 	public void show() {
