@@ -36,7 +36,6 @@ import com.skjanyou.start.util.InstanceUtil;
 import com.skjanyou.start.util.PropertiesUtil;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.CommUtil;
-import com.skjanyou.util.ResourcesUtil;
 import com.skjanyou.util.ScanUtil;
 import com.skjanyou.util.StringUtil;
 import com.skjanyou.util.convert.ConvertUtil;
@@ -123,7 +122,7 @@ public class DefaultPluginProcess implements PluginProcess {
 			// 启动开启的插件
 			if( plugin.getEnable() ){
 				logger.info("开始加载插件:{ id:" + plugin.getId() + ",displayName:" + plugin.getDisplayName() + "}");
-				Properties defaultProps = CommUtil.isNullOrEmpty(plugin.getDefaultConfig()) ? new Properties() : ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader);
+				Properties defaultProps = CommUtil.isNullOrEmpty(plugin.getDefaultConfig()) ? new Properties() : PropertiesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader);
 				this.systemAllPluginConfig.addProperties(defaultProps);
 				properties = new ComplexPluginConfig( manager, defaultProps );
 				classList = CommUtil.isNullOrEmpty(plugin.getClassScanPath()) ? Collections.emptyList() : scanPluginClassList(plugin.getClassScanPath(),classLoader);
@@ -299,7 +298,7 @@ public class DefaultPluginProcess implements PluginProcess {
 			// 插件描述
 			String displayName = plugin.getDisplayName();
 			// 默认配置
-			Properties defaultProperties = ResourcesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader);
+			Properties defaultProperties = PropertiesUtil.getInnerResources(plugin.getDefaultConfig(), classLoader);
 			// 当前配置
 			ComplexPluginConfig currentProperties = new ComplexPluginConfig(manager, defaultProperties);
 			

@@ -3,14 +3,16 @@ package com.skjanyou.javafx.inter.impl;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.Set;
 
+import com.skjanyou.javafx.anno.FxAnnotation.FxBean;
 import com.skjanyou.javafx.anno.FxAnnotation.FxContext;
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.anno.FxAnnotation.FxDecorator;
-import com.skjanyou.javafx.anno.FxAnnotation.ResponsiveBean;
+import com.skjanyou.javafx.anno.FxAnnotation.FxValidate;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.constant.ControllerType;
 import com.skjanyou.javafx.core.BeanProperty;
@@ -20,6 +22,9 @@ import com.skjanyou.javafx.inter.FxControllerFactory;
 import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
+import com.skjanyou.javafx.inter.FxValidationManager;
+import com.skjanyou.javafx.inter.FxValidationManager.FxValidateResult;
+import com.skjanyou.javafx.inter.FxValidationManager.FxValidateResultDetail;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
 import com.skjanyou.util.BeanUtil;
 import com.skjanyou.util.StreamUtil;
@@ -29,10 +34,12 @@ import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -69,6 +76,10 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	private Stage stage;
 	/** Scene **/
 	private Scene scene;
+	// 类中的所有成员变量
+	protected Field[] fields;
+	// 类中的所有方法
+	protected Method[] methods;
 	
 	public DefaultFxControllerFactory( Class<?> controllerClass ) {
 		this(controllerClass,null,null);
@@ -89,6 +100,8 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 		this.fxDecorator = controllerClass.getAnnotation(FxDecorator.class);
 		this.stageList = new LinkedList<>();
 		this.sceneList = new LinkedList<>();
+		this.fields = this.controllerClass.getDeclaredFields();
+		this.methods = this.controllerClass.getDeclaredMethods();
 	}
 	
 	@Override
@@ -137,9 +150,11 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			initEventHandler( this.proxyController,this.parent );
 			initResponsiveBean( this.proxyController,this.parent );
 			initContext(this.proxyController,this.parent);
+			initValidate(this.proxyController,this.parent);
 		} 
 		return this.loadResult;
 	}
+
 
 	/**
 	 *   初始化窗口修饰器
@@ -211,9 +226,8 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	
 	@SuppressWarnings({ "rawtypes" })
 	protected void initResponsiveBean(Object controller,Parent parent) {
-		Field[] fields = this.controllerClass.getDeclaredFields();
-		for (Field field : fields) {
-			ResponsiveBean respBean = field.getAnnotation(ResponsiveBean.class);
+		for (Field field : this.fields) {
+			FxBean respBean = field.getAnnotation(FxBean.class);
 			if( respBean != null ) {
 				String[] binds = respBean.value();
 				Class<?> clazz = field.getType();
@@ -248,8 +262,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	
 	
 	protected void initContext(Object controller,Parent parent) {
-		Field[] fields = this.controllerClass.getDeclaredFields();
-		for (Field field : fields) {
+		for (Field field : this.fields) {
 			FxContext fxContext = field.getAnnotation(FxContext.class);
 			if( fxContext != null ) {
 				// 
@@ -272,5 +285,48 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 		}
 	}
 
+	/**
+	  *   初始化校验规则
+	 * @param proxyController
+	 * @param parent
+	 */
+	private void initValidate(Object proxyController, Parent parent) {
+		for (Field field : this.fields) {
+			FxValidate fxValidate = field.getAnnotation(FxValidate.class);
+			if( fxValidate != null ) {
+				FXML fxml = field.getAnnotation(FXML.class);
+				if( fxml == null ) {
+					throw new RuntimeException(String.format("变量%s的@FxValidate注解必须搭配@FXML注解使用", field.toGenericString()));
+				}
+				// 绑定校验规则
+				try {
+					field.setAccessible(true);
+					Object fieldBean = field.get(proxyController);
+					if( fieldBean != null  ) {
+						if( fieldBean instanceof TextField) {
+							TextField textField = (TextField) fieldBean;
+							textField.textProperty().addListener(e->{
+								FxValidateResult result = FxValidationManager.validate(textField, fxValidate);
+								if( !result.hasFail ) {
+									String errorMsg = "";
+									
+									for (FxValidateResultDetail detail : result.resultDetail) {
+										errorMsg += detail.rule + ":" + detail.error + ",";
+									}
+									if( errorMsg.length() > 0 ) { errorMsg.substring(0, errorMsg.length() - 1); }
+									System.out.println(errorMsg);
+								}
+							});
+						}
+						
+					}
+					field.setAccessible(false);
+					
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 }

@@ -15,13 +15,8 @@ public interface ControllerLifeCycle {
 	 */
 	public void onInit( Stage stage, Parent root );
 	/**
-	 * 该视图显示触发的回调
+	 * 该视图开始被挂载的时候
 	 * @param stage
 	 */
-	public void onShow( Stage stage );
-	/**
-	 * 该视图销毁时触发的回调
-	 * @param stage
-	 */
-	public void onDestroy( Stage stage );
+	public void onMount( Stage stage );
 }

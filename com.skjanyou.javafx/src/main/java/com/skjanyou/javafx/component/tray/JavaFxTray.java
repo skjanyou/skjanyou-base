@@ -46,7 +46,7 @@ public class JavaFxTray {
 	private static int rowHeight = 45;
 	private static TrayIcon ti;
 	
-	private JavaFxTray() {
+	JavaFxTray() {
 		FxControllerFactory controllerFactory = new DefaultFxControllerFactory(BlackTrayController.class);
 		result = controllerFactory.createController();
 		blackTrayController = (BlackTrayController) result.getController();
@@ -58,7 +58,8 @@ public class JavaFxTray {
 	
 	public static JavaFxTray getTray() {
 		if( !isSupport ) {
-			throw new RuntimeException("系统不支持托盘");
+			System.err.println("系统不支持托盘,使用MockTray");
+			return new JavaFxTrayMock();
 		}
 		if( instance == null ) {
 			instance = new JavaFxTray();

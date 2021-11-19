@@ -103,11 +103,9 @@ public class BlackPopup implements ControllerLifeCycle {
 	}
 
 	@Override
-	public void onShow(Stage stage) {
+	public void onMount(Stage stage) {
+		
 	}
 
-	@Override
-	public void onDestroy(Stage stage) {
-	}
 
 }

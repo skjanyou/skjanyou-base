@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.skjanyou.javafx.constant.ControllerExitType;
 import com.skjanyou.javafx.constant.ControllerType;
 import com.skjanyou.javafx.constant.DecoratorType;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
@@ -65,6 +66,8 @@ public final class FxAnnotation {
 		String[] styles() default {};
 		/** 控制器类型 **/
 		ControllerType type() default ControllerType.WINDOW;
+		/** 退出方式 **/
+		ControllerExitType exitType() default ControllerExitType.HIDE ;
 	}
 	
 	/**
@@ -135,7 +138,7 @@ public final class FxAnnotation {
 	@Inherited
 	@Target(ElementType.FIELD)
 	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface ResponsiveBean{
+	public static @interface FxBean{
 		public static enum BindType {
 			BYNAME,
 			BYID,
@@ -144,17 +147,73 @@ public final class FxAnnotation {
 		String[] value() default {};
 	}
 	
+	/**
+	 * 
+	 * 	@author skjanyou
+	 * 	时间 : 2021-11-11
+	 * 	<pre>
+	 * 	作用 : Fx生命周期,不想实现ControllerLifeCycle的话,可以通过该注解来实现生命周期的监听　</br>
+	 *      
+	 */	
 	@Documented
 	@Inherited
 	@Target(ElementType.FIELD)
 	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface LifeCycle{
-		public static enum LifeCycleType {
+	public static @interface FxLifeCycle{
+		public static enum FxLifeCycleType {
 			ONLOAD,
 			ONINIT,
 			ONSHOW,
 			ONDESTROY
 		}
-		LifeCycleType[] value() default {};
+		FxLifeCycleType[] value() default {};
+	}
+	
+	/**
+	 * 
+	 * 	@author skjanyou
+	 * 	时间 : 2020-10-7
+	 * 	<pre>
+	 * 	作用 : 元素的校验,支持自定义校验规则　</br>
+	  *   只能使用在节点上面,必须和@FXML同用
+	 *  </pre>
+	 *      
+	 */	
+	@Documented
+	@Inherited
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface FxValidate{
+		/** 表单 **/
+		String form() default "";
+		/** 校验规则 **/
+		FxValidateRule[] value();
+	}
+	
+	/**
+	 * 这里做一个约定,后置规则的调用频率一定要小于等于前置规则</br>
+	 * 例如：前置规则为required,触发方式为blur；后置规则为card,那么触发方式就不能选择change,只能选择blur
+	 * @author skjanyou
+	 * 时间 : 2021-11-12
+	 * 作用 :
+	 */
+	@Documented
+	@Inherited
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface FxValidateRule{
+		/** 规则名字 **/
+		String rule();
+		/** 触发方式 **/
+		RuleValidTrigger trigger() default RuleValidTrigger.CHANGE;
+		/** 参数 **/
+		String[] param() default {};
+		/** 前置规则名字,只有前置规则满足后,才会走这个规则 **/
+		String preRule() default "";
+		
+		public static enum RuleValidTrigger {
+			BLUR,
+			CHANGE,
+		}
 	}
 }

@@ -36,14 +36,8 @@ public class BlackLoading implements ControllerLifeCycle {
 	}
 
 	@Override
-	public void onShow(Stage stage) {
-		
-	}
-
-	@Override
-	public void onDestroy(Stage stage) {
-		
-	}
+	public void onMount(Stage stage) {
+	}	
 
 	/** 
 	 * 关闭加载窗口
@@ -90,4 +84,6 @@ public class BlackLoading implements ControllerLifeCycle {
 	public BlackLoading showLoading( Window parent, String titps ) {
 		return showLoading(parent,titps,null);
 	}
+
+
 }

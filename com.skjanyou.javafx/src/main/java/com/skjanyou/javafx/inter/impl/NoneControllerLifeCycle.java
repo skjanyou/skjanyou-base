@@ -18,13 +18,8 @@ public class NoneControllerLifeCycle implements ControllerLifeCycle {
 	}
 
 	@Override
-	public void onShow(Stage stage) {
-
-	}
-
-	@Override
-	public void onDestroy(Stage stage) {
-
+	public void onMount(Stage stage) {
+		
 	}
 
 }

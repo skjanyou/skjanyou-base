@@ -49,6 +49,7 @@ public class JavaFxPlugin implements PluginSupport{
 		PlatformImpl.startup(jfpr);
 		latch.await();
 		if( jfpr.catchException != null ) {
+			PlatformImpl.exit();
 			throw jfpr.catchException;
 		}
 	}
