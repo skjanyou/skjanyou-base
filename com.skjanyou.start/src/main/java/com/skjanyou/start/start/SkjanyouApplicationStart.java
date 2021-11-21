@@ -38,7 +38,6 @@ import com.skjanyou.start.provider.ClassLoaderProvider;
 import com.skjanyou.start.provider.ConfigureProvider;
 import com.skjanyou.start.util.InstanceUtil;
 import com.skjanyou.start.util.JarUtil;
-import com.skjanyou.start.util.PrintTable;
 import com.skjanyou.start.util.ServiceLoaderUtil;
 import com.skjanyou.util.ClassUtil;
 import com.skjanyou.util.StreamUtil;
@@ -195,7 +194,6 @@ public abstract class SkjanyouApplicationStart {
 		resultList.add(body3);
 		
 		
-		new PrintTable(resultList,200,200).printTable();
 		
 	}
 	

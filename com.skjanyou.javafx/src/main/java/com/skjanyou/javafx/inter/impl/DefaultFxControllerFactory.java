@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.skjanyou.javafx.anno.FxAnnotation.FxBean;
@@ -13,6 +16,8 @@ import com.skjanyou.javafx.anno.FxAnnotation.FxContext;
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.anno.FxAnnotation.FxDecorator;
 import com.skjanyou.javafx.anno.FxAnnotation.FxValidate;
+import com.skjanyou.javafx.anno.FxAnnotation.FxValidateRule;
+import com.skjanyou.javafx.anno.FxAnnotation.FxValidateRule.RuleValidTrigger;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.constant.ControllerType;
 import com.skjanyou.javafx.core.BeanProperty;
@@ -22,10 +27,10 @@ import com.skjanyou.javafx.inter.FxControllerFactory;
 import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
-import com.skjanyou.javafx.inter.FxValidationManager;
-import com.skjanyou.javafx.inter.FxValidationManager.FxValidateResult;
-import com.skjanyou.javafx.inter.FxValidationManager.FxValidateResultDetail;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
+import com.skjanyou.javafx.validate.FxValidateResult;
+import com.skjanyou.javafx.validate.FxValidateResult.FxValidateResultDetail;
+import com.skjanyou.javafx.validate.FxValidationManager;
 import com.skjanyou.util.BeanUtil;
 import com.skjanyou.util.StreamUtil;
 import com.sun.javafx.fxml.BeanAdapter;
@@ -290,6 +295,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	 * @param proxyController
 	 * @param parent
 	 */
+	private Map<FxValidate,Map<RuleValidTrigger,List<FxValidateRule>>> ruleCache = new HashMap<>();
 	private void initValidate(Object proxyController, Parent parent) {
 		for (Field field : this.fields) {
 			FxValidate fxValidate = field.getAnnotation(FxValidate.class);
@@ -299,24 +305,69 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 					throw new RuntimeException(String.format("变量%s的@FxValidate注解必须搭配@FXML注解使用", field.toGenericString()));
 				}
 				// 绑定校验规则
+				// 检查是否有绑定组
+				String[] formArr = fxValidate.form();
+				if( formArr.length > 0 ){
+					
+				}
+				// 这里分成两类,第一类是Change,第二类是Blur,将校验规则分组后,然后再绑定事件监听
+				FxValidateRule[] rules = fxValidate.value();
+				// change事件的规则合集
+				List<FxValidateRule> changeRuleList = new LinkedList<>();
+				boolean hasChangeRule = false;
+				// focus的事件的规则合集
+				List<FxValidateRule> blurRuleList = new LinkedList<>();
+				boolean hasblurRule = false;				
+				for (FxValidateRule fxValidateRule : rules) {
+					if( fxValidateRule.trigger() == RuleValidTrigger.CHANGE ){
+						hasChangeRule = true;
+						changeRuleList.add(fxValidateRule);
+					}else{
+						hasblurRule = true;
+						blurRuleList.add(fxValidateRule);
+					}
+				}
+				// 根据前面统计的结果进行事件绑定
 				try {
 					field.setAccessible(true);
 					Object fieldBean = field.get(proxyController);
 					if( fieldBean != null  ) {
 						if( fieldBean instanceof TextField) {
 							TextField textField = (TextField) fieldBean;
-							textField.textProperty().addListener(e->{
-								FxValidateResult result = FxValidationManager.validate(textField, fxValidate);
-								if( !result.hasFail ) {
-									String errorMsg = "";
-									
-									for (FxValidateResultDetail detail : result.resultDetail) {
-										errorMsg += detail.rule + ":" + detail.error + ",";
+							// 判断是否有Change事件
+							if( hasChangeRule ){
+								textField.textProperty().addListener(e->{
+									FxValidateResult result = FxValidationManager.validate(textField, changeRuleList);
+									if( result.hasFail ) {
+										String errorMsg = "";
+										
+										for (FxValidateResultDetail detail : result.resultDetail) {
+											errorMsg += detail.rule + ":" + detail.error + ",";
+										}
+										if( errorMsg.length() > 0 ) { errorMsg = errorMsg.substring(0, errorMsg.length() - 1); }
+										System.out.println("change: " + errorMsg);
 									}
-									if( errorMsg.length() > 0 ) { errorMsg.substring(0, errorMsg.length() - 1); }
-									System.out.println(errorMsg);
-								}
-							});
+								});
+							}
+							// 判断是否有Blur事件
+							if( hasblurRule ){
+								textField.focusedProperty().addListener((ob, old, now) ->{
+									if( !now ){
+										System.out.println("blur");
+										FxValidateResult result = FxValidationManager.validate(textField, blurRuleList);
+										if( result.hasFail ) {
+											String errorMsg = "";
+											
+											for (FxValidateResultDetail detail : result.resultDetail) {
+												errorMsg += detail.rule + ":" + detail.error + ",";
+											}
+											if( errorMsg.length() > 0 ) { errorMsg = errorMsg.substring(0, errorMsg.length() - 1); }
+											System.out.println("focus: " + errorMsg);
+										}								
+										
+									}
+								});
+							}
 						}
 						
 					}

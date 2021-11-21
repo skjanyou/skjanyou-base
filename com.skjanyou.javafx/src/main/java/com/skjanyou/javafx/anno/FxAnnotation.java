@@ -163,8 +163,7 @@ public final class FxAnnotation {
 		public static enum FxLifeCycleType {
 			ONLOAD,
 			ONINIT,
-			ONSHOW,
-			ONDESTROY
+			ONMOUNT
 		}
 		FxLifeCycleType[] value() default {};
 	}
@@ -185,7 +184,7 @@ public final class FxAnnotation {
 	@Retention(RetentionPolicy.RUNTIME)
 	public static @interface FxValidate{
 		/** 表单 **/
-		String form() default "";
+		String[] form() default {};
 		/** 校验规则 **/
 		FxValidateRule[] value();
 	}
@@ -208,7 +207,7 @@ public final class FxAnnotation {
 		RuleValidTrigger trigger() default RuleValidTrigger.CHANGE;
 		/** 参数 **/
 		String[] param() default {};
-		/** 前置规则名字,只有前置规则满足后,才会走这个规则 **/
+		/** 前置规则名字,只有前置规则满足后,才会走这个规则,(暂时未实现) **/
 		String preRule() default "";
 		
 		public static enum RuleValidTrigger {
