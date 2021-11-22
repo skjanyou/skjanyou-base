@@ -184,7 +184,7 @@ public final class FxAnnotation {
 	@Retention(RetentionPolicy.RUNTIME)
 	public static @interface FxValidate{
 		/** 表单 **/
-		String[] form() default {};
+		String[] form() default { "DEFAULT-FORM" };
 		/** 校验规则 **/
 		FxValidateRule[] value();
 	}

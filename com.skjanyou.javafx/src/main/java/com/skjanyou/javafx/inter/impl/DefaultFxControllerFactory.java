@@ -28,6 +28,7 @@ import com.skjanyou.javafx.inter.FxControllerFactoryProperty;
 import com.skjanyou.javafx.inter.FxEventDispatcher;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
 import com.skjanyou.javafx.inter.JavaFxDecorator;
+import com.skjanyou.javafx.validate.FxFormValidator;
 import com.skjanyou.javafx.validate.FxValidateResult;
 import com.skjanyou.javafx.validate.FxValidateResult.FxValidateResultDetail;
 import com.skjanyou.javafx.validate.FxValidationManager;
@@ -295,7 +296,6 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	 * @param proxyController
 	 * @param parent
 	 */
-	private Map<FxValidate,Map<RuleValidTrigger,List<FxValidateRule>>> ruleCache = new HashMap<>();
 	private void initValidate(Object proxyController, Parent parent) {
 		for (Field field : this.fields) {
 			FxValidate fxValidate = field.getAnnotation(FxValidate.class);
@@ -303,12 +303,6 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 				FXML fxml = field.getAnnotation(FXML.class);
 				if( fxml == null ) {
 					throw new RuntimeException(String.format("变量%s的@FxValidate注解必须搭配@FXML注解使用", field.toGenericString()));
-				}
-				// 绑定校验规则
-				// 检查是否有绑定组
-				String[] formArr = fxValidate.form();
-				if( formArr.length > 0 ){
-					
 				}
 				// 这里分成两类,第一类是Change,第二类是Blur,将校验规则分组后,然后再绑定事件监听
 				FxValidateRule[] rules = fxValidate.value();
@@ -369,7 +363,8 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 								});
 							}
 						}
-						
+						// 添加表单校验规则
+						FxFormValidator.registFormValidRule(proxyController, field,fieldBean, fxValidate );
 					}
 					field.setAccessible(false);
 					
