@@ -44,7 +44,6 @@ import com.skjanyou.util.StreamUtil;
 import com.skjanyou.util.StringUtil;
 
 public abstract class SkjanyouApplicationStart {
-	private static SkjanyouApplicationStart start = new SkjanyouApplicationStart() {};
 	protected static Logger logger = LogUtil.getLogger(SkjanyouApplicationStart.class);
 	private Class<?> configClass;
 	private ProgressLoader progressLoader = null;
@@ -117,8 +116,18 @@ public abstract class SkjanyouApplicationStart {
 	} 
 	
 	public static void start( Class<?> configClass,ProgressLoader progressLoader,String[] args ) {
-		start.configClass = configClass;
-		start.progressLoader = progressLoader;
+		SkjanyouApplicationStart start = new SkjanyouApplicationStart(){};
+		start.startup(configClass, progressLoader, args);
+	}
+	
+	public void startup( Class<?> configClass,ProgressLoader progressLoader,String[] args  ){
+		this.configClass = configClass;
+		this.progressLoader = progressLoader == null ? new ProgressLoader() {
+			@Override
+			public void progress(int total, int current, String message) {}
+			@Override
+			public void done() {}
+		} : progressLoader;
 		CommandManager.processCommand(args[0]);
 	}
 	
@@ -129,24 +138,24 @@ public abstract class SkjanyouApplicationStart {
 			logger.error("启动类",configClass.getName(),"没有配置@Configure注解,应用程序无法启动!");
 			return;
 		}
-		start.pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
+		this.pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
 		// 2.配置参数,扫描路径,配置类等
-		ConfigManager manager = start.configureProvider.getConfigure(start.configClass);
+		ConfigManager manager = this.configureProvider.getConfigure(this.configClass);
 		// 3.创建ClassLoader
 		ClassLoader srcClassLoader = Thread.currentThread().getContextClassLoader();
-		SkjanyouClassLoader classLoader = start.classLoaderProvider.getClassLoader();
+		SkjanyouClassLoader classLoader = this.classLoaderProvider.getClassLoader();
 		classLoader.addClassLoader(srcClassLoader);
 		Thread.currentThread().setContextClassLoader(classLoader);
 		// 4.将前面步骤创建对象放置到Bean容器
-		start.beandefinition.setBean(Beandefinition.class.getName(), start.beandefinition);
-		start.beandefinition.setBean(ConfigManager.class.getName(), manager);
-		start.beandefinition.setBean(SkjanyouClassLoader.class.getName(), classLoader);
+		this.beandefinition.setBean(Beandefinition.class.getName(), this.beandefinition);
+		this.beandefinition.setBean(ConfigManager.class.getName(), manager);
+		this.beandefinition.setBean(SkjanyouClassLoader.class.getName(), classLoader);
 		// 5.扫描Jar包
-		start.findJarFile(manager, classLoader);
+		this.findJarFile(manager, classLoader);
 		// 6.初始化Plugin
-		start.pluginProcess.findPlugin(manager, classLoader, start.pluginScanPath);
+		this.pluginProcess.findPlugin(manager, classLoader, this.pluginScanPath);
 		// 7.生成配置文件
-		start.pluginProcess.generateDefaultConfigList(new File("skjanyou.default.properties"));
+		this.pluginProcess.generateDefaultConfigList(new File("skjanyou.default.properties"));
 		
 	}
 	
@@ -157,24 +166,24 @@ public abstract class SkjanyouApplicationStart {
 			logger.error("启动类",configClass.getName(),"没有配置@Configure注解,应用程序无法启动!");
 			return;
 		}
-		start.pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
+		this.pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
 		// 2.配置参数,扫描路径,配置类等
-		ConfigManager manager = start.configureProvider.getConfigure(start.configClass);
+		ConfigManager manager = this.configureProvider.getConfigure(this.configClass);
 		// 3.创建ClassLoader
 		ClassLoader srcClassLoader = Thread.currentThread().getContextClassLoader();
-		SkjanyouClassLoader classLoader = start.classLoaderProvider.getClassLoader();
+		SkjanyouClassLoader classLoader = this.classLoaderProvider.getClassLoader();
 		classLoader.addClassLoader(srcClassLoader);
 		Thread.currentThread().setContextClassLoader(classLoader);
 		// 4.将前面步骤创建对象放置到Bean容器
-		start.beandefinition.setBean(Beandefinition.class.getName(), start.beandefinition);
-		start.beandefinition.setBean(ConfigManager.class.getName(), manager);
-		start.beandefinition.setBean(SkjanyouClassLoader.class.getName(), classLoader);
+		this.beandefinition.setBean(Beandefinition.class.getName(), this.beandefinition);
+		this.beandefinition.setBean(ConfigManager.class.getName(), manager);
+		this.beandefinition.setBean(SkjanyouClassLoader.class.getName(), classLoader);
 		// 5.扫描Jar包
-		start.findJarFile(manager, classLoader);
+		this.findJarFile(manager, classLoader);
 		// 6.初始化Plugin
-		start.pluginProcess.findPlugin(manager, classLoader, start.pluginScanPath);
+		this.pluginProcess.findPlugin(manager, classLoader, this.pluginScanPath);
 		// 7.初始化Plugin,并打印信息
-		start.pluginProcess.initPlugin(manager, classLoader);		
+		this.pluginProcess.initPlugin(manager, classLoader);		
 		
 		List<List<String>> resultList = new ArrayList<>();
 		List<String> header = new ArrayList<>();
@@ -204,48 +213,48 @@ public abstract class SkjanyouApplicationStart {
 			logger.error("启动类",configClass.getName(),"没有配置@Configure注解,应用程序无法启动!");
 			return;
 		}
-		start.pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
+		this.pluginScanPath.addAll(Arrays.asList(configure.scanPath()));
 		progressLoader.progress(11, 1, "配置参数");
 		// 2.配置参数,扫描路径,配置类等
-		ConfigManager manager = start.configureProvider.getConfigure(start.configClass);
+		ConfigManager manager = this.configureProvider.getConfigure(this.configClass);
 		progressLoader.progress(11, 2, "创建类加载器");
 		// 3.创建ClassLoader
 		ClassLoader srcClassLoader = Thread.currentThread().getContextClassLoader();
-		SkjanyouClassLoader classLoader = start.classLoaderProvider.getClassLoader();
+		SkjanyouClassLoader classLoader = this.classLoaderProvider.getClassLoader();
 		classLoader.addClassLoader(srcClassLoader);
 		Thread.currentThread().setContextClassLoader(classLoader);
 		progressLoader.progress(11, 3, "配置Bean容器");
 		// 4.将前面步骤创建对象放置到Bean容器
-		start.beandefinition.setBean(Beandefinition.class.getName(), start.beandefinition);
-		start.beandefinition.setBean(ConfigManager.class.getName(), manager);
-		start.beandefinition.setBean(SkjanyouClassLoader.class.getName(), classLoader);
+		this.beandefinition.setBean(Beandefinition.class.getName(), this.beandefinition);
+		this.beandefinition.setBean(ConfigManager.class.getName(), manager);
+		this.beandefinition.setBean(SkjanyouClassLoader.class.getName(), classLoader);
 		progressLoader.progress(11, 4, "扫描Jar包");
 		// 5.扫描Jar包
-		start.findJarFile(manager, classLoader);
+		this.findJarFile(manager, classLoader);
 		progressLoader.progress(11, 5, "扫描插件");
 		// 6.初始化Plugin
-		start.pluginProcess.findPlugin(manager, classLoader, start.pluginScanPath);
+		this.pluginProcess.findPlugin(manager, classLoader, this.pluginScanPath);
 		progressLoader.progress(11, 6, "加载类");
 		// 7.加载所有的类
-		start.loadAllClasses(classLoader);
+		this.loadAllClasses(classLoader);
 		progressLoader.progress(11, 7, "初始化插件");
 		// 8.初始化Plugin
-		start.pluginProcess.initPlugin(manager, classLoader);
+		this.pluginProcess.initPlugin(manager, classLoader);
 		progressLoader.progress(11, 8, "初始化Bean");
 		// 9.初始化Bean
-		start.initBean( start.beandefinition );
+		this.initBean( this.beandefinition );
 		// 10.填充依赖
-		start.fillDependency( start.beandefinition );
+		this.fillDependency( this.beandefinition );
 		progressLoader.progress(11, 9, "启动描插件");
 		// 11.启动所有的Plugin
-		start.pluginProcess.startPlugin();
+		this.pluginProcess.startPlugin();
 		progressLoader.progress(11, 10, "绑定shutdown钩子");
 		// 12.绑定shutdown钩子
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			@Override
 			public void run() {
-				start.pluginProcess.shutdownPlugin();
-				start.onExit();
+				SkjanyouApplicationStart.this.pluginProcess.shutdownPlugin();
+				SkjanyouApplicationStart.this.onExit();
 			}
 		});
 		progressLoader.progress(11, 11, "应用启动完成");
@@ -298,7 +307,7 @@ public abstract class SkjanyouApplicationStart {
 				Object bean = InstanceUtil.newInstance(targetClass);
 				// 开始对该类进行配置
 				// 插件配置类
-				PluginConfig config = start.pluginProcess.getSystemAllPluginConfig();
+				PluginConfig config = this.pluginProcess.getSystemAllPluginConfig();
 				Field[] fields = targetClass.getDeclaredFields();
 				for (Field field : fields) {
 					Value valAnno = field.getAnnotation(Value.class);
