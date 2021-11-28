@@ -90,7 +90,7 @@ public class DefaultBeanPropertyBuilder extends BeanPropertyBuilder implements M
 
 		BeanWrapper beanWrapper = new BeanWrapper(bean);
 
-		Iterator<Entry<String,Class<?>>> it= fieldPropertyMap.entrySet().iterator();
+		Iterator<Entry<String,Class<?>>> it = fieldPropertyMap.entrySet().iterator();
 		while( it.hasNext() ) {
 			Entry<String,Class<?>> entry = it.next();
 			String fieldName = entry.getKey();

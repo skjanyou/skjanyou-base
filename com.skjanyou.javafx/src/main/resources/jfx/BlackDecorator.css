@@ -1,4 +1,5 @@
-* {
+/* VBox,HBox,Pane,AnchorPane,FlowPane,ScrollPane,StackPane {*/
+*{
 	-fx-background-color: #333333;
 	-fx-text-fill: white;
 }

@@ -17,6 +17,8 @@ public class DatabaseInfo {
 	private String validationSQL;
 	/** 是否在获取链接前验证有效性 **/
 	private Boolean testOnBorrow;	
+	/** 数据库类型 **/
+	private DatabaseEnum databaseType;
 	
 	public DatabaseInfo(String className, String url, String user,
 			String password, int size, long mills, String validationSQL,Boolean testOnBorrow) {
@@ -29,6 +31,7 @@ public class DatabaseInfo {
 		this.mills = mills;
 		this.validationSQL = validationSQL;
 		this.testOnBorrow = testOnBorrow;
+		this.databaseType = DatabaseEnum.resolveDbType(url);
 	}
 	public String getClassName() {
 		return className;
@@ -77,5 +80,11 @@ public class DatabaseInfo {
 	}
 	public void setTestOnBorrow(Boolean testOnBorrow) {
 		this.testOnBorrow = testOnBorrow;
+	}
+	public DatabaseEnum getDatabaseType() {
+		return databaseType;
+	}
+	public void setDatabaseType(DatabaseEnum databaseType) {
+		this.databaseType = databaseType;
 	}
 }

@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.skjanyou.javafx.anno.FxAnnotation.FxBean;
@@ -257,6 +255,7 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 							BeanPropertyBuilder.bind(propertyBean,key,p);
 						}
 					}
+					field.setAccessible(false);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
