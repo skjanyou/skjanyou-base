@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.skjanyou.start.config.ConfigManagerFactory;
-import com.skjanyou.start.config.impl.WithoutConfig;
+import com.skjanyou.start.config.impl.PropertiesConfig;
 
 
 @Target( { ElementType.TYPE } )
@@ -15,6 +15,6 @@ import com.skjanyou.start.config.impl.WithoutConfig;
 @Documented
 public @interface Configure {
 	String name();
-	Class<? extends ConfigManagerFactory> configManagerFactory() default WithoutConfig.class;
+	Class<? extends ConfigManagerFactory> configManagerFactory() default PropertiesConfig.class;
 	String[] scanPath() default "";
 }
