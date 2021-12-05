@@ -7,8 +7,6 @@ import java.util.concurrent.CountDownLatch;
 import com.skjanyou.annotation.api.Util.Property;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.core.FxPluginDefineAnnotationClassAdapter;
-import com.skjanyou.javafx.inter.ControllerLifeCycle;
-import com.skjanyou.javafx.inter.impl.NoneControllerLifeCycle;
 import com.skjanyou.plugin.PluginDefineAnnotationClassManager;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.bean.PluginConfig;
@@ -68,12 +66,9 @@ public class JavaFxPlugin implements PluginSupport{
 				LoadResult bean = loadResultMap.get(mainViewClass);
 				if( bean != null ) {
 					if( bean.getParent() != null ) {
-						Object controller = bean.getController();
 						Stage stage = bean.getStage();
-						ControllerLifeCycle life = ( controller instanceof ControllerLifeCycle) ? (ControllerLifeCycle) controller : new NoneControllerLifeCycle();
 						// TODO 这个地方要优化,没有加@FxDecorator注解的界面也会被去掉装饰
 						Scene scene = bean.getScene();
-						life.onInit(stage,bean.getParent());
 						stage.setScene(scene);
 						stage.setTitle(title);
 						stage.getIcons().add(new Image(StreamUtil.getInputStreamIgnoreLocation(icon)));

@@ -18,9 +18,14 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 
@@ -87,13 +92,22 @@ public class NettyHttpServer extends AbstractServer {
 		this.serverBootstrap.channel(NioServerSocketChannel.class);
 		this.serverBootstrap.option(ChannelOption.SO_BACKLOG, 1024);
 		this.serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
-		this.serverBootstrap.option(ChannelOption.ALLOW_HALF_CLOSURE, true);
+		this.serverBootstrap.option(ChannelOption.ALLOW_HALF_CLOSURE, true)
+		.option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(1024*1024));
 		this.serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			@Override
 			public void initChannel(SocketChannel channel) throws Exception {
 				ChannelPipeline pipeline = channel.pipeline();
 				pipeline.addLast("readTimeOut", new ReadTimeoutHandler(readTimeout)); // 读超时。
 				pipeline.addLast("writeTimeOut", new WriteTimeoutHandler(writeTimeout)); //// 写超时。
+                // 请求解码器
+				pipeline.addLast("http-decoder", new HttpRequestDecoder());
+                // 将HTTP消息的多个部分合成一条完整的HTTP消息
+                pipeline.addLast("http-aggregator", new HttpObjectAggregator(1024 * 128));
+                // 响应转码器
+                pipeline.addLast("http-encoder", new HttpResponseEncoder());
+                // 解决大码流的问题，ChunkedWriteHandler：向客户端发送HTML5文件
+                pipeline.addLast("http-chunked", new ChunkedWriteHandler());
 				pipeline.addLast(new NioShortServerHandler(url, bizThreadPool,NettyHttpServer.this));
 				
 			}
@@ -122,11 +136,5 @@ public class NettyHttpServer extends AbstractServer {
 		return this.handler;
 	}	
 	
-	public static void main(String[] args) {
-		Server server = new NettyHttpServer();
-		server.init();
-		server.startup();
-		System.out.println(1);
-	}
 
 }
