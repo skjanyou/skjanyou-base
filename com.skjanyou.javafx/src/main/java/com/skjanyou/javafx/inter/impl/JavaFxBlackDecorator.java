@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.Light.Point;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -193,22 +194,39 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 
 	}
 
+	@FXML
+	public void bannerClick(MouseEvent event) {
+		if( event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
+			stage.setMaximized(!stage.isMaximized());
+		}
+	}
+	
+	@FXML
 	public void min() {
 		stage.setIconified(true);
 	}
 
+	@FXML
 	public void max() {
 		stage.setMaximized(!stage.isMaximized());
 	}
 
+	@FXML
 	public void close() {
 		stage.close();
 	}
 
+	@FXML
 	public void color() {
 		colorPicker.show();
 	}
 
+	@FXML
+	public void transparent() {
+		System.out.println("transparent");
+		banner.getStyleClass().add("transparent");
+	}
+	
 	public void changeColor(ActionEvent event) {
 		ColorPicker colorPicker = (ColorPicker) event.getSource();
 		String rgbString = "#" + Integer.toHexString(colorPicker.getValue().hashCode());

@@ -8,6 +8,7 @@ import java.util.Map;
 import com.skjanyou.server.api.inter.Headers;
 import com.skjanyou.server.api.inter.Protocol;
 import com.skjanyou.server.api.inter.Request;
+import com.skjanyou.util.JsonUtil;
 import com.skjanyou.util.StreamUtil;
 import com.skjanyou.util.convert.ConvertUtil;
 
@@ -56,10 +57,15 @@ public class HttpRequest implements Request {
 		public Requestbody convertToRequestbody(String formBody) {
 			if( formBody != null && formBody.length() > 0 ){
 				setRequestBody(formBody);
-				// 这里有多种格式
-				Object result = ConvertUtil.convert(formBody, Map.class);
-				// 如果类型仍旧没有变化
-				if( formBody.equals(result) ){
+				if( JsonUtil.isJSON(formBody) ) {
+					// 这里有多种格式
+					Object result = ConvertUtil.convert(formBody, Map.class);
+					// 如果类型仍旧没有变化
+					this.requestBodyMap.putAll((Map)result);
+				}else {
+					// 这里要判断一下content-type,当为表单数据才这样取
+					request.headers.get("");
+					// 表单数据
 					String[] kvArr = formBody.split("&");
 					for (String kv : kvArr) {
 						String[] kvs = kv.split("=");
@@ -68,11 +74,8 @@ public class HttpRequest implements Request {
 							String value = kvs[1];
 							this.requestBodyMap.put(key, value);
 						}
-					}					
-				}else{
-					this.requestBodyMap.putAll((Map)result);
+					}		
 				}
-				
 
 			}
 			return this;

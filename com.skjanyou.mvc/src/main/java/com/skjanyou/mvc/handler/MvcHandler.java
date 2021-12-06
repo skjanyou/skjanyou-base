@@ -48,6 +48,8 @@ public abstract class MvcHandler extends MappingHandler {
 	public void handler(HttpRequest request, HttpResponse response) throws ServerException{
 		// 请求url
 		String url = request.requestLine().url().split("\\?")[0]; 
+		url = url.replace("//", "/").replace("\\\\", "\\");
+		
 		// HTTP协议版本
 		response.getHttpResponseLine().setProtocol(new HttpProtocolLv1());
 		
@@ -65,6 +67,7 @@ public abstract class MvcHandler extends MappingHandler {
 		Method method = context.getTargetMethod();
 		Object object = context.getTargetObj();
 		ExceptionHandler handler = context.getHandler();
+		Class<?> rtClass = method.getReturnType();
 		List<Class<? extends Exception>> classList = context.getExceptionList();
 		// 响应行
 		HttpResponseLine responseLine = response.getHttpResponseLine();
@@ -97,7 +100,12 @@ public abstract class MvcHandler extends MappingHandler {
 		logger.debug("return result :[ " + result + " ]");
 		httpHeaders.put("Content-Type", contentType);
 		responseLine.setStatusCode(StatusCode.Ok);
-		if( result instanceof File ) {
+		if( result == null ) {
+			responseBody.setBodyContent(new byte[0]);
+			return ;
+		}
+		// 检查返回类型
+		if( File.class.isAssignableFrom(rtClass) ) {
 			httpHeaders.put("Content-Type", "application/octet-stream");
 			File resultFile = (File) result;
 			String fileName = resultFile.getName();
@@ -112,7 +120,9 @@ public abstract class MvcHandler extends MappingHandler {
 		}else if( result instanceof byte[] ) {
 			httpHeaders.put("Content-Type", "application/octet-stream");
 			responseBody.setBodyContent((byte[]) result );
-		}else {
+		}else if( Void.class.isAssignableFrom(rtClass) ){
+			responseBody.setBodyContent(new byte[0]);
+		}else{
 			result = ConvertUtil.convert(result, String.class);
 			responseBody.setBodyContent(result.toString());		
 		}

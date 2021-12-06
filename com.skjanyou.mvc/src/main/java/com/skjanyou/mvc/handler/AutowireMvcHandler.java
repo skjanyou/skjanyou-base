@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.skjanyou.mvc.anno.Mvc.HttpParameter;
 import com.skjanyou.mvc.anno.Mvc.HttpPostReuqestBody;
+import com.skjanyou.mvc.anno.Mvc.HttpPostReuqestBodyContext;
 import com.skjanyou.mvc.anno.Mvc.HttpRequestHeader;
 import com.skjanyou.mvc.anno.Mvc.HttpResponseHeader;
 import com.skjanyou.mvc.bean.Context;
@@ -75,6 +76,9 @@ public class AutowireMvcHandler extends MvcHandler {
 						}else{
 							throw new ServerException("httpPostReuqestBody未指定key时,类型应为Map<String,Object>");
 						}
+					}else{
+						Object bean = ConvertUtil.convert(requestBodyMap, parameter.getType());
+						linkList.add(bean);
 					}
 				}else{
 					// 不为空时,说明为检索的key
@@ -138,7 +142,14 @@ public class AutowireMvcHandler extends MvcHandler {
 				}
 				linkList.add(httpResponseHeaders);
 				continue;
-			}			
+			}
+			
+			// 获取Post请求正文数据
+			HttpPostReuqestBodyContext postBodyContext = parameter.getAnnotation(HttpPostReuqestBodyContext.class);
+			if( postBodyContext != null ) {
+				linkList.add(request.getHttpRequestbody().getRequestbody());
+				continue;
+			}
 			
 			linkList.add(null);
 		}

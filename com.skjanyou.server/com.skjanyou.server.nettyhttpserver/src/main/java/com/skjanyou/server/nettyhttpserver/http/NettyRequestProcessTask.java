@@ -7,6 +7,7 @@ import java.net.SocketTimeoutException;
 import java.util.List;
 
 import com.skjanyou.log.core.Logger;
+import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.core.HttpRequest;
@@ -24,9 +25,9 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
 public class NettyRequestProcessTask implements Runnable {
+	private Logger logger = LogUtil.getLogger(NettyRequestProcessTask.class);
 	private ChannelHandlerContext ctx;
 	private byte[] msgBytes;
-	private Logger logger;
 	private NettyHttpServer nettyHttpServer;
 
 	public NettyRequestProcessTask( NettyHttpServer nettyHttpServer, ChannelHandlerContext ctx, byte[] msgBytes ) {

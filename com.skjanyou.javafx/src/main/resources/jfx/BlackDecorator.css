@@ -20,9 +20,11 @@
 }
 
 
-#banner,#blank,#close_box,#resize_box,#min_box {
+#banner,#blank,#close_box,#resize_box,#min_box,#transparent_box {
 	-fx-background-color: black;
 }
+
+
 
 /** 这里单独给ImageView元素添加Hover完成不了改变背景颜色,需要再添加一个父容器元素来处理 */
 #close_box:hover {
@@ -30,7 +32,7 @@
 } 
 
 
-#resize_box:hover,#min_box:hover {
+#resize_box:hover,#min_box:hover,#transparent_box:hover {
 	-fx-background-color: #333333;
 }
 
@@ -56,6 +58,10 @@
 
 .show {
 	visibility: true;
+}
+
+.transparent {
+	-fx-background-color: transparent;
 }
 
 .button {
