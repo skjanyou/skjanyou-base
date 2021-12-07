@@ -222,9 +222,10 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	}
 
 	@FXML
-	public void transparent() {
-		System.out.println("transparent");
+	public void transparent(MouseEvent event) {
+		event.consume();
 		banner.getStyleClass().add("transparent");
+		stage.setOpacity(0.2);
 	}
 	
 	public void changeColor(ActionEvent event) {
