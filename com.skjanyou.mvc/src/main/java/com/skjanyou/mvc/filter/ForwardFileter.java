@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.skjanyou.server.api.constant.StatusCode;
+import com.skjanyou.server.api.inter.AbstractHttpFilter;
 import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
@@ -20,7 +21,7 @@ import com.skjanyou.server.core.HttpResponse.HttpResponseBody;
 import com.skjanyou.server.core.HttpResponse.HttpResponseLine;
 
 
-public class ForwardFileter implements Filter {
+public class ForwardFileter extends AbstractHttpFilter {
 	private String ip;
 	private int port;
 	private String contextPath;
@@ -32,7 +33,7 @@ public class ForwardFileter implements Filter {
 		this.contextPath = contextPath;
 	}
 	@Override
-	public int priority() {
+	public int getOrder() {
 		return 1;
 	}
 	@Override
@@ -67,13 +68,7 @@ public class ForwardFileter implements Filter {
 	        }
 	        byte[] bodyContent = baos.toByteArray();
 	        httpResponseBody.setBodyContent(bodyContent);
-//	        String html = UrlUtil.fechchHtml(conn.getInputStream());
-//	        httpResponseBody.setBodyContent(html);
 		}
 		return false;
-	}
-	@Override
-	public Filter destroy() {
-		return null;
 	}
 }

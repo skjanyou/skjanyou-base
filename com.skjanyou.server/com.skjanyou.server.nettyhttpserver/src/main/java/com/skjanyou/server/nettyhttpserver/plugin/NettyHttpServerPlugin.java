@@ -9,9 +9,9 @@ import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
 import com.skjanyou.plugin.PluginSupport;
 import com.skjanyou.plugin.bean.PluginConfig;
+import com.skjanyou.server.api.bean.FilterAdapter;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.exception.ServerException;
-import com.skjanyou.server.api.inter.Filter;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.Server;
@@ -58,25 +58,7 @@ public class NettyHttpServerPlugin implements PluginSupport{
 		}
 		server = new NettyHttpServer();
 		server.setConfig(config);
-		server.addFilter(new Filter() {
-			@Override
-			public int priority() {
-				return 0;
-			}
-			@Override
-			public Filter init() {
-				return this;
-			}
-			@Override
-			public boolean doFilter(Request request, Response response)
-					throws Exception {
-				return true;
-			}
-			@Override
-			public Filter destroy() {
-				return this;
-			}
-		});
+		server.addFilter(new FilterAdapter());
 		server.handler(new ServerHandler() {
 			
 			@Override

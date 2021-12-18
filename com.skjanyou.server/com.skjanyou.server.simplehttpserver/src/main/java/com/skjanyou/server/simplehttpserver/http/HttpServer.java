@@ -5,19 +5,25 @@ import java.util.List;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.inter.AbstractServer;
 import com.skjanyou.server.api.inter.Filter;
+import com.skjanyou.server.api.inter.FilterHandler;
 import com.skjanyou.server.api.inter.Server;
 import com.skjanyou.server.api.inter.ServerHandler;
 
 public class HttpServer extends AbstractServer {
 	private DispatchThread dispatchThread;
-	public HttpServer(){}
+	private FilterHandler filterHander;
+	public HttpServer(){
+		this.filterHander = new FilterHandler();
+	}
 	
 	
 	@Override
 	public Server init(){
 		for( Filter filter : this.filters){
 			filter.init();
-		};		
+			this.filterHander.addChain(filter);
+		};
+		
 		this.handler.init();		
 		dispatchThread = new DispatchThread(this);
 		return this;

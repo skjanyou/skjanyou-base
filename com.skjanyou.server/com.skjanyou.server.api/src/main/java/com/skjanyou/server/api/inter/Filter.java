@@ -1,11 +1,9 @@
 package com.skjanyou.server.api.inter;
 
-public interface Filter {
-	/**
-	 * 过滤器优先级,优先级越大,越先执行
-	 * @return
-	 */
-	public int priority();
+import com.skjanyou.server.api.bean.HttpEntity;
+import com.skjanyou.util.plus.chain.Chain;
+
+public interface Filter extends Chain<HttpEntity> {
 	/**
 	 * 初始化过滤器
 	 * @return

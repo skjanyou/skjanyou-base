@@ -1,32 +1,31 @@
 package com.skjanyou.server.api.inter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.skjanyou.server.api.bean.ServerConfig;
 
-public abstract class AbstractServer implements Server{
+public abstract class AbstractServer implements Server {
 	protected ServerConfig config;
 	protected List<Filter> filters;	
+	protected FilterHandler filterHandler;
 	protected ServerHandler handler;
 	protected boolean isAlive;
 	public AbstractServer(){
-		filters = new ArrayList<>();
-		
+		this.filters = new ArrayList<>();
+		this.filterHandler = new FilterHandler();
 	}
 	
 	@Override
 	public Server addFilter(Filter filter) {
 		this.filters.add(filter);
-		Collections.sort(this.filters,new Comparator<Filter>() {
-			@Override
-			public int compare(Filter filter1, Filter filter2) {
-				return filter1.priority() - filter2.priority();
-			}
-		});		
+		this.filterHandler.addChain(filter);
 		return this;
+	}
+
+	@Override
+	public FilterHandler getFilterHandler() {
+		return this.filterHandler;
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package com.skjanyou.mvc.filter;
 import java.io.File;
 
 import com.skjanyou.server.api.constant.StatusCode;
-import com.skjanyou.server.api.inter.Filter;
+import com.skjanyou.server.api.inter.AbstractHttpFilter;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.core.HttpProtocolLv1;
@@ -13,22 +13,12 @@ import com.skjanyou.server.core.HttpResponse.HttpResponseLine;
 
 
 // 静态资源过滤器
-public class StaticFileFilter implements Filter {
+public class StaticFileFilter extends AbstractHttpFilter {
 	private String staticFilePath = null;
 	public StaticFileFilter( String staticFilePath ){
 		this.staticFilePath = staticFilePath;
 	}
 	
-	@Override
-	public int priority() {
-		return 0;
-	}
-
-	@Override
-	public Filter init() {
-		return this;
-	}
-
 	@Override
 	public boolean doFilter(Request request, Response response) throws Exception {
 		HttpRequest httpRequest = (HttpRequest) request;
@@ -43,9 +33,5 @@ public class StaticFileFilter implements Filter {
 		return false;
 	}
 
-	@Override
-	public Filter destroy() {
-		return this;
-	}
 
 }

@@ -4,12 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
-import java.util.List;
 
 import com.skjanyou.log.core.Logger;
 import com.skjanyou.log.util.LogUtil;
+import com.skjanyou.server.api.bean.HttpEntity;
 import com.skjanyou.server.api.constant.StatusCode;
-import com.skjanyou.server.api.inter.Filter;
+import com.skjanyou.server.api.inter.FilterHandler;
 import com.skjanyou.server.core.HttpRequest;
 import com.skjanyou.server.core.HttpResponse;
 import com.skjanyou.server.core.RequestBuilder;
@@ -69,20 +69,10 @@ public class NettyRequestProcessTask implements Runnable {
 			// 添加IP地址
 			request.headers().put("remote-ip", ip);
 
-			List<Filter> filterList = this.nettyHttpServer.getFilters();
-
-			boolean allPass = true;
-			for (Filter filter : filterList) {
-				boolean isContinue = filter.doFilter(request, response);
-				if(!isContinue){ 
-					allPass = false;
-					break ;
-				}
-			}
-
-			if( allPass ){
-				this.nettyHttpServer.getHandler().handler(request, response);
-			}
+			FilterHandler filterHandler = this.nettyHttpServer.getFilterHandler();
+			HttpEntity httpEntity = new HttpEntity(request,response);
+			filterHandler.doChainProcess(httpEntity);
+			this.nettyHttpServer.getHandler().handler(request, response);
 
 			return response;
 		} catch( SocketTimeoutException ste ) {

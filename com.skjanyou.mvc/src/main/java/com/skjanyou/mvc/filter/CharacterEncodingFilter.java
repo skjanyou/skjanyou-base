@@ -6,23 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.skjanyou.server.api.inter.Filter;
+import com.skjanyou.server.api.inter.AbstractHttpFilter;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.core.HttpRequest;
 import com.skjanyou.server.core.HttpRequest.HttpRequestLine;
 
-public class CharacterEncodingFilter implements Filter {
-
-	@Override
-	public int priority() {
-		return 0;
-	}
-
-	@Override
-	public Filter init() {
-		return this;
-	}
+public class CharacterEncodingFilter extends AbstractHttpFilter {
 
 	@Override
 	public boolean doFilter(Request request, Response response)
@@ -45,10 +35,6 @@ public class CharacterEncodingFilter implements Filter {
 		return true;
 	}
 
-	@Override
-	public Filter destroy() {
-		return null;
-	}
 
 	private String decode( String input ){
 		String output = input;
@@ -58,4 +44,5 @@ public class CharacterEncodingFilter implements Filter {
 		}
 		return output;
 	}
+
 }

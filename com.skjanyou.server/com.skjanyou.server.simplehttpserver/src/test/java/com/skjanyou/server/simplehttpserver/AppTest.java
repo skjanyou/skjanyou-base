@@ -3,6 +3,7 @@ package com.skjanyou.server.simplehttpserver;
 import java.io.File;
 
 import com.skjanyou.annotation.api.enumclass.ResponseType;
+import com.skjanyou.server.api.bean.FilterAdapter;
 import com.skjanyou.server.api.bean.ServerConfig;
 import com.skjanyou.server.api.constant.StatusCode;
 import com.skjanyou.server.api.exception.ServerException;
@@ -62,29 +63,7 @@ public class AppTest {
 	public static void main(String[] args) {
 		Server server = new HttpServer();
 		server.handler(new MyServerHandler());
-		server.addFilter(new Filter() {
-			
-			@Override
-			public int priority() {
-				return 0;
-			}
-			
-			@Override
-			public Filter init() {
-				return this;
-			}
-			
-			@Override
-			public boolean doFilter(Request request, Response response)
-					throws Exception {
-				return true;
-			}
-			
-			@Override
-			public Filter destroy() {
-				return null;
-			}
-		});
+		server.addFilter(new FilterAdapter());
 		ServerConfig config = new ServerConfig();
 		config.setIp("127.0.0.1");config.setPort(2333);config.setTimeout(5000000);
 		server.startup();

@@ -4,8 +4,6 @@ import com.skjanyou.server.api.exception.ServerException;
 import com.skjanyou.server.api.inter.Request;
 import com.skjanyou.server.api.inter.Response;
 import com.skjanyou.server.api.inter.ServerHandler;
-import com.skjanyou.server.core.HttpRequest;
-import com.skjanyou.server.core.HttpResponse;
 
 public abstract class HttpServerHandler implements ServerHandler {
 
