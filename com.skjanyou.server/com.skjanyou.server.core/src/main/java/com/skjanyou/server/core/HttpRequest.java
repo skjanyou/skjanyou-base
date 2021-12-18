@@ -63,7 +63,7 @@ public class HttpRequest implements Request {
 					// 如果类型仍旧没有变化
 					this.requestBodyMap.putAll((Map)result);
 				}else {
-					// 这里要判断一下content-type,当为表单数据才这样取
+					// TODO 这里要判断一下content-type,当为表单数据才这样取
 					request.headers.get("");
 					// 表单数据
 					String[] kvArr = formBody.split("&");
