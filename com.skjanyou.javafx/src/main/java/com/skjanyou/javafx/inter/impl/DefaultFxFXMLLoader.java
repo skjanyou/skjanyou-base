@@ -9,6 +9,7 @@ import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.bean.LoadResult;
 import com.skjanyou.javafx.inter.ControllerLifeCycle;
 import com.skjanyou.javafx.inter.FxFXMLLoader;
+import com.skjanyou.javafx.inter.builder.JavaFxBuilderFactoryPlus;
 import com.sun.javafx.application.PlatformImpl;
 
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,10 @@ import net.sf.cglib.proxy.MethodProxy;
 public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Callback<Class<?>, Object>,MethodInterceptor {
 	private FxController fxControllerAnno;
 	private Stage stage;
+	public DefaultFxFXMLLoader() {
+		this.setControllerFactory(this);
+		this.setBuilderFactory(new JavaFxBuilderFactoryPlus());
+	}
 	public DefaultFxFXMLLoader( Class<?> controllerClass,Stage stage ) {
 		this.fxControllerAnno = controllerClass.getAnnotation(FxController.class);
 		this.stage = stage;
@@ -31,6 +36,7 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 		}
 		this.setLocation(getFXMLURL());
 		this.setControllerFactory(this);
+		this.setBuilderFactory(new JavaFxBuilderFactoryPlus());
 	}
 	
 	@Override
@@ -91,9 +97,13 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 
 	@Override
 	public Object call(Class<?> param) {
+		System.out.println(param);
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(param);
         enhancer.setCallback(this);
+        // FIXME 也许可以在这里添加事件绑定
+        Object root = super.getRoot();
+        System.out.println("root," + root);
 		return enhancer.create();
 	}
 

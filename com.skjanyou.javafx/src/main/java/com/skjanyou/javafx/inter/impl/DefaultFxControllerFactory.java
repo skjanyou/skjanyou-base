@@ -70,10 +70,6 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 	private Parent parent;
 	/** 加载的结果,包括Root对象和Controller类 **/
 	private LoadResult loadResult;
-	/** 历史Stage **/
-	private LinkedList<Stage> stageList;
-	/** 历史Scene **/
-	private LinkedList<Scene> sceneList;
 	/** 父Stage **/
 	private Stage fatherStage;
 	/** 用于展示用的Stage **/
@@ -102,8 +98,6 @@ public class DefaultFxControllerFactory implements FxControllerFactory,FxControl
 			throw new RuntimeException("Controller类上面必须携带FxController注解");
 		}
 		this.fxDecorator = controllerClass.getAnnotation(FxDecorator.class);
-		this.stageList = new LinkedList<>();
-		this.sceneList = new LinkedList<>();
 		this.fields = this.controllerClass.getDeclaredFields();
 		this.methods = this.controllerClass.getDeclaredMethods();
 	}
