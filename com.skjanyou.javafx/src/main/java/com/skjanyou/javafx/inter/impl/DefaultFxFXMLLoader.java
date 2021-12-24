@@ -97,13 +97,9 @@ public class DefaultFxFXMLLoader extends FXMLLoader implements FxFXMLLoader,Call
 
 	@Override
 	public Object call(Class<?> param) {
-		System.out.println(param);
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(param);
         enhancer.setCallback(this);
-        // FIXME 也许可以在这里添加事件绑定
-        Object root = super.getRoot();
-        System.out.println("root," + root);
 		return enhancer.create();
 	}
 
