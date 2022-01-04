@@ -35,6 +35,7 @@ import javafx.stage.Stage;
 public class JavaFxBlackDecorator implements JavaFxDecorator {
 	protected Stage stage;
 	protected Point point = new Point();
+	private boolean isTransparent = false;
 	protected FxDecorator fxDecorator;
 	@FXML
 	protected ColorPicker colorPicker;
@@ -224,8 +225,15 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	@FXML
 	public void transparent(MouseEvent event) {
 		event.consume();
-		banner.getStyleClass().add("transparent");
-		stage.setOpacity(0.2);
+		if( this.isTransparent ) {
+			banner.getStyleClass().remove("transparent");
+			stage.setOpacity(1);
+			this.isTransparent = false;
+		}else{
+			banner.getStyleClass().add("transparent");
+			stage.setOpacity(0.2);
+			this.isTransparent = true;
+		}
 	}
 	
 	public void changeColor(ActionEvent event) {

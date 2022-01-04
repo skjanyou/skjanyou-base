@@ -3,6 +3,8 @@ package com.skjanyou.javafx.component.loading;
 import com.skjanyou.javafx.anno.FxAnnotation.FxController;
 import com.skjanyou.javafx.inter.ControllerLifeCycle;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -66,16 +68,30 @@ public class BlackLoading implements ControllerLifeCycle {
 //        Loading_Pane.setStyle("-fx-background:transparent;");
         stage.setScene(scene);
         
-        stage.addEventFilter(KeyEvent.KEY_RELEASED, e->{
-        	if( e.getCode() == KeyCode.ESCAPE ) {
-        		this.closeLoading();
-        	}
-        });
-        stage.addEventFilter(WindowEvent.WINDOW_HIDDEN, e->{
-        	if( callback != null ) {
-        		callback.cancel();
-        	}        	
-        });
+        EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+	        	if( event.getCode() == KeyCode.ESCAPE ) {
+	        		BlackLoading.this.closeLoading();
+	        		stage.removeEventFilter(KeyEvent.KEY_RELEASED, this);
+	        	}
+			}
+        	
+        };
+        
+        EventHandler<WindowEvent> windowEvent = new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+	        	if( callback != null ) {
+	        		callback.cancel();
+	        		stage.removeEventFilter(WindowEvent.WINDOW_HIDDEN, this);
+	        	}  
+			}
+        	
+        };
+        
+        stage.addEventFilter(KeyEvent.KEY_RELEASED, keyEvent);
+        stage.addEventFilter(WindowEvent.WINDOW_HIDDEN, windowEvent);
         
         stage.show();		
         return this;
