@@ -53,6 +53,8 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 	protected ImageView restore;
 	
 	@FXML
+	protected VBox transparent_box;
+	@FXML
 	protected ImageView color_image;
 	@FXML
 	protected VBox min_box;
@@ -83,19 +85,23 @@ public class JavaFxBlackDecorator implements JavaFxDecorator {
 		return this;
 	}
 
+	// TODO 这里还是依据类型去remove掉比较好
 	protected void bindHeader() {
 		DecoratorType type = this.fxDecorator.type();
 		switch (type) {
 		case CLOSE:
+			transparent_box.setVisible(false);
 			resize_box.setVisible(false);
 			color_image.setVisible(false);
 			min_box.setVisible(false);
 			break;
 		case MAX_CLOSE:
+			transparent_box.setVisible(false);
 			color_image.setVisible(false);
 			min_box.setVisible(false);
 			break;
 		case MIN_MAX_CLOSE:
+			transparent_box.setVisible(false);
 			color_image.setVisible(false);
 			break;
 		case NONE:
